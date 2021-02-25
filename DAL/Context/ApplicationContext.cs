@@ -15,7 +15,7 @@ namespace RUPsystem.Context
         }
 
         public DbSet<Cidade> Cidades { get; set; }
-        public DbSet<Estado> Estados { get; set; }
-        public DbSet<Pais> Paises { get; set; }
+        public DbSet<Estados> Estados { get; set; }
+        public DbSet<Paises> Paises { get; set; }
     }
 }

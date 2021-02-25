@@ -564,6 +564,29 @@
             "rid": "win"
           }
         }
+      },
+      "BLL/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "dependencies": {
+          "DAL": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/BLL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/BLL.dll": {}
+        }
+      },
+      "DAL/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "compile": {
+          "bin/placeholder/DAL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DAL.dll": {}
+        }
       }
     }
   },
@@ -1756,10 +1779,21 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "BLL/1.0.0": {
+      "type": "project",
+      "path": "../BLL/BLL.csproj",
+      "msbuildProject": "../BLL/BLL.csproj"
+    },
+    "DAL/1.0.0": {
+      "type": "project",
+      "path": "../DAL/DAL.csproj",
+      "msbuildProject": "../DAL/DAL.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "BLL >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 5.0.3",
       "Microsoft.EntityFrameworkCore.Relational >= 5.0.3",
       "Microsoft.EntityFrameworkCore.Tools >= 5.0.3",
@@ -1774,11 +1808,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\RUPsystem\\RUPsystem.csproj",
+      "projectUniqueName": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
       "projectName": "RUPsystem",
-      "projectPath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\RUPsystem\\RUPsystem.csproj",
+      "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
       "packagesPath": "C:\\Users\\Krause\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\RUPsystem\\obj\\",
+      "outputPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -1796,7 +1830,11 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj": {
+              "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

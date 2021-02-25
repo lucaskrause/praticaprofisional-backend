@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Entitys
 {
-    public class Cidade : GenericEntity
+    public class Paises : AbstractEntity
     {
-        public string descricao { get; set; }
-        public int estadoId { get; set; }
-        public Estado estado { get; set; }
+        public string pais { get; set; }
+        public string Sigla { get; set; }
     }
 }

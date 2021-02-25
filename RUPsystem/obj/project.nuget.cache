@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4M30hkHtKPU4ztkqouQv/KSKKG+OBqMRhVGl6EN86CnD/zGihSEHfiU8APFJfg92v0pVHCl32gpU9/byk+3Zqw==",
+  "dgSpecHash": "ij0WxBiDY8iZQ0I/S6pLisJ6xZdQpvGcEWW92JkUq37T/c+9VaOdt22u6YT+OO41RXg4S/a9vhOZqyop+ILRNw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\RUPsystem\\RUPsystem.csproj",
+  "projectFilePath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Krause\\.nuget\\packages\\bouncycastle.netcore\\1.8.5\\bouncycastle.netcore.1.8.5.nupkg.sha512",
     "C:\\Users\\Krause\\.nuget\\packages\\google.protobuf\\3.11.4\\google.protobuf.3.11.4.nupkg.sha512",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SzdQ3qiWp6W9zMYs7GF+na/4Po86ANsb5rha4FNWHI26DmxmTLxEO/PH7pJfc9neRvSGkT5NH+h8kV7LKPy8qA==",
+  "dgSpecHash": "9QfSCs9isaJJNL14GhmkhhFtIzBT8flx1yq9JAwBLGM59R4Z0DduNkgiWlOUDNCFgcn6aGbaQsh5+JEwam9XqA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\BLL\\BLL.csproj",
+  "projectFilePath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

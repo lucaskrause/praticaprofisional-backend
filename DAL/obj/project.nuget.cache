@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3e1zJrhod5Ym6BIylkkDsNNStlZnhnWmapQrqxyEHpnJCbWobMzbd0ECN7Hx1nZDARREyM+MHzgu9Z3wPqMUnw==",
+  "dgSpecHash": "9huc3dzDwgA8KFTKl4LTu1EqC8yudtHKIVJcjthrXl+IpjyBceD2IWImu6pB1B3Zl13UiFHBohTgF0YJScRlEQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\DAL.csproj",
+  "projectFilePath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

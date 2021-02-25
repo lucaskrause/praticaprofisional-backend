@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Entitys
 {
-    public class Estado : GenericEntity
+    public class Estados : AbstractEntity
     {
-        public string descricao { get; set; }
+        public string estado { get; set; }
+        public string uf { get; set; }
         public int paisId { get; set; }
-        public Pais pais { get; set; }
+        public Paises pais { get; set; }
     }
 }

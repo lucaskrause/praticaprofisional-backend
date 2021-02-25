@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\DAL.csproj": {}
+    "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\DAL.csproj": {
+    "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\DAL.csproj",
+        "projectUniqueName": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\DAL.csproj",
+        "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
         "packagesPath": "C:\\Users\\Krause\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Krause\\source\\repos\\PraticaProfissional\\DAL\\obj\\",
+        "outputPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
