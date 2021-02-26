@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 
-namespace DAL.Daos
+namespace DAL.DataAccessObject
 {
     public class DAO
     {
-        public SqlConnection conexao { get; }
+        private SqlConnection _conexao;
 
         public DAO()
         {
-            this.conexao = Conecta.CreateConnection();
+            string strConn = "Server=localhost;Database=praticaprofissional;Uid=root;Pwd=;";
+            SqlConnection conexao = new SqlConnection(strConn);
         }
 
-        public DAO(SqlConnection conexao)
-        {
-            this.conexao = conexao;
-
-        }
-
+        public SqlConnection GetCurrentConnection() => _conexao;
 
         public virtual void Inserir(Object obj)
         {
@@ -52,7 +50,7 @@ namespace DAL.Daos
 
         protected SqlCommand CreateCommandTransaction(SqlTransaction transaction)
         {
-            SqlCommand comando = this.conexao.CreateCommand();
+            SqlCommand comando = this._conexao.CreateCommand();
 
             comando.Transaction = transaction;
 

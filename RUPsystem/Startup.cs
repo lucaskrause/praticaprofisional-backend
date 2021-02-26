@@ -27,8 +27,6 @@ namespace RUPsystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration["Server=localhost;Database=praticaprofissional;Uid=root;Pwd=;"];
-            services.AddDbContext<ApplicationContext>(opt => opt.UseMySql(connection));
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddControllers();
         }

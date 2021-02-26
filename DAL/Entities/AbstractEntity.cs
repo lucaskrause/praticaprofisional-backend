@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace RUPsystem.Entities
 {
@@ -10,12 +13,21 @@ namespace RUPsystem.Entities
             this.Status = "Ativo";
         }
 
+        [Key]
+        [Column("id")]
         public int codigo { get; set; }
 
-        public DateTime dtCadastro { get; set; }
+        [Column("dtCadastro")]
+        [DataType(DataType.DateTime)]
+        [JsonIgnore]
+        public DateTime? dtCadastro { get; set; }
 
-        public DateTime dtAlteracao { get; set; }
+        [Column("dtAlteracao")]
+        [DataType(DataType.DateTime)]
+        [JsonIgnore]
+        public DateTime? dtAlteracao { get; set; }
 
+        [Column("status")]
         public string Status { get; set; }
 
         public virtual void PrepareSave()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RUPsystem.Entitys;
@@ -10,6 +11,14 @@ namespace RUPsystem.Controllers
 {
     public class PaisesController : AbstractController<Paises>
     {
+        new PaisesService _service;
+        public PaisesController()
+        {
+            _service = new PaisesService();
+
+        }
+
+        [HttpPost]
         public async Task<IActionResult> create(Paises pais)
         {
             try

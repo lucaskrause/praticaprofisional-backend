@@ -10,13 +10,15 @@ using RUPsystem.Entities;
 
 namespace RUPsystem.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class AbstractController<T> : ControllerBase where T : AbstractEntity 
     {
-        protected AbstractService<T> _service;
+        protected Service<T> _service;
 
         public AbstractController()
         {
-            _service = new AbstractService<T>();
+            _service = new Service<T>();
         }
     }
 }
