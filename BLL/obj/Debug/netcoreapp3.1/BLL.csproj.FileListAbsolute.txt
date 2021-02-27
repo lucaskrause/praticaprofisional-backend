@@ -1,0 +1,12 @@
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\bin\Debug\netcoreapp3.1\BLL.deps.json
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\bin\Debug\netcoreapp3.1\BLL.dll
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\bin\Debug\netcoreapp3.1\BLL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\bin\Debug\netcoreapp3.1\DAL.dll
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\bin\Debug\netcoreapp3.1\DAL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.csprojAssemblyReference.cache
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.AssemblyInfoInputs.cache
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.AssemblyInfo.cs
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.csproj.CoreCompileInputs.cache
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.csproj.CopyComplete
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.dll
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.pdb

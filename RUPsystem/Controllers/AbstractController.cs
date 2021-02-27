@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using BLL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RUPsystem.Context;
 using RUPsystem.Entities;
+using DAL.DataAccessObject;
 
 namespace RUPsystem.Controllers
 {
@@ -18,7 +18,7 @@ namespace RUPsystem.Controllers
 
         public AbstractController()
         {
-            _service = new Service<T>();
+            _service = new Service<T>(new DAO());
         }
     }
 }

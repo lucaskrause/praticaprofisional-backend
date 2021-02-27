@@ -6,13 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "DAL/1.0.0": {
+      "BLL/1.0.0": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "5.0.3",
-          "System.Data.SqlClient": "4.8.2"
+          "DAL": "1.0.0"
         },
         "runtime": {
-          "DAL.dll": {}
+          "BLL.dll": {}
         }
       },
       "Microsoft.EntityFrameworkCore/5.0.3": {
@@ -228,11 +227,20 @@
           "System.Security.Principal.Windows": "4.7.0"
         }
       },
-      "System.Security.Principal.Windows/4.7.0": {}
+      "System.Security.Principal.Windows/4.7.0": {},
+      "DAL/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "5.0.3",
+          "System.Data.SqlClient": "4.8.2"
+        },
+        "runtime": {
+          "DAL.dll": {}
+        }
+      }
     }
   },
   "libraries": {
-    "DAL/1.0.0": {
+    "BLL/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -397,6 +405,11 @@
       "sha512": "sha512-ojD0PX0XhneCsUbAZVKdb7h/70vyYMDYs85lwEI+LngEONe/17A0cFaRFqZU+sOEidcVswYWikYOQ9PPfjlbtQ==",
       "path": "system.security.principal.windows/4.7.0",
       "hashPath": "system.security.principal.windows.4.7.0.nupkg.sha512"
+    },
+    "DAL/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

@@ -3,3 +3,7 @@ C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netco
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.csprojAssemblyReference.cache
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.AssemblyInfoInputs.cache
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.AssemblyInfo.cs
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netcoreapp3.1\DAL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.dll
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.csproj.CoreCompileInputs.cache

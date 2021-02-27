@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using BLL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RUPsystem.Entitys;
+using RUPsystem.Entities;
 
 namespace RUPsystem.Controllers
 {
@@ -19,20 +19,16 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> create(Paises pais)
+        public IActionResult create(Paises pais)
         {
             try
             {
-                var result = await _service.Save(pais);
-                return Created("/api/paises/" + result.codigo, result);
+                _service.Inserir(pais);
+                return Created("/api/paises/", pais);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    Message = "Erro Interno do Servidor, tente novamente. Caso persista o erro, entrar em contato com time de desenvolvimento.",
-                    Status = 500
-                });
+                throw new Exception("Ocorreu um erro: ", ex);
             }
         }
     }
