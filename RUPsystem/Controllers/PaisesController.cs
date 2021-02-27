@@ -15,21 +15,36 @@ namespace RUPsystem.Controllers
         public PaisesController()
         {
             _service = new PaisesService();
-
         }
 
-        [HttpPost]
-        public IActionResult create(Paises pais)
+        public virtual void Inserir(Object obj)
         {
-            try
-            {
-                _service.Inserir(pais);
-                return Created("/api/paises/", pais);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocorreu um erro: ", ex);
-            }
+            Dao.Inserir(obj);
+        }
+
+        public virtual void Editar(Object obj)
+        {
+            Dao.Editar(obj);
+        }
+
+        public virtual void Excluir(Object obj)
+        {
+            Dao.Excluir(obj);
+        }
+
+        public virtual object BuscarPorID(Object obj)
+        {
+            return this.Dao.BuscarPorID(obj);
+        }
+
+        public virtual DataTable ListarTodos()
+        {
+            return Dao.ListarTodos();
+        }
+
+        public virtual object Pesquisar(string obj)
+        {
+            return Dao.Pesquisar(obj);
         }
     }
 }

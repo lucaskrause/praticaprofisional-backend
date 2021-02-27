@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RUPsystem.Entities;
 using DAL.DataAccessObject;
+using System.Data;
 
 namespace RUPsystem.Controllers
 {

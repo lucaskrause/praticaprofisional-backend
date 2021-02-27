@@ -872,6 +872,7 @@
       "DAL/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "5.0.3",
+          "Microsoft.EntityFrameworkCore.Relational": "5.0.3",
           "System.Data.SqlClient": "4.8.2"
         },
         "runtime": {
