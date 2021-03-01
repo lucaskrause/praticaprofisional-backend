@@ -1303,7 +1303,7 @@
       ]
     },
     "Newtonsoft.Json/11.0.2": {
-      "sha512": "znZGbws7E4BA9jxNZ7FuiIRI3C9hrgatVQSTKhIYZYNOud4M5VfGlTYi6RdYO5sQrebFuF/g9UEV3hOxDMXF6Q==",
+      "sha512": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
       "type": "package",
       "path": "newtonsoft.json/11.0.2",
       "files": [
@@ -2082,23 +2082,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Krause\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\lucas\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
+      "projectUniqueName": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
       "projectName": "RUPsystem",
-      "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
-      "packagesPath": "C:\\Users\\Krause\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\obj\\",
+      "projectPath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
+      "packagesPath": "C:\\Users\\lucas\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Krause\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\lucas\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -2110,9 +2106,10 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj": {
-              "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj"
+            "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj": {
+              "projectPath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj"
             }
           }
         }
@@ -2125,6 +2122,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
@@ -2167,7 +2165,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   },

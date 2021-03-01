@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using BLL.Service;
+using DAL.DataAccessObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RUPsystem.Entities;
@@ -17,34 +19,89 @@ namespace RUPsystem.Controllers
             _service = new PaisesService();
         }
 
-        public virtual void Inserir(Object obj)
+        public override IActionResult ListarTodos()
         {
-            Dao.Inserir(obj);
+            try
+            {
+                IList<Paises> listPaises = _service.ListarTodos();
+                return Ok(listPaises.ToList());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public virtual void Editar(Object obj)
+        public override IActionResult BuscarPorID(Paises pais)
         {
-            Dao.Editar(obj);
+            try
+            {
+                Paises newPais = _service.BuscarPorID(pais);
+                return Ok(newPais);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public virtual void Excluir(Object obj)
+        [HttpPost]
+        [Route("inserir")]
+        public override IActionResult Inserir(Paises pais)
         {
-            Dao.Excluir(obj);
+            try
+            {
+                Paises newPais = _service.Inserir(pais);
+                return Ok(newPais);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
         }
 
-        public virtual object BuscarPorID(Object obj)
+        public override IActionResult Editar(Paises pais)
         {
-            return this.Dao.BuscarPorID(obj);
+            try
+            {
+                pais = _service.Editar(pais);
+                return Ok(pais);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public virtual DataTable ListarTodos()
+        public override IActionResult Excluir(Paises pais)
         {
-            return Dao.ListarTodos();
+            try
+            {
+                bool result = _service.Excluir(pais);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public virtual object Pesquisar(string obj)
+        public override IActionResult Pesquisar(string str)
         {
-            return Dao.Pesquisar(obj);
+            try
+            {
+                IList<Paises> listPaises = _service.Pesquisar(str);
+                return Ok(listPaises.ToList());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

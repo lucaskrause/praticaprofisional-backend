@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RUPsystem.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,47 +7,17 @@ using System.Text;
 
 namespace DAL.DataAccessObject
 {
-    public class DAO
+    public abstract class DAO<T> where T : AbstractEntity
     {
         private SqlConnection _conexao;
 
         public DAO()
         {
             string strConn = "Server=localhost;Database=praticaprofissional;Uid=root;Pwd=;";
-            SqlConnection conexao = new SqlConnection(strConn);
+            _conexao = new SqlConnection(strConn);
         }
 
         public SqlConnection GetCurrentConnection() => _conexao;
-
-        public virtual void Inserir(Object obj)
-        {
-
-        }
-
-        public virtual void Editar(Object obj)
-        {
-
-        }
-
-        public virtual void Excluir(Object obj)
-        {
-
-        }
-
-        public virtual object BuscarPorID(Object obj)
-        {
-            return null;
-        }
-
-        public virtual DataTable ListarTodos()
-        {
-            return null;
-        }
-
-        public virtual object Pesquisar(string obj)
-        {
-            return null;
-        }
 
         protected SqlCommand CreateCommandTransaction(SqlTransaction transaction)
         {
@@ -56,5 +27,18 @@ namespace DAL.DataAccessObject
 
             return comando;
         }
+
+        public abstract T Inserir(T entity);
+
+        public abstract T Editar(T entity);
+
+        public abstract bool Excluir(T entity);
+
+        public abstract T BuscarPorID(T entity);
+
+        public abstract IList<T> ListarTodos();
+
+        public abstract T Pesquisar(string str);
+
     }
 }

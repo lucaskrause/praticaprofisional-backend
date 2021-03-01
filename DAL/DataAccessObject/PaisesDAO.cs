@@ -6,17 +6,31 @@ using System.Text;
 
 namespace DAL.DataAccessObject
 {
-    public class PaisesDAO : DAO
+    public class PaisesDAO : DAO<Paises>
     {
         public PaisesDAO() : base()
         {
         }
 
-        public override void Inserir(object obj)
+        public override Paises BuscarPorID(Paises entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Paises Editar(Paises obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Excluir(Paises entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Paises Inserir(Paises pais)
         {
             using (var conexao = GetCurrentConnection())
             {
-                Paises pais = obj as Paises;
                 string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) values (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
 
                 SqlCommand command = new SqlCommand(sql, conexao);
@@ -30,7 +44,19 @@ namespace DAL.DataAccessObject
                 conexao.Open();
                 command.ExecuteNonQuery();
                 conexao.Close();
+
+                return pais;
             }
+        }
+
+        public override IList<Paises> ListarTodos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Paises Pesquisar(string str)
+        {
+            throw new NotImplementedException();
         }
     }
 }
