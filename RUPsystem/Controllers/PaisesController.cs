@@ -13,31 +13,32 @@ namespace RUPsystem.Controllers
 {
     public class PaisesController : AbstractController<Paises>
     {
-        new PaisesService _service;
+        private readonly PaisesService _service;
         public PaisesController()
         {
             _service = new PaisesService();
         }
 
-        public override IActionResult ListarTodos()
+        [HttpGet]
+        [Route("todos")]
+        public override async Task<IActionResult> ListarTodos()
         {
             try
             {
-                IList<Paises> listPaises = _service.ListarTodos();
+                IList<Paises> listPaises = await _service.ListarTodos();
                 return Ok(listPaises.ToList());
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
-        public override IActionResult BuscarPorID(Paises pais)
+        public override async Task<IActionResult> BuscarPorID(Paises pais)
         {
             try
             {
-                Paises newPais = _service.BuscarPorID(pais);
+                Paises newPais = await _service.BuscarPorID(pais);
                 return Ok(newPais);
             }
             catch (Exception)
@@ -49,11 +50,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override IActionResult Inserir(Paises pais)
+        public override async Task<IActionResult> Inserir(Paises pais)
         {
             try
             {
-                Paises newPais = _service.Inserir(pais);
+                Paises newPais = await _service.Inserir(pais);
                 return Ok(newPais);
             }
             catch (Exception ex)
@@ -62,11 +63,11 @@ namespace RUPsystem.Controllers
             }
         }
 
-        public override IActionResult Editar(Paises pais)
+        public override async Task<IActionResult> Editar(Paises pais)
         {
             try
             {
-                pais = _service.Editar(pais);
+                pais = await _service.Editar(pais);
                 return Ok(pais);
             }
             catch (Exception)
@@ -76,11 +77,11 @@ namespace RUPsystem.Controllers
             }
         }
 
-        public override IActionResult Excluir(Paises pais)
+        public override async Task<IActionResult> Excluir(Paises pais)
         {
             try
             {
-                bool result = _service.Excluir(pais);
+                bool result = await _service.Excluir(pais);
                 return Ok(result);
             }
             catch (Exception)
@@ -90,11 +91,11 @@ namespace RUPsystem.Controllers
             }
         }
 
-        public override IActionResult Pesquisar(string str)
+        public override async Task<IActionResult> Pesquisar(string str)
         {
             try
             {
-                IList<Paises> listPaises = _service.Pesquisar(str);
+                IList<Paises> listPaises = await _service.Pesquisar(str);
                 return Ok(listPaises.ToList());
             }
             catch (Exception)

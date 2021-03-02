@@ -13,20 +13,20 @@ namespace RUPsystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class AbstractController<T> : ControllerBase where T : AbstractEntity 
+    public abstract class AbstractController<T> : ControllerBase where T : AbstractEntity
     {
         public IService<T> service;
 
-        public abstract IActionResult Inserir(T entity);
+        public abstract Task<IActionResult> Inserir(T entity);
 
-        public abstract IActionResult Editar(T entity);
+        public abstract Task<IActionResult> Editar(T entity);
 
-        public abstract IActionResult Excluir(T entity);
+        public abstract Task<IActionResult> Excluir(T entity);
 
-        public abstract IActionResult BuscarPorID(T entity);
+        public abstract Task<IActionResult> BuscarPorID(T entity);
 
-        public abstract IActionResult ListarTodos();
+        public abstract Task<IActionResult> ListarTodos();
 
-        public abstract IActionResult Pesquisar(string str);
+        public abstract Task<IActionResult> Pesquisar(string str);
     }
 }

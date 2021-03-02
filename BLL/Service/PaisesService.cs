@@ -9,44 +9,38 @@ namespace BLL.Service
 {
     public class PaisesService : IService<Paises>
     {
-        private PaisesDAO paisesDao = null;
+        private readonly PaisesDAO paisesDao = null;
 
         public PaisesService() => this.paisesDao = new PaisesDAO();
 
-        public Paises BuscarPorID(Paises entity)
+        public async Task<IList<Paises>> ListarTodos()
+        {
+            return await paisesDao.ListarTodos();
+        }
+        
+        public async Task<Paises> BuscarPorID(Paises entity)
         {
             throw new NotImplementedException();
         }
 
-        public Paises Editar(Paises entity)
+        public async Task<Paises> Inserir(Paises pais)
+        {
+            pais.PrepareSave();
+            pais.Ativar();
+            return await paisesDao.Inserir(pais);
+        }
+
+        public async Task<Paises> Editar(Paises entity)
         {
             throw new NotImplementedException();
         }
 
-        public bool Excluir(Paises entity)
+        public async Task<bool> Excluir(Paises entity)
         {
             throw new NotImplementedException();
         }
 
-        public Paises Inserir(Paises pais)
-        {
-            if(pais.Pais != null && pais.Pais != "")
-            {
-                pais.PrepareSave();
-                pais.Ativar();
-                return paisesDao.Inserir(pais);
-            } else
-            {
-                throw new Exception("Campo País precisa estar preenchido!");
-            }
-        }
-
-        public IList<Paises> ListarTodos()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<Paises> Pesquisar(string str)
+        public async Task<IList<Paises>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

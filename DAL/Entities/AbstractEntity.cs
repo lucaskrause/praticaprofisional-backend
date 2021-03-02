@@ -33,7 +33,7 @@ namespace RUPsystem.Entities
         public virtual void PrepareSave()
         {
             this.dtCadastro = this.dtCadastro == null ? DateTime.Now : this.dtCadastro;
-            this.dtAlteracao = (codigo > 0 ? DateTime.Now : this.dtAlteracao);
+            this.dtAlteracao = (codigo > 0 ? DateTime.Now : this.dtCadastro);
         }
 
         public virtual void Ativar()

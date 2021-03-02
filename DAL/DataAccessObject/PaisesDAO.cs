@@ -1,8 +1,12 @@
-﻿using RUPsystem.Entities;
+﻿using MySqlConnector;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RUPsystem.Entities;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.DataAccessObject
 {
@@ -12,49 +16,102 @@ namespace DAL.DataAccessObject
         {
         }
 
-        public override Paises BuscarPorID(Paises entity)
+        public override async Task<Paises> BuscarPorID(Paises entity)
         {
             throw new NotImplementedException();
         }
 
-        public override Paises Editar(Paises obj)
+        public override async Task<Paises> Editar(Paises obj)
         {
             throw new NotImplementedException();
         }
 
-        public override bool Excluir(Paises entity)
+        public override async Task<bool> Excluir(Paises entity)
         {
             throw new NotImplementedException();
         }
 
-        public override Paises Inserir(Paises pais)
+        public override async Task<Paises> Inserir(Paises pais)
         {
             using (var conexao = GetCurrentConnection())
             {
-                string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) values (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
+                try
+                {
+                    string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) values (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
 
-                SqlCommand command = new SqlCommand(sql, conexao);
+                    conexao.Open();
 
-                command.Parameters.AddWithValue("@pais", pais.Pais);
-                command.Parameters.AddWithValue("@sigla", pais.Sigla);
-                command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
-                command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
-                command.Parameters.AddWithValue("@status", pais.Status);
+                    MySqlCommand command = new MySqlCommand(sql, conexao);
 
-                conexao.Open();
-                command.ExecuteNonQuery();
-                conexao.Close();
-
-                return pais;
+                    command.Parameters.AddWithValue("@pais", pais.Pais);
+                    command.Parameters.AddWithValue("@sigla", pais.Sigla);
+                    command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", pais.Status);
+                    
+                    await command.ExecuteNonQueryAsync();
+                    return pais;
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    conexao.Close();
+                }            
             }
         }
 
-        public override IList<Paises> ListarTodos()
+        public override async Task<IList<Paises>> ListarTodos()
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT * FROM paises";
+
+                    conexao.Open();
+
+                    MySqlCommand command = new MySqlCommand(sql, conexao);
+                    
+                    command.ExecuteNonQuery();
+
+                    List<Paises> list = new List<Paises>();
+
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        DataTable schemaTable = reader.GetSchemaTable();
+
+                        JTokenWriter writer = new JTokenWriter();
+                        writer.WriteStartObject();
+
+                        foreach (DataRow row in schemaTable.Rows)
+                        {
+                            writer.WritePropertyName(row[0].ToString());
+                            writer.WriteValue(reader[row[0].ToString()]);
+                        }
+                        writer.WriteEndObject();
+                        JObject o = (JObject)writer.Token;
+                        var stringJson = o.ToString();
+                        Paises p = JsonConvert.DeserializeObject<Paises>(stringJson);
+                        list.Add(p);
+                    }
+                    return list;
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    conexao.Close();
+                }            
+            }
         }
 
-        public override Paises Pesquisar(string str)
+        public override async Task<Paises> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

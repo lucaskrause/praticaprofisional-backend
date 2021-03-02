@@ -6,7 +6,6 @@ C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netco
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netcoreapp3.1\DAL.pdb
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.dll
 C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.pdb
-C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.csproj.CoreCompileInputs.cache
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netcoreapp3.1\DAL.deps.json
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netcoreapp3.1\DAL.dll
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\bin\Debug\netcoreapp3.1\DAL.pdb
@@ -16,3 +15,4 @@ C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcor
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.csproj.CoreCompileInputs.cache
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.dll
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\DAL\obj\Debug\netcoreapp3.1\DAL.csproj.CoreCompileInputs.cache
