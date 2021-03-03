@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {}
+    "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {
+    "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
+        "projectUniqueName": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
-        "packagesPath": "C:\\Users\\Krause\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\obj\\",
+        "projectPath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\DAL.csproj",
+        "packagesPath": "C:\\Users\\lucas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\DAL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Krause\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\lucas\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -29,6 +26,7 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -40,14 +38,15 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
-            "MySqlConnector": {
-              "target": "Package",
-              "version": "[1.2.1, )"
-            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[12.0.3, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[5.0.3, )"
             }
           },
           "imports": [
@@ -65,7 +64,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
         }
       }
     }

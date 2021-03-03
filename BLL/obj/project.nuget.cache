@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "7u3W6/Y+Dc+pQOPaZM4i0U3FhxOmXcFRN0Dp7Gf5UW4Hf9NNLgNOm7EBhbTTFzJDLJbDv8+MVhqSY1vMDVhSqA==",
+  "dgSpecHash": "qxCvNemKpFwR9dYgVDKtXWFKn8JECa2qrBHe5srDMM9JojNNsxUzdS57JRzPDyo92Wp8InuvPR+9Mj/eG/W57g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj",
+  "projectFilePath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\BLL\\BLL.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Krause\\.nuget\\packages\\mysqlconnector\\1.2.1\\mysqlconnector.1.2.1.nupkg.sha512",
-    "C:\\Users\\Krause\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+    "C:\\Users\\lucas\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\lucas\\.nuget\\packages\\npgsql\\5.0.3\\npgsql.5.0.3.nupkg.sha512",
+    "C:\\Users\\lucas\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.6.0\\system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
   ],
   "logs": []
 }

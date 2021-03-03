@@ -41,7 +41,7 @@ namespace RUPsystem.Entities
             this.Status = "Ativo";
         }
 
-        public virtual void Desativar()
+        public virtual void Inativar()
         {
             this.Status = "Inativo";
         }

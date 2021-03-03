@@ -1,6 +1,6 @@
-﻿using MySqlConnector;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Npgsql;
 using RUPsystem.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,19 +16,53 @@ namespace DAL.DataAccessObject
         {
         }
 
-        public override async Task<Paises> BuscarPorID(Paises entity)
+        public override async Task<IList<Paises>> ListarTodos()
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT * FROM paises WHERE status = 'Ativo'";
+
+                    conexao.Open();
+
+                    List<Paises> list = await GetResultSet(sql);
+                    return list;
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override async Task<Paises> Editar(Paises obj)
+        public override async Task<Paises> BuscarPorID(int codigo)
         {
-            throw new NotImplementedException();
-        }
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT * FROM paises WHERE codigo = @codigo";
 
-        public override async Task<bool> Excluir(Paises entity)
-        {
-            throw new NotImplementedException();
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", codigo);
+
+                    List<Paises> list = await GetResultSet(sql);
+
+                    return list[0];
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
         public override async Task<Paises> Inserir(Paises pais)
@@ -41,7 +75,7 @@ namespace DAL.DataAccessObject
 
                     conexao.Open();
 
-                    MySqlCommand command = new MySqlCommand(sql, conexao);
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@pais", pais.Pais);
                     command.Parameters.AddWithValue("@sigla", pais.Sigla);
@@ -63,55 +97,63 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<IList<Paises>> ListarTodos()
+
+
+        public override async Task<Paises> Editar(Paises pais)
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
-                    string sql = @"SELECT * FROM paises";
+                    string sql = @"UPDATE paises SET pais = @pais, sigla = @sigla, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     conexao.Open();
 
-                    MySqlCommand command = new MySqlCommand(sql, conexao);
-                    
-                    command.ExecuteNonQuery();
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    List<Paises> list = new List<Paises>();
+                    command.Parameters.AddWithValue("@pais", pais.Pais);
+                    command.Parameters.AddWithValue("@sigla", pais.Sigla);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", pais.codigo);
 
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        DataTable schemaTable = reader.GetSchemaTable();
-
-                        JTokenWriter writer = new JTokenWriter();
-                        writer.WriteStartObject();
-
-                        foreach (DataRow row in schemaTable.Rows)
-                        {
-                            writer.WritePropertyName(row[0].ToString());
-                            writer.WriteValue(reader[row[0].ToString()]);
-                        }
-                        writer.WriteEndObject();
-                        JObject o = (JObject)writer.Token;
-                        var stringJson = o.ToString();
-                        Paises p = JsonConvert.DeserializeObject<Paises>(stringJson);
-                        list.Add(p);
-                    }
-                    return list;
-                }
-                catch
-                {
-                    throw;
+                    await command.ExecuteNonQueryAsync();
+                    return pais;
                 }
                 finally
                 {
                     conexao.Close();
-                }            
+                }
             }
         }
 
-        public override async Task<Paises> Pesquisar(string str)
+        public override async Task<bool> Excluir(Paises pais)
+        {
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@status", pais.Status);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", pais.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
+        }
+
+        public override Task<Paises> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

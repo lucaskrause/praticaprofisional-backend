@@ -14,7 +14,7 @@ namespace BLL.Service
 
         public abstract Task<bool> Excluir(T entity);
 
-        public abstract Task<T> BuscarPorID(T entity);
+        public abstract Task<T> BuscarPorID(int id);
 
         public abstract Task<IList<T>> ListarTodos();
 

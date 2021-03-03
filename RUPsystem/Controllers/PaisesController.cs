@@ -28,23 +28,24 @@ namespace RUPsystem.Controllers
                 IList<Paises> listPaises = await _service.ListarTodos();
                 return Ok(listPaises.ToList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return UnprocessableEntity(ex.Message);
             }
         }
 
-        public override async Task<IActionResult> BuscarPorID(Paises pais)
+        [HttpGet]
+        [Route("{id}")]
+        public override async Task<IActionResult> BuscarPorID(int id)
         {
             try
             {
-                Paises newPais = await _service.BuscarPorID(pais);
+                Paises newPais = await _service.BuscarPorID(id);
                 return Ok(newPais);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return UnprocessableEntity(ex.Message);
             }
         }
 
@@ -63,6 +64,8 @@ namespace RUPsystem.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("editar")]
         public override async Task<IActionResult> Editar(Paises pais)
         {
             try
@@ -70,13 +73,14 @@ namespace RUPsystem.Controllers
                 pais = await _service.Editar(pais);
                 return Ok(pais);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return UnprocessableEntity(ex.Message);
             }
         }
 
+        [HttpDelete]
+        [Route("excluir")]
         public override async Task<IActionResult> Excluir(Paises pais)
         {
             try
@@ -84,13 +88,14 @@ namespace RUPsystem.Controllers
                 bool result = await _service.Excluir(pais);
                 return Ok(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return UnprocessableEntity(ex.Message);
             }
         }
 
+        [HttpPost]
+        [Route("pesquisar")]
         public override async Task<IActionResult> Pesquisar(string str)
         {
             try
@@ -98,10 +103,9 @@ namespace RUPsystem.Controllers
                 IList<Paises> listPaises = await _service.Pesquisar(str);
                 return Ok(listPaises.ToList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return UnprocessableEntity(ex.Message);
             }
         }
     }

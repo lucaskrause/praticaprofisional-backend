@@ -18,9 +18,9 @@ namespace BLL.Service
             return await paisesDao.ListarTodos();
         }
         
-        public async Task<Paises> BuscarPorID(Paises entity)
+        public async Task<Paises> BuscarPorID(int id)
         {
-            throw new NotImplementedException();
+            return await paisesDao.BuscarPorID(id);
         }
 
         public async Task<Paises> Inserir(Paises pais)
@@ -30,14 +30,17 @@ namespace BLL.Service
             return await paisesDao.Inserir(pais);
         }
 
-        public async Task<Paises> Editar(Paises entity)
+        public async Task<Paises> Editar(Paises pais)
         {
-            throw new NotImplementedException();
+            pais.PrepareSave();
+            return await paisesDao.Editar(pais);
         }
 
-        public async Task<bool> Excluir(Paises entity)
+        public async Task<bool> Excluir(Paises pais)
         {
-            throw new NotImplementedException();
+            pais.PrepareSave();
+            pais.Inativar();
+            return await paisesDao.Excluir(pais);
         }
 
         public async Task<IList<Paises>> Pesquisar(string str)

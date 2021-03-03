@@ -23,7 +23,7 @@ namespace RUPsystem.Controllers
 
         public abstract Task<IActionResult> Excluir(T entity);
 
-        public abstract Task<IActionResult> BuscarPorID(T entity);
+        public abstract Task<IActionResult> BuscarPorID(int id);
 
         public abstract Task<IActionResult> ListarTodos();
 
