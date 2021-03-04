@@ -67,16 +67,18 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
+
                 try
                 {
-                    string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
-
-                    conexao.Open();
+                    string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status)";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@pais", pais.Pais);
                     command.Parameters.AddWithValue("@sigla", pais.Sigla);
+                    command.Parameters.AddWithValue("@ddi", pais.DDI);
                     command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
                     command.Parameters.AddWithValue("@status", pais.Status);
@@ -86,10 +88,12 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
+                    transaction.Rollback();
                     throw;
                 }
                 finally
                 {
+                    transaction.Commit();
                     conexao.Close();
                 }            
             }
@@ -103,7 +107,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE paises SET pais = @pais, sigla = @sigla, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    string sql = @"UPDATE paises SET pais = @pais, sigla = @sigla, ddi = @ddi, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     conexao.Open();
 
@@ -111,6 +115,7 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@pais", pais.Pais);
                     command.Parameters.AddWithValue("@sigla", pais.Sigla);
+                    command.Parameters.AddWithValue("@ddi", pais.DDI);
                     command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
                     command.Parameters.AddWithValue("@codigo", pais.codigo);
 
@@ -151,7 +156,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override Task<Paises> Pesquisar(string str)
+        public override Task<IList<Paises>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

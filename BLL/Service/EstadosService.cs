@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Service
 {
-    public class EstadosServices : IService<Estados>
+    public class EstadosService : IService<Estados>
     {
         private readonly EstadosDAO estadosDao = null;
 
-        public EstadosServices() => this.estadosDao = new EstadosDAO();
+        public EstadosService() => this.estadosDao = new EstadosDAO();
 
         public async Task<IList<Estados>> ListarTodos()
         {

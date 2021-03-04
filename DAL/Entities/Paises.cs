@@ -15,5 +15,8 @@ namespace RUPsystem.Entities
 
         [Required]
         public string Sigla { get; set; }
+
+        [Required]
+        public string DDI { get; set; }
     }
 }

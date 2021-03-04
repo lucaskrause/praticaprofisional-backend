@@ -71,7 +71,7 @@ namespace DAL.DataAccessObject
 
         public abstract Task<bool> Excluir(T entity);
 
-        public abstract Task<T> Pesquisar(string str);
+        public abstract Task<IList<T>> Pesquisar(string str);
 
     }
 }

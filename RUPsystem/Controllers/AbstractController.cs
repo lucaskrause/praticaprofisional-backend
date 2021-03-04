@@ -15,7 +15,7 @@ namespace RUPsystem.Controllers
     [Route("api/[controller]")]
     public abstract class AbstractController<T> : ControllerBase where T : AbstractEntity
     {
-        public IService<T> service;
+        public readonly IService<T> _service;
 
         public abstract Task<IActionResult> ListarTodos();
 

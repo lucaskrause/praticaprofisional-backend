@@ -1,6 +1,6 @@
 ﻿using BLL.Service;
 using Microsoft.AspNetCore.Mvc;
-using RUPsystem.Entities;
+using RUPsystem.Entitys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +8,9 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class EstadosController : AbstractController<Estados>
+    public class CidadesController : AbstractController<Cidades>
     {
-        private readonly new EstadosService _service;
-
-        public EstadosController()
-        {
-            _service = new EstadosService();
-        }
+        private readonly new CidadesService _service;
 
         [HttpGet]
         [Route("todos")]
@@ -23,8 +18,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Estados> estados = await _service.ListarTodos();
-                return Ok(estados.ToList());
+                IList<Cidades> list = await _service.ListarTodos();
+                return Ok(list.ToList());
             }
             catch (Exception ex)
             {
@@ -38,8 +33,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Estados newEstado = await _service.BuscarPorID(codigo);
-                return Ok(newEstado);
+                Cidades cidade = await _service.BuscarPorID(codigo);
+                return Ok(cidade);
             }
             catch (Exception ex)
             {
@@ -49,12 +44,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Estados estado)
+        public override async Task<IActionResult> Inserir(Cidades cidade)
         {
             try
             {
-                Estados newEstado = await _service.Inserir(estado);
-                return Ok(newEstado);
+                Cidades newCidade = await _service.Inserir(cidade);
+                return Ok(newCidade);
             }
             catch (Exception ex)
             {
@@ -62,14 +57,14 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Estados estado)
+        public override async Task<IActionResult> Editar(Cidades cidade)
         {
             try
             {
-                Estados newEstado = await _service.Editar(estado);
-                return Ok(newEstado);
+                Cidades newCidade = await _service.Editar(cidade);
+                return Ok(newCidade);
             }
             catch (Exception ex)
             {
@@ -77,13 +72,13 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route("excluir")]
-        public override async Task<IActionResult> Excluir(Estados estado)
+        public override async Task<IActionResult> Excluir(Cidades cidade)
         {
             try
             {
-               bool result = await _service.Excluir(estado);
+                bool result = await _service.Excluir(cidade);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -96,7 +91,14 @@ namespace RUPsystem.Controllers
         [Route("pesquisar")]
         public override async Task<IActionResult> Pesquisar(string str)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
         }
     }
 }

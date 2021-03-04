@@ -9,6 +9,10 @@ namespace DAL.DataAccessObject
 {
     public class EstadosDAO : DAO<Estados>
     {
+        public EstadosDAO() : base()
+        {
+        }
+
         public override async Task<IList<Estados>> ListarTodos()
         {
             using(var conexao = GetCurrentConnection())
