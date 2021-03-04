@@ -26,12 +26,10 @@ namespace DAL.DataAccessObject
 
                     conexao.Open();
 
-                    List<Paises> list = await GetResultSet(sql);
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    List<Paises> list = await GetResultSet(command);
                     return list;
-                }
-                catch
-                {
-                    throw;
                 }
                 finally
                 {
@@ -46,7 +44,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM paises WHERE codigo = @codigo";
+                    string sql = @"SELECT * FROM paises WHERE codigo = @codigo AND status = 'Ativo';";
 
                     conexao.Open();
 
@@ -54,7 +52,7 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@codigo", codigo);
 
-                    List<Paises> list = await GetResultSet(sql);
+                    List<Paises> list = await GetResultSet(command);
 
                     return list[0];
                 }
@@ -71,7 +69,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) values (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
+                    string sql = @"INSERT INTO paises(pais, sigla, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @dtCadastro, @dtAlteracao, @status)";
 
                     conexao.Open();
 

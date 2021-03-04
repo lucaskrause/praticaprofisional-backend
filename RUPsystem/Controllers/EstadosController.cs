@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using BLL.Service;
-using DAL.DataAccessObject;
-using Microsoft.AspNetCore.Http;
+﻿using BLL.Service;
 using Microsoft.AspNetCore.Mvc;
 using RUPsystem.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class PaisesController : AbstractController<Paises>
+    public class EstadosController : AbstractController<Estados>
     {
-        private readonly PaisesService _service;
-        
-        public PaisesController()
+        private readonly EstadosServices _service;
+
+        public EstadosController()
         {
-            _service = new PaisesService();
+            _service = new EstadosServices();
         }
 
         [HttpGet]
@@ -26,8 +23,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Paises> listPaises = await _service.ListarTodos();
-                return Ok(listPaises.ToList());
+                IList<Estados> estados = await _service.ListarTodos();
+                return Ok(estados.ToList());
             }
             catch (Exception ex)
             {
@@ -41,8 +38,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Paises newPais = await _service.BuscarPorID(codigo);
-                return Ok(newPais);
+                Estados newEstado = await _service.BuscarPorID(codigo);
+                return Ok(newEstado);
             }
             catch (Exception ex)
             {
@@ -52,12 +49,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Paises pais)
+        public override async Task<IActionResult> Inserir(Estados estado)
         {
             try
             {
-                Paises newPais = await _service.Inserir(pais);
-                return Ok(newPais);
+                Estados newEstado = await _service.Inserir(estado);
+                return Ok(newEstado);
             }
             catch (Exception ex)
             {
@@ -67,12 +64,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Paises pais)
+        public override async Task<IActionResult> Editar(Estados estado)
         {
             try
             {
-                pais = await _service.Editar(pais);
-                return Ok(pais);
+                Estados newEstado = await _service.Editar(estado);
+                return Ok(newEstado);
             }
             catch (Exception ex)
             {
@@ -82,11 +79,11 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir")]
-        public override async Task<IActionResult> Excluir(Paises pais)
+        public override async Task<IActionResult> Excluir(Estados estado)
         {
             try
             {
-                bool result = await _service.Excluir(pais);
+               bool result = await _service.Excluir(estado);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,15 +96,7 @@ namespace RUPsystem.Controllers
         [Route("pesquisar")]
         public override async Task<IActionResult> Pesquisar(string str)
         {
-            try
-            {
-                IList<Paises> listPaises = await _service.Pesquisar(str);
-                return Ok(listPaises.ToList());
-            }
-            catch (Exception ex)
-            {
-                return UnprocessableEntity(ex.Message);
-            }
+            throw new NotImplementedException();
         }
     }
 }

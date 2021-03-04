@@ -32,11 +32,10 @@ namespace DAL.DataAccessObject
             return comando;
         } */
 
-        public async Task<List<T>> GetResultSet(string sql)
+        public async Task<List<T>> GetResultSet(NpgsqlCommand command)
         {
             List<T> list =  new List<T>();
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, _conexao);
             command.ExecuteNonQuery();
 
             using var reader = await command.ExecuteReaderAsync();
@@ -62,15 +61,15 @@ namespace DAL.DataAccessObject
             return list;
         }
 
+        public abstract Task<IList<T>> ListarTodos();
+
+        public abstract Task<T> BuscarPorID(int id);
+
         public abstract Task<T> Inserir(T entity);
 
         public abstract Task<T> Editar(T entity);
 
         public abstract Task<bool> Excluir(T entity);
-
-        public abstract  Task<T> BuscarPorID(int id);
-
-        public abstract Task<IList<T>> ListarTodos();
 
         public abstract Task<T> Pesquisar(string str);
 
