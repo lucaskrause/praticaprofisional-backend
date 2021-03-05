@@ -96,7 +96,16 @@ namespace RUPsystem.Controllers
         [Route("pesquisar")]
         public override async Task<IActionResult> Pesquisar(string str)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IList<Estados> list = await _service.Pesquisar(str);
+                return Ok(list.ToList());
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex.Message);
+                throw;
+            }
         }
     }
 }

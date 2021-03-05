@@ -11,6 +11,8 @@ namespace BLL.Service
     {
         private readonly CidadesDAO CidadesDao = null;
 
+        public CidadesService() => this.CidadesDao = new CidadesDAO();
+
         public async Task<IList<Cidades>> ListarTodos()
         {
             return await CidadesDao.ListarTodos();

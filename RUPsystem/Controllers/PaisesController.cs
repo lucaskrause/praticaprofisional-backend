@@ -13,7 +13,7 @@ namespace RUPsystem.Controllers
 {
     public class PaisesController : AbstractController<Paises>
     {
-        private readonly PaisesService _service;
+        private readonly new PaisesService _service;
         
         public PaisesController()
         {

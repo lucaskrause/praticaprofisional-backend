@@ -12,6 +12,11 @@ namespace RUPsystem.Controllers
     {
         private readonly new CidadesService _service;
 
+        public CidadesController()
+        {
+            _service = new CidadesService();
+        }
+
         [HttpGet]
         [Route("todos")]
         public override async Task<IActionResult> ListarTodos()
@@ -57,7 +62,7 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("editar")]
         public override async Task<IActionResult> Editar(Cidades cidade)
         {
@@ -72,7 +77,7 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("excluir")]
         public override async Task<IActionResult> Excluir(Cidades cidade)
         {
@@ -93,7 +98,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                return Ok();
+                IList<Cidades> list = await _service.Pesquisar(str);
+                return Ok(list.ToList());
             }
             catch (Exception ex)
             {

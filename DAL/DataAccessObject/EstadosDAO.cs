@@ -143,7 +143,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override Task<Estados> Pesquisar(string str)
+        public override Task<IList<Estados>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }
