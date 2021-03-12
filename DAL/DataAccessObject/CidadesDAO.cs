@@ -73,8 +73,8 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@cidade", cidade.Cidade);
                     command.Parameters.AddWithValue("@codigoEstado", cidade.CodigoEstado);
-                    command.Parameters.AddWithValue("@dtCadastro", cidade.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
+                    command.Parameters.AddWithValue("@dtCadastro", cidade.DtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", cidade.DtAlteracao);
                     command.Parameters.AddWithValue("@status", cidade.Status);
 
                     await command.ExecuteNonQueryAsync();
@@ -101,9 +101,9 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@cidade", cidade.Cidade);
                     command.Parameters.AddWithValue("@codigoEstado", cidade.CodigoEstado);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
+                    command.Parameters.AddWithValue("@dtAlteracao", cidade.DtAlteracao);
                     command.Parameters.AddWithValue("@status", cidade.Status);
-                    command.Parameters.AddWithValue("@codigo", cidade.codigo);
+                    command.Parameters.AddWithValue("@codigo", cidade.Codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return cidade;
@@ -129,8 +129,8 @@ namespace DAL.DataAccessObject
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@status", cidade.Status);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", cidade.codigo);
+                    command.Parameters.AddWithValue("@dtAlteracao", cidade.DtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", cidade.Codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;

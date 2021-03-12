@@ -36,8 +36,10 @@ namespace BLL.Service
             return await paisesDao.Editar(pais);
         }
 
-        public async Task<bool> Excluir(Paises pais)
+        public async Task<bool> Excluir(int codigo)
         {
+            Paises pais = new Paises();
+            pais.Codigo = codigo;
             pais.PrepareSave();
             pais.Inativar();
             return await paisesDao.Excluir(pais);

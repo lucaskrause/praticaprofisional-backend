@@ -36,8 +36,10 @@ namespace BLL.Service
             return await CidadesDao.Editar(cidade);
         }
 
-        public async Task<bool> Excluir(Cidades cidade)
+        public async Task<bool> Excluir(int codigo)
         {
+            Cidades cidade = new Cidades();
+            cidade.Codigo = codigo;
             cidade.PrepareSave();
             cidade.Inativar();
             return await CidadesDao.Excluir(cidade);

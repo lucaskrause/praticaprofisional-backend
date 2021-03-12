@@ -78,12 +78,12 @@ namespace RUPsystem.Controllers
         }
 
         [HttpDelete]
-        [Route("excluir")]
-        public override async Task<IActionResult> Excluir(Estados estado)
+        [Route("excluir/{codigo}")]
+        public override async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
-               bool result = await _service.Excluir(estado);
+               bool result = await _service.Excluir(codigo);
                 return Ok(result);
             }
             catch (Exception ex)

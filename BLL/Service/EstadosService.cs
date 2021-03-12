@@ -36,8 +36,10 @@ namespace BLL.Service
             return await estadosDao.Editar(estado);
         }
 
-        public async Task<bool> Excluir(Estados estado)
+        public async Task<bool> Excluir(int codigo)
         {
+            Estados estado = new Estados();
+            estado.Codigo = codigo;
             estado.PrepareSave();
             estado.Inativar();
             return await estadosDao.Excluir(estado);

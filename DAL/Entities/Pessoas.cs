@@ -1,18 +1,52 @@
-﻿using System;
+﻿using RUPsystem.Entities;
+using RUPsystem.Entitys;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DAL.Entities
 {
-    class AbstractEntity
+    public class Pessoas : AbstractEntity
     {
         [Required]
-        public string Pais { get; set; }
+        public string Nome { get; set; }
 
         [Required]
-        public string Sigla { get; set; }
+        public string CPF_CNPJ { get; set; }
 
         [Required]
-        public string DDI { get; set; }
+        public string RG_IE { get; set; }
+
+        [Required]
+        public string Sexo { get; set; }
+
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string Telefone { get; set; }
+
+        [Required]
+        public int CodigoCidade { get; set; }
+
+        [JsonIgnore]
+        public Cidades Cidades { get; set; }
+
+        [Required]
+        public string CEP { get; set; }
+
+        [Required]
+        public string Bairro { get; set; }
+
+        [Required]
+        public string Logradouro { get; set; }
+
+        [Required]
+        public int Numero { get; set; }
+
+        [Required]
+        public string Tipo { get; set; }
     }
 }

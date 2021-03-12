@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "cx1r0tCiCPqt1zuV5fZ9ocy1gIHRx/fnpUYP2LLhNb302FFofOEqvTZvwzt3ZcAMu1LEG8TKvImdafTzFyRCPw==",
+  "dgSpecHash": "/iKnXLazBx3oOULGhaGw4n/wsaZ53nDOcTpXbGT4wGUIs4aRbOU/ck/bwPHGESs6NGzlaMDofaACeJ8SWK+r0w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\lucas\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
+  "projectFilePath": "C:\\Users\\Krause\\Documents\\GitHub\\praticaprofissional-backend\\RUPsystem\\RUPsystem.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\lucas\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
-    "C:\\Users\\lucas\\.nuget\\packages\\npgsql\\5.0.3\\npgsql.5.0.3.nupkg.sha512",
-    "C:\\Users\\lucas\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.6.0\\system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
+    "C:\\Users\\Krause\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\Krause\\.nuget\\packages\\npgsql\\5.0.3\\npgsql.5.0.3.nupkg.sha512",
+    "C:\\Users\\Krause\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.6.0\\system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
   ],
   "logs": []
 }

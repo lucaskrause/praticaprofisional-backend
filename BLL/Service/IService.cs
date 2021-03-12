@@ -8,15 +8,15 @@ namespace BLL.Service
 {
     public interface IService<T> where T : AbstractEntity
     {
+        public abstract Task<IList<T>> ListarTodos();
+
+        public abstract Task<T> BuscarPorID(int codigo);
+
         public abstract Task<T> Inserir(T entity);
 
         public abstract Task<T> Editar(T entity);
 
-        public abstract Task<bool> Excluir(T entity);
-
-        public abstract Task<T> BuscarPorID(int id);
-
-        public abstract Task<IList<T>> ListarTodos();
+        public abstract Task<bool> Excluir(int codigo);
 
         public abstract Task<IList<T>> Pesquisar(string str);
     }

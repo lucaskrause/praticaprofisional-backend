@@ -74,8 +74,8 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@estado", estado.Estado);
                     command.Parameters.AddWithValue("@uf", estado.Uf);
                     command.Parameters.AddWithValue("@codigoPais", estado.CodigoPais);
-                    command.Parameters.AddWithValue("@dtCadastro", estado.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", estado.dtAlteracao);
+                    command.Parameters.AddWithValue("@dtCadastro", estado.DtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", estado.DtAlteracao);
                     command.Parameters.AddWithValue("@status", estado.Status);
 
                     await command.ExecuteNonQueryAsync();
@@ -103,8 +103,8 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@estado", estado.Estado);
                     command.Parameters.AddWithValue("@uf", estado.Uf);
                     command.Parameters.AddWithValue("@codigoPais", estado.CodigoPais);
-                    command.Parameters.AddWithValue("@dtAlteracao", estado.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", estado.codigo);
+                    command.Parameters.AddWithValue("@dtAlteracao", estado.DtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", estado.Codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return estado;
@@ -130,8 +130,8 @@ namespace DAL.DataAccessObject
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@status", estado.Status);
-                    command.Parameters.AddWithValue("@dtAlteracao", estado.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", estado.codigo);
+                    command.Parameters.AddWithValue("@dtAlteracao", estado.DtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", estado.Codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;

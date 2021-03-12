@@ -25,7 +25,7 @@ namespace RUPsystem.Controllers
 
         public abstract Task<IActionResult> Editar(T entity);
 
-        public abstract Task<IActionResult> Excluir(T entity);
+        public abstract Task<IActionResult> Excluir(int codigo);
 
         public abstract Task<IActionResult> Pesquisar(string str);
     }
