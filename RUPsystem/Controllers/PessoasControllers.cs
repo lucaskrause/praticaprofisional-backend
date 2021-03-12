@@ -38,7 +38,7 @@ namespace RUPsystem.Controllers
         }
 
         [HttpDelete]
-        [Route("")]
+        [Route("excluir/{codigo}")]
         public override Task<IActionResult> Excluir(int codigo)
         {
             throw new NotImplementedException();
