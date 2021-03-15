@@ -18,7 +18,7 @@ namespace RUPsystem.Controllers
         }
 
         [HttpGet]
-        [Route("Todos")]
+        [Route("")]
         public override async Task<IActionResult> ListarTodos()
         {
             try

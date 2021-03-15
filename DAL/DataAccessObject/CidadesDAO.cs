@@ -65,13 +65,14 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO cidades (cidade, codigoEstado, dtCadastro, dtAlteracao, status) VALUES(@cidade, @codigoEstado, @dtCadastro, @dtAlteracao, @status);";
+                    string sql = @"INSERT INTO cidades (cidade, ddd, codigoEstado, dtCadastro, dtAlteracao, status) VALUES(@cidade, @ddd, @codigoEstado, @dtCadastro, @dtAlteracao, @status);";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@cidade", cidade.Cidade);
+                    command.Parameters.AddWithValue("@ddd", cidade.ddd);
                     command.Parameters.AddWithValue("@codigoEstado", cidade.CodigoEstado);
                     command.Parameters.AddWithValue("@dtCadastro", cidade.DtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", cidade.DtAlteracao);

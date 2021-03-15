@@ -15,6 +15,9 @@ namespace RUPsystem.Entitys
         public string Cidade { get; set; }
 
         [Required]
+        public string ddd { get; set; }
+
+        [Required]
         public int CodigoEstado { get; set; }
 
         [JsonIgnore]

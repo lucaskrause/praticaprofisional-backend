@@ -17,7 +17,6 @@ namespace DAL.DataAccessObject
         public DAO()
         {
             string strConn = "Server=localhost;Port=5432;Database=praticaprofissional;User Id=postgres;Password=1234;";
-            //"server=localhost;user=root;password=;database=praticaprofissional";
             _conexao = new NpgsqlConnection(strConn);
         }
 

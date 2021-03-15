@@ -21,3 +21,4 @@ C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcor
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.csproj.CopyComplete
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.dll
 C:\Users\lucas\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.pdb
+C:\Users\Krause\Documents\GitHub\praticaprofissional-backend\BLL\obj\Debug\netcoreapp3.1\BLL.csproj.CoreCompileInputs.cache

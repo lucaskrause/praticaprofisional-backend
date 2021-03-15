@@ -17,6 +17,8 @@ namespace RUPsystem.Controllers
             _service = new PrecificacoesService();
         }
 
+        [HttpGet]
+        [Route("")]
         public override async Task<IActionResult> ListarTodos()
         {
             try
@@ -31,7 +33,7 @@ namespace RUPsystem.Controllers
         }
 
         [HttpGet]
-        [Route("todos")]
+        [Route("{codigo}")]
         public override async Task<IActionResult> BuscarPorID(int codigo)
         {
             try

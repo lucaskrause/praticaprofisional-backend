@@ -19,12 +19,10 @@ namespace RUPsystem.Entities
 
         [Column("dtCadastro")]
         [DataType(DataType.DateTime)]
-        [JsonIgnore]
         public DateTime? DtCadastro { get; set; }
 
         [Column("dtAlteracao")]
         [DataType(DataType.DateTime)]
-        [JsonIgnore]
         public DateTime? DtAlteracao { get; set; }
 
         [Column("status")]
