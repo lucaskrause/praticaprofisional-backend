@@ -72,7 +72,7 @@ namespace DAL.DataAccessObject
 
                 try
                 {
-                    string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status)";
+                    string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -82,8 +82,9 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtCadastro", pais.DtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", pais.DtAlteracao);
                     command.Parameters.AddWithValue("@status", pais.Status);
-                    
-                    await command.ExecuteNonQueryAsync();
+
+                    Object idInserido = await command.ExecuteScalarAsync();
+                    pais.Codigo = (int)idInserido;
                     return pais;
                 }
                 catch

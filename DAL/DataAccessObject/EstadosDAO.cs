@@ -65,7 +65,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO estados (estado, uf, codigoPais, dtCadastro, dtAlteracao, status) VALUES (@estado, @uf, @codigoPais, @dtCadastro, @dtAlteracao, @status)";
+                    string sql = @"INSERT INTO estados (estado, uf, codigoPais, dtCadastro, dtAlteracao, status) VALUES (@estado, @uf, @codigoPais, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
@@ -78,7 +78,8 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtAlteracao", estado.DtAlteracao);
                     command.Parameters.AddWithValue("@status", estado.Status);
 
-                    await command.ExecuteNonQueryAsync();
+                    Object idInserido = await command.ExecuteScalarAsync();
+                    estado.Codigo = (int) idInserido;
                     return estado;
                 }
                 finally
