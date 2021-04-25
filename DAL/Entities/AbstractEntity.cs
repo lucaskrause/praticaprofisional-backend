@@ -9,39 +9,39 @@ namespace RUPsystem.Entities
     {
         public AbstractEntity()
         {
-            this.Codigo = 0;
-            this.Status = "Ativo";
+            this.codigo = 0;
+            this.status = "Ativo";
         }
 
         [Key]
         [Column("id")]
-        public int Codigo { get; set; }
+        public int codigo { get; set; }
 
         [Column("dtCadastro")]
         [DataType(DataType.DateTime)]
-        public DateTime? DtCadastro { get; set; }
+        public DateTime? dtCadastro { get; set; }
 
         [Column("dtAlteracao")]
         [DataType(DataType.DateTime)]
-        public DateTime? DtAlteracao { get; set; }
+        public DateTime? dtAlteracao { get; set; }
 
         [Column("status")]
-        public string Status { get; set; }
+        public string status { get; set; }
 
         public virtual void PrepareSave()
         {
-            this.DtCadastro = this.DtCadastro == null ? DateTime.Now : this.DtCadastro;
-            this.DtAlteracao = (Codigo > 0 ? DateTime.Now : this.DtCadastro);
+            this.dtCadastro = this.dtCadastro == null ? DateTime.Now : this.dtCadastro;
+            this.dtAlteracao = (codigo > 0 ? DateTime.Now : this.dtCadastro);
         }
 
         public virtual void Ativar()
         {
-            this.Status = "Ativo";
+            this.status = "Ativo";
         }
 
         public virtual void Inativar()
         {
-            this.Status = "Inativo";
+            this.status = "Inativo";
         }
     }
 }

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class PessoasController : AbstractController<Pessoas>
+    public class ClientesController : AbstractController<Clientes>
     {
         private readonly new PessoasService _service;
 
-        public PessoasController()
+        public ClientesController()
         {
             _service = new PessoasService();
         }
@@ -23,7 +23,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -49,11 +49,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Pessoas pessoa)
+        public override async Task<IActionResult> Inserir(Clientes pessoa)
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -64,11 +64,11 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Pessoas pessoa)
+        public override async Task<IActionResult> Editar(Clientes pessoa)
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Pessoas> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)

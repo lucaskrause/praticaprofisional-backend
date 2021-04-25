@@ -6,34 +6,34 @@ using System.Threading.Tasks;
 
 namespace DAL.DataAccessObject
 {
-    public class PessoasDAO : DAO<Pessoas>
+    public class PessoasDAO : DAO<Clientes>
     {
-        public override Task<Pessoas> BuscarPorID(int id)
+        public override Task<Clientes> BuscarPorID(int id)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<Pessoas> Editar(Pessoas entity)
+        public override Task<Clientes> Editar(Clientes entity)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<bool> Excluir(Pessoas entity)
+        public override Task<bool> Excluir(Clientes entity)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<Pessoas> Inserir(Pessoas entity)
+        public override Task<Clientes> Inserir(Clientes entity)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IList<Pessoas>> ListarTodos()
+        public override Task<IList<Clientes>> ListarTodos()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IList<Pessoas>> Pesquisar(string str)
+        public override Task<IList<Clientes>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

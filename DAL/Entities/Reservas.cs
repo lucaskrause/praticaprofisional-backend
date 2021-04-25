@@ -13,7 +13,7 @@ namespace DAL.Entities
         public int CodigoPessoa { get; set; }
 
         [JsonIgnore]
-        public Pessoas Pessoas { get; set; }
+        public Clientes Pessoas { get; set; }
 
         [Required]
         public DateTime DtReserva { get; set; }

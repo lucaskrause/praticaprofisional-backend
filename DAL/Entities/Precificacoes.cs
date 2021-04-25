@@ -13,7 +13,7 @@ namespace DAL.Entities
         public string descricao { get; set; }
 
         [Required]
-        public int QtdePessoas { get; set; }
+        public int qtdePessoas { get; set; }
 
         [Required]
         public decimal valor { get; set; }

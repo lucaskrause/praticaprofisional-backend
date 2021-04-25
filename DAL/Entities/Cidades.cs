@@ -1,26 +1,33 @@
-﻿using RUPsystem.Entities;
+﻿using Newtonsoft.Json;
+using RUPsystem.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RUPsystem.Entitys
 {
     public class Cidades : AbstractEntity
     {
+        public Cidades()
+        {
+            estado = new Estados();
+        }
+
         [Required]
-        public string Cidade { get; set; }
+        public string cidade { get; set; }
 
         [Required]
         public string ddd { get; set; }
 
         [Required]
-        public int CodigoEstado { get; set; }
+        public int codigoEstado { get; set; }
 
         [JsonIgnore]
-        public Estados Estado { get; set; }
+        public Estados estado { get; set; }
+
+        public string nomeEstado { set { estado.estado = value; } }
     }
 }

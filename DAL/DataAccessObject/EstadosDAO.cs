@@ -19,7 +19,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM estados WHERE status = 'Ativo';";
+                    string sql = @"SELECT estados.codigo, estados.estado, estados.uf, paises.pais, estados.dtCadastro, estados.dtAlteracao, paises.pais as nomePais FROM estados INNER JOIN paises ON (estados.codigopais = paises.codigo) WHERE estados.status = 'Ativo';";
 
                     conexao.Open();
 

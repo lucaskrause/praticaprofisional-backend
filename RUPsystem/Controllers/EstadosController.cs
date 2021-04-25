@@ -1,5 +1,6 @@
 ﻿using BLL.Service;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 using RUPsystem.Entities;
 using System;
 using System.Collections.Generic;

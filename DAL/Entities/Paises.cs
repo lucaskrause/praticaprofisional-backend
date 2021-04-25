@@ -11,12 +11,12 @@ namespace RUPsystem.Entities
     public class Paises : AbstractEntity
     {
         [Required]
-        public string Pais { get; set; }
+        public string pais { get; set; }
 
         [Required]
-        public string Sigla { get; set; }
+        public string sigla { get; set; }
 
         [Required]
-        public string DDI { get; set; }
+        public string ddi { get; set; }
     }
 }
