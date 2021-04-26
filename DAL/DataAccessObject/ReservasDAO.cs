@@ -13,17 +13,17 @@ namespace DAL.DataAccessObject
             throw new NotImplementedException();
         }
 
-        public override Task<Reservas> Editar(Reservas entity)
+        public override Task<Reservas> Editar(Reservas reserva)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<bool> Excluir(Reservas entity)
+        public override Task<bool> Excluir(Reservas reserva)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<Reservas> Inserir(Reservas entity)
+        public override Task<Reservas> Inserir(Reservas reserva)
         {
             throw new NotImplementedException();
         }

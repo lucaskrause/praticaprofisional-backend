@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DAL.DataAccessObject
 {
-    public class PessoasDAO : DAO<Clientes>
+    public class ClientesDAO : DAO<Clientes>
     {
         public override Task<Clientes> BuscarPorID(int id)
         {

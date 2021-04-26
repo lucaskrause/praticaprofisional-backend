@@ -11,11 +11,6 @@ namespace RUPsystem.Entitys
 {
     public class Cidades : AbstractEntity
     {
-        public Cidades()
-        {
-            estado = new Estados();
-        }
-
         [Required]
         public string cidade { get; set; }
 
@@ -28,6 +23,6 @@ namespace RUPsystem.Entitys
         [JsonIgnore]
         public Estados estado { get; set; }
 
-        public string nomeEstado { set { estado.estado = value; } }
+        public string nomeEstado { set { estado ??= new Estados(); estado.estado = value; } }
     }
 }

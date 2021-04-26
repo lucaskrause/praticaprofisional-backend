@@ -62,7 +62,7 @@ namespace DAL.DataAccessObject
 
         public abstract Task<IList<T>> ListarTodos();
 
-        public abstract Task<T> BuscarPorID(int id);
+        public abstract Task<T> BuscarPorID(int codigo);
 
         public abstract Task<T> Inserir(T entity);
 

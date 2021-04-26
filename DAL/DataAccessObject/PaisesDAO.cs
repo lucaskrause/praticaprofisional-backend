@@ -76,15 +76,15 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@pais", pais.Pais);
-                    command.Parameters.AddWithValue("@sigla", pais.Sigla);
-                    command.Parameters.AddWithValue("@ddi", pais.DDI);
-                    command.Parameters.AddWithValue("@dtCadastro", pais.DtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.DtAlteracao);
-                    command.Parameters.AddWithValue("@status", pais.Status);
+                    command.Parameters.AddWithValue("@pais", pais.pais);
+                    command.Parameters.AddWithValue("@sigla", pais.sigla);
+                    command.Parameters.AddWithValue("@ddi", pais.ddi);
+                    command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", pais.status);
 
                     Object idInserido = await command.ExecuteScalarAsync();
-                    pais.Codigo = (int)idInserido;
+                    pais.codigo = (int)idInserido;
                     return pais;
                 }
                 catch
@@ -114,11 +114,11 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@pais", pais.Pais);
-                    command.Parameters.AddWithValue("@sigla", pais.Sigla);
-                    command.Parameters.AddWithValue("@ddi", pais.DDI);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.DtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", pais.Codigo);
+                    command.Parameters.AddWithValue("@pais", pais.pais);
+                    command.Parameters.AddWithValue("@sigla", pais.sigla);
+                    command.Parameters.AddWithValue("@ddi", pais.ddi);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", pais.codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return pais;
@@ -143,9 +143,9 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@status", pais.Status);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.DtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", pais.Codigo);
+                    command.Parameters.AddWithValue("@status", pais.status);
+                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", pais.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;

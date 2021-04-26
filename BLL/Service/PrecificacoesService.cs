@@ -39,7 +39,7 @@ namespace BLL.Service
         public async Task<bool> Excluir(int codigo)
         {
             Precificacoes preco = new Precificacoes();
-            preco.Codigo = codigo;
+            preco.codigo = codigo;
             preco.PrepareSave();
             preco.Inativar();
             return await precificacoesDao.Excluir(preco);

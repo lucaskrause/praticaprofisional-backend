@@ -39,7 +39,7 @@ namespace BLL.Service
         public async Task<bool> Excluir(int codigo)
         {
             Reservas reserva = new Reservas();
-            reserva.Codigo = codigo;
+            reserva.codigo = codigo;
             reserva.PrepareSave();
             reserva.Inativar();
             return await reservasDao.Excluir(reserva);

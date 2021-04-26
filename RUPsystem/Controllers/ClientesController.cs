@@ -10,11 +10,11 @@ namespace RUPsystem.Controllers
 {
     public class ClientesController : AbstractController<Clientes>
     {
-        private readonly new PessoasService _service;
+        private readonly new ClientesService _service;
 
         public ClientesController()
         {
-            _service = new PessoasService();
+            _service = new ClientesService();
         }
 
         [HttpGet]

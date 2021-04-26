@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Service
 {
-    public class PessoasService : IService<Clientes>
+    public class ClientesService : IService<Clientes>
     {
-        private readonly PessoasDAO pessoasDao = null;
+        private readonly ClientesDAO pessoasDao = null;
 
-        public PessoasService() => this.pessoasDao = new PessoasDAO();
+        public ClientesService() => this.pessoasDao = new ClientesDAO();
 
         public async Task<IList<Clientes>> ListarTodos()
         {
@@ -38,11 +38,11 @@ namespace BLL.Service
 
         public async Task<bool> Excluir(int codigo)
         {
-            Clientes pessoa = new Clientes();
-            pessoa.Codigo = codigo;
-            pessoa.PrepareSave();
-            pessoa.Inativar();
-            return await pessoasDao.Excluir(pessoa);
+            Clientes cliente = new Clientes();
+            cliente.codigo = codigo;
+            cliente.PrepareSave();
+            cliente.Inativar();
+            return await pessoasDao.Excluir(cliente);
         }
 
         public async Task<IList<Clientes>> Pesquisar(string str)

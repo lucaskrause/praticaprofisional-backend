@@ -34,7 +34,7 @@ namespace DAL.Entities
         [JsonIgnore]
         public Cidades cidade { get; set; }
 
-        public string nomeCidade { set { cidade.cidade = value; } }
+        public string nomeCidade { set { cidade ??= new Cidades();  cidade.cidade = value; } }
 
         [Required]
         public string cep { get; set; }
@@ -51,10 +51,10 @@ namespace DAL.Entities
         [Required]
         public string tipo { get; set; }
 
-        //[JsonIgnore]
-        // public FormasPagamentos formaPagamento { get; set; }
+        [JsonIgnore]
+        public FormasPagamento formaPagamento { get; set; }
 
-        // public string nomeForma { set { formaPagamento.descricao = value; } }
+        public string nomeForma { set { formaPagamento ??= new FormasPagamento(); formaPagamento.descricao = value; } }
 
     }
 }

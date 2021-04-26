@@ -39,7 +39,7 @@ namespace BLL.Service
         public async Task<bool> Excluir(int codigo)
         {
             Cidades cidade = new Cidades();
-            cidade.Codigo = codigo;
+            cidade.codigo = codigo;
             cidade.PrepareSave();
             cidade.Inativar();
             return await CidadesDao.Excluir(cidade);

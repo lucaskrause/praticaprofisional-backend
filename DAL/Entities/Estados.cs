@@ -11,11 +11,6 @@ namespace RUPsystem.Entities
 {
     public class Estados : AbstractEntity
     {
-        public Estados()
-        {
-            pais = new Paises();
-        }
-
         [Required]
         public string estado { get; set; }
 
@@ -28,7 +23,7 @@ namespace RUPsystem.Entities
         [JsonIgnore]
         public Paises pais { get; set; }
 
-        public string nomePais { set { pais.pais = value; } }
+        public string nomePais { set { pais ??= new Paises(); pais.pais = value; } }
 
     }
 }
