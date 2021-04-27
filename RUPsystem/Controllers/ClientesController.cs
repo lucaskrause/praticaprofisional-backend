@@ -38,8 +38,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Clientes cliente = await _service.BuscarPorID(codigo);
+                return Ok(cliente);
             }
             catch (Exception ex)
             {
@@ -49,12 +49,14 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Clientes pessoa)
+        public override async Task<IActionResult> Inserir(Clientes cliente)
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                cliente.cidade = null;
+                cliente.formaPagamento = null;
+                Clientes newCliente = await _service.Inserir(cliente);
+                return Ok(newCliente);
             }
             catch (Exception ex)
             {
@@ -64,12 +66,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Clientes pessoa)
+        public override async Task<IActionResult> Editar(Clientes cliente)
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Clientes newCliente = await _service.Editar(cliente);
+                return Ok(newCliente);
             }
             catch (Exception ex)
             {
@@ -83,8 +85,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                bool remove = await _service.Excluir(codigo);
+                return Ok(remove);
             }
             catch (Exception ex)
             {
@@ -98,7 +100,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
+                IList<Clientes> list = await _service.Pesquisar(str);
                 return Ok(list.ToList());
             }
             catch (Exception ex)

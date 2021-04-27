@@ -41,7 +41,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM cidades WHERE codigo = @codigo AND status = 'Ativo';";
+                    string sql = @"SELECT cidades.codigo, cidades.cidade, cidades.ddd, cidades.codigoestado, cidades.dtcadastro, cidades.dtalteracao, cidades.status, estados.estado as nomeEstado FROM cidades INNER JOIN estados ON cidades.codigoestado = estados.codigo WHERE cidades.codigo = @codigo AND cidades.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -95,13 +95,14 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE cidades SET cidade = @cidade, codigoEstado = @codigoEstado, dtAlteracao = @dtAlteracao, status = @status";
+                    string sql = @"UPDATE cidades SET cidade = @cidade, ddd = @ddd, codigoEstado = @codigoEstado, dtAlteracao = @dtAlteracao, status = @status WHERE codigo = @codigo";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@cidade", cidade.cidade);
+                    command.Parameters.AddWithValue("@ddd", cidade.ddd);
                     command.Parameters.AddWithValue("@codigoEstado", cidade.codigoEstado);
                     command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
                     command.Parameters.AddWithValue("@status", cidade.status);

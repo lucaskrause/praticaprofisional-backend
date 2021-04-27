@@ -105,7 +105,6 @@ namespace RUPsystem.Controllers
             catch (Exception ex)
             {
                 return UnprocessableEntity(ex.Message);
-                throw;
             }
         }
     }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace DAL.Entities
 {
@@ -14,13 +14,19 @@ namespace DAL.Entities
         public string nome { get; set; }
 
         [Required]
-        public string cpf_cnpj { get; set; }
+        public string tipoPessoa { get; set; }
 
         [Required]
-        public string rg_ie { get; set; }
+        public string cpfCnpj { get; set; }
+
+        [Required]
+        public string rgIe { get; set; }
 
         [Required]
         public string sexo { get; set; }
+
+        [Required]
+        public string dtNascFundacao { get; set; }
 
         [Required]
         public string email { get; set; }
@@ -43,13 +49,19 @@ namespace DAL.Entities
         public string bairro { get; set; }
 
         [Required]
+        public string complemento { get; set; }
+
+        [Required]
         public string logradouro { get; set; }
 
         [Required]
         public int numero { get; set; }
 
         [Required]
-        public string tipo { get; set; }
+        public string tipoCliente { get; set; }
+
+        [Required]
+        public int codigoFormaPagamento{ get; set; }
 
         [JsonIgnore]
         public FormasPagamento formaPagamento { get; set; }
