@@ -1,5 +1,5 @@
 ﻿using DAL.DataAccessObject;
-using RUPsystem.Entities;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,7 +47,7 @@ namespace BLL.Service
 
         public async Task<IList<Paises>> Pesquisar(string str)
         {
-            throw new NotImplementedException();
+            return await paisesDao.Pesquisar(str);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using BLL.Service;
-using DAL.Entities;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

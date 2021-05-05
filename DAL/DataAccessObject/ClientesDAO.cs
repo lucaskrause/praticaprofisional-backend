@@ -1,4 +1,4 @@
-﻿using DAL.Entities;
+﻿using DAL.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;

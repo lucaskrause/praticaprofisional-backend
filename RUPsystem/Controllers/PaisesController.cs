@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using BLL.Service;
-using DAL.DataAccessObject;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RUPsystem.Entities;
+using DAL.Models;
 
 namespace RUPsystem.Controllers
 {

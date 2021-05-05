@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using RUPsystem.Entitys;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

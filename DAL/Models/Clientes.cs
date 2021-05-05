@@ -1,12 +1,8 @@
-﻿using RUPsystem.Entities;
-using RUPsystem.Entitys;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using Newtonsoft.Json;
 
-namespace DAL.Entities
+namespace DAL.Models
 {
     public class Clientes : AbstractEntity
     {
@@ -26,7 +22,7 @@ namespace DAL.Entities
         public string sexo { get; set; }
 
         [Required]
-        public string dtNascFundacao { get; set; }
+        public DateTime dtNascFundacao { get; set; }
 
         [Required]
         public string email { get; set; }
@@ -67,6 +63,5 @@ namespace DAL.Entities
         public FormasPagamento formaPagamento { get; set; }
 
         public string nomeForma { set { formaPagamento ??= new FormasPagamento(); formaPagamento.descricao = value; } }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using RUPsystem.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using Npgsql;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using DAL.Models;
 
 namespace DAL.DataAccessObject
 {

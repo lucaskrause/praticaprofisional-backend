@@ -1,14 +1,9 @@
-﻿using RUPsystem.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DAL.Entities
+namespace DAL.Models
 {
     public class Precificacoes : AbstractEntity
     {
-
         [Required]
         public string descricao { get; set; }
 

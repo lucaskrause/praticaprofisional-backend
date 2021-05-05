@@ -1,5 +1,5 @@
 ﻿using DAL.DataAccessObject;
-using RUPsystem.Entities;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -45,9 +45,9 @@ namespace BLL.Service
             return await estadosDao.Excluir(estado);
         }
 
-        public Task<IList<Estados>> Pesquisar(string str)
+        public async Task<IList<Estados>> Pesquisar(string str)
         {
-            throw new NotImplementedException();
+            return await estadosDao.Pesquisar(str);
         }
     }
 }
