@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class ClientesController : AbstractController<Clientes>
+    public class FuncionariosController : AbstractController<Funcionarios>
     {
-        private readonly new ClientesService _service;
+        private readonly new FuncionariosService _service;
 
-        public ClientesController()
+        public FuncionariosController()
         {
-            _service = new ClientesService();
+            _service = new FuncionariosService();
         }
 
         [HttpGet]
@@ -23,8 +23,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                IList<Funcionarios> listFuncionarios = await _service.ListarTodos();
+                return Ok(listFuncionarios.ToList());
             }
             catch (Exception ex)
             {
@@ -38,8 +38,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Clientes cliente = await _service.BuscarPorID(codigo);
-                return Ok(cliente);
+                Funcionarios newFuncionario = await _service.BuscarPorID(codigo);
+                return Ok(newFuncionario);
             }
             catch (Exception ex)
             {
@@ -49,12 +49,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Clientes cliente)
+        public override async Task<IActionResult> Inserir(Funcionarios funcionario)
         {
             try
             {
-                Clientes newCliente = await _service.Inserir(cliente);
-                return Ok(newCliente);
+                Funcionarios newFuncionario = await _service.Inserir(funcionario);
+                return Ok(newFuncionario);
             }
             catch (Exception ex)
             {
@@ -64,12 +64,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Clientes cliente)
+        public override async Task<IActionResult> Editar(Funcionarios funcionario)
         {
             try
             {
-                Clientes newCliente = await _service.Editar(cliente);
-                return Ok(newCliente);
+                funcionario = await _service.Editar(funcionario);
+                return Ok(funcionario);
             }
             catch (Exception ex)
             {
@@ -83,8 +83,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                bool remove = await _service.Excluir(codigo);
-                return Ok(remove);
+                bool result = await _service.Excluir(codigo);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -98,8 +98,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.Pesquisar(str);
-                return Ok(list.ToList());
+                IList<Funcionarios> listFuncionarios = await _service.Pesquisar(str);
+                return Ok(listFuncionarios.ToList());
             }
             catch (Exception ex)
             {

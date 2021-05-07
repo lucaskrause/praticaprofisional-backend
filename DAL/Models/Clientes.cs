@@ -57,11 +57,11 @@ namespace DAL.Models
         public string tipoCliente { get; set; }
 
         [Required]
-        public int codigoFormaPagamento{ get; set; }
+        public int codigoCondicaoPagamento{ get; set; }
 
         [JsonIgnore]
-        public FormasPagamento formaPagamento { get; set; }
+        public CondicoesPagamento condicaoPagamento { get; set; }
 
-        public string nomeForma { set { formaPagamento ??= new FormasPagamento(); formaPagamento.descricao = value; } }
+        public string nomeForma { set { condicaoPagamento ??= new CondicoesPagamento(); condicaoPagamento.descricao = value; } }
     }
 }

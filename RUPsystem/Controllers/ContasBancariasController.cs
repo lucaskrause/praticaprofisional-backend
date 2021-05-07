@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class ClientesController : AbstractController<Clientes>
+    public class ContasBancariasController : AbstractController<ContasBancarias>
     {
-        private readonly new ClientesService _service;
+        private readonly new ContasBancariasService _service;
 
-        public ClientesController()
+        public ContasBancariasController()
         {
-            _service = new ClientesService();
+            _service = new ContasBancariasService();
         }
 
         [HttpGet]
@@ -23,7 +23,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
+                IList<ContasBancarias> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -38,8 +38,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Clientes cliente = await _service.BuscarPorID(codigo);
-                return Ok(cliente);
+                ContasBancarias contaBancaria = await _service.BuscarPorID(codigo);
+                return Ok(contaBancaria);
             }
             catch (Exception ex)
             {
@@ -49,12 +49,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Clientes cliente)
+        public override async Task<IActionResult> Inserir(ContasBancarias contaBancaria)
         {
             try
             {
-                Clientes newCliente = await _service.Inserir(cliente);
-                return Ok(newCliente);
+                ContasBancarias newContaBancaria = await _service.Inserir(contaBancaria);
+                return Ok(newContaBancaria);
             }
             catch (Exception ex)
             {
@@ -64,12 +64,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Clientes cliente)
+        public override async Task<IActionResult> Editar(ContasBancarias contaBancaria)
         {
             try
             {
-                Clientes newCliente = await _service.Editar(cliente);
-                return Ok(newCliente);
+                ContasBancarias newContaBancaria = await _service.Editar(contaBancaria);
+                return Ok(newContaBancaria);
             }
             catch (Exception ex)
             {
@@ -83,8 +83,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                bool remove = await _service.Excluir(codigo);
-                return Ok(remove);
+                bool result = await _service.Excluir(codigo);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -98,7 +98,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.Pesquisar(str);
+                IList<ContasBancarias> list = await _service.Pesquisar(str);
                 return Ok(list.ToList());
             }
             catch (Exception ex)

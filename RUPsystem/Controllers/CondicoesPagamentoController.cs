@@ -8,23 +8,21 @@ using System.Threading.Tasks;
 
 namespace RUPsystem.Controllers
 {
-    public class ClientesController : AbstractController<Clientes>
+    public class CondicoesPagamentoController : AbstractController<CondicoesPagamento>
     {
-        private readonly new ClientesService _service;
-
-        public ClientesController()
+        private readonly new CondicoesPagamentoService _service;
+        public CondicoesPagamentoController()
         {
-            _service = new ClientesService();
+            _service = new CondicoesPagamentoService();
         }
-
         [HttpGet]
         [Route("")]
         public override async Task<IActionResult> ListarTodos()
         {
             try
             {
-                IList<Clientes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                IList<CondicoesPagamento> listCondicoesPagamento = await _service.ListarTodos();
+                return Ok(listCondicoesPagamento.ToList());
             }
             catch (Exception ex)
             {
@@ -38,8 +36,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Clientes cliente = await _service.BuscarPorID(codigo);
-                return Ok(cliente);
+                CondicoesPagamento newCondicoesPagamento = await _service.BuscarPorID(codigo);
+                return Ok(newCondicoesPagamento);
             }
             catch (Exception ex)
             {
@@ -49,12 +47,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Clientes cliente)
+        public override async Task<IActionResult> Inserir(CondicoesPagamento condicoesPagamento)
         {
             try
             {
-                Clientes newCliente = await _service.Inserir(cliente);
-                return Ok(newCliente);
+                CondicoesPagamento newCondicoesPagamento = await _service.Inserir(condicoesPagamento);
+                return Ok(newCondicoesPagamento);
             }
             catch (Exception ex)
             {
@@ -64,12 +62,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar")]
-        public override async Task<IActionResult> Editar(Clientes cliente)
+        public override async Task<IActionResult> Editar(CondicoesPagamento condicoesPagamento)
         {
             try
             {
-                Clientes newCliente = await _service.Editar(cliente);
-                return Ok(newCliente);
+                condicoesPagamento = await _service.Editar(condicoesPagamento);
+                return Ok(condicoesPagamento);
             }
             catch (Exception ex)
             {
@@ -83,8 +81,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                bool remove = await _service.Excluir(codigo);
-                return Ok(remove);
+                bool result = await _service.Excluir(codigo);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -98,8 +96,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Clientes> list = await _service.Pesquisar(str);
-                return Ok(list.ToList());
+                IList<CondicoesPagamento> listCondicoesPagamento = await _service.Pesquisar(str);
+                return Ok(listCondicoesPagamento.ToList());
             }
             catch (Exception ex)
             {
