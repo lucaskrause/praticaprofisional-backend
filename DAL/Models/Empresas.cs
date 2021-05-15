@@ -41,7 +41,7 @@ namespace DAL.Models
         public string logradouro { get; set; }
 
         [Required]
-        public string complememto { get; set; }
+        public string complemento { get; set; }
 
         [Required]
         public string bairro { get; set; }

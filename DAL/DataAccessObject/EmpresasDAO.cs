@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,32 +9,156 @@ namespace DAL.DataAccessObject
 {
     public class EmpresasDAO : DAO<Empresas>
     {
-        public override Task<IList<Empresas>> ListarTodos()
+        public override async Task<IList<Empresas>> ListarTodos()
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection()) {
+                try
+                {
+                    string sql = "@SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complememto, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.status = 'Ativo';";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    List<Empresas> list = await GetResultSet(command);
+                    return list;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override Task<Empresas> BuscarPorID(int codigo)
+        public override async Task<Empresas> BuscarPorID(int codigo)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complememto, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.codigo = @codigo AND empresas.status = 'Ativo';";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", codigo);
+
+                    List<Empresas> list = await GetResultSet(command);
+                    return list[0];
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override Task<Empresas> Inserir(Empresas entity)
+        public override async Task<Empresas> Inserir(Empresas empresa)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status);";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
+                    command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
+                    command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
+                    command.Parameters.AddWithValue("@ie", empresa.ie);
+                    command.Parameters.AddWithValue("@telefone", empresa.telefone);
+                    command.Parameters.AddWithValue("@email", empresa.email);
+                    command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
+                    command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
+                    command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
+                    command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
+                    command.Parameters.AddWithValue("@complemento", empresa.complemento);
+                    command.Parameters.AddWithValue("@bairro", empresa.bairro);
+                    command.Parameters.AddWithValue("@cep", empresa.cep);
+                    command.Parameters.AddWithValue("@dtCadastro", empresa.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", empresa.status);
+
+                    Object idInserido = await command.ExecuteScalarAsync();
+                    empresa.codigo = (int)idInserido;
+                    return empresa;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override Task<Empresas> Editar(Empresas entity)
+        public override async Task<Empresas> Editar(Empresas empresa)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"UPDATE empresas SET razaosocial = @razaoSocial, nomefantasia = @nomeFantasia, cnpj = @cnpj, ie = @ie, telefone = @telefone, email = @email, dtfundacao = @dtFundacao, qtdecotas = @qtdeCotas, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
+                    command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
+                    command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
+                    command.Parameters.AddWithValue("@ie", empresa.ie);
+                    command.Parameters.AddWithValue("@telefone", empresa.telefone);
+                    command.Parameters.AddWithValue("@email", empresa.email);
+                    command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
+                    command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
+                    command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
+                    command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
+                    command.Parameters.AddWithValue("@complemento", empresa.complemento);
+                    command.Parameters.AddWithValue("@bairro", empresa.bairro);
+                    command.Parameters.AddWithValue("@cep", empresa.cep);
+                    command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
+
+                    await command.ExecuteNonQueryAsync();
+                    return empresa;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override Task<bool> Excluir(Empresas entity)
+        public override async Task<bool> Excluir(Empresas empresa)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"UPDATE empresas SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    // string sql = @"DELETE FROM empresa WHERE codigo = @codigo";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@status", empresa.status);
+                    command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", empresa.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
-        public override Task<IList<Empresas>> Pesquisar(string str)
+        public override async Task<IList<Empresas>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }

@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao as nomeForma FROM clientes inner join cidades on (clientes.codigoCidade = cidades.codigo) inner join formaspagamento on (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.status = 'Ativo';";
+                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN formaspagamento ON (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao as nomeForma FROM clientes inner join cidades on (clientes.codigoCidade = cidades.codigo) inner join formaspagamento on (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo';";
+                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN formaspagamento ON (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -54,40 +54,40 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Clientes> Inserir(Clientes clientes)
+        public override async Task<Clientes> Inserir(Clientes cliente)
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
-                    string sql = @"INSERT INTO clientes(nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, tipocliente, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @tipoCliente, @codigoFormaPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+                    string sql = @"INSERT INTO clientes (nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, tipocliente, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @tipoCliente, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@nome", clientes.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", clientes.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", clientes.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", clientes.rgIe);
-                    command.Parameters.AddWithValue("@sexo", clientes.sexo);
-                    command.Parameters.AddWithValue("@email", clientes.email);
-                    command.Parameters.AddWithValue("@telefone", clientes.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", clientes.dtNascFundacao);
-                    command.Parameters.AddWithValue("@codigoCidade", clientes.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", clientes.logradouro);
-                    command.Parameters.AddWithValue("@complemento", clientes.complemento);
-                    command.Parameters.AddWithValue("@bairro", clientes.bairro);
-                    command.Parameters.AddWithValue("@cep", clientes.cep);
-                    command.Parameters.AddWithValue("@tipoCliente", clientes.tipoCliente);
-                    command.Parameters.AddWithValue("@codigoFormaPagamento", clientes.codigoFormaPagamento);
-                    command.Parameters.AddWithValue("@dtCadastro", clientes.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", clientes.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", clientes.status);
+                    command.Parameters.AddWithValue("@nome", cliente.nome);
+                    command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
+                    command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
+                    command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                    command.Parameters.AddWithValue("@sexo", cliente.sexo);
+                    command.Parameters.AddWithValue("@email", cliente.email);
+                    command.Parameters.AddWithValue("@telefone", cliente.telefone);
+                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascFundacao);
+                    command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
+                    command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
+                    command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                    command.Parameters.AddWithValue("@bairro", cliente.bairro);
+                    command.Parameters.AddWithValue("@cep", cliente.cep);
+                    command.Parameters.AddWithValue("@tipoCliente", cliente.tipoCliente);
+                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
+                    command.Parameters.AddWithValue("@dtCadastro", cliente.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", cliente.status);
 
                     Object idInserido = await command.ExecuteScalarAsync();
-                    clientes.codigo = (int)idInserido;
-                    return clientes;
+                    cliente.codigo = (int)idInserido;
+                    return cliente;
                 }
                 finally
                 {
@@ -96,37 +96,37 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Clientes> Editar(Clientes clientes)
+        public override async Task<Clientes> Editar(Clientes cliente)
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
-                    string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, tipocliente = @tipoCliente, codigoformapagamento = @codigoFormaPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+                    string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, tipocliente = @tipoCliente, codigoformapagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@nome", clientes.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", clientes.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", clientes.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", clientes.rgIe);
-                    command.Parameters.AddWithValue("@sexo", clientes.sexo);
-                    command.Parameters.AddWithValue("@email", clientes.email);
-                    command.Parameters.AddWithValue("@telefone", clientes.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", clientes.dtNascFundacao);
-                    command.Parameters.AddWithValue("@codigoCidade", clientes.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", clientes.logradouro);
-                    command.Parameters.AddWithValue("@complemento", clientes.complemento);
-                    command.Parameters.AddWithValue("@bairro", clientes.bairro);
-                    command.Parameters.AddWithValue("@cep", clientes.cep);
-                    command.Parameters.AddWithValue("@tipoCliente", clientes.tipoCliente);
-                    command.Parameters.AddWithValue("@codigoFormaPagamento", clientes.codigoFormaPagamento);
-                    command.Parameters.AddWithValue("@dtAlteracao", clientes.dtAlteracao);
+                    command.Parameters.AddWithValue("@nome", cliente.nome);
+                    command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
+                    command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
+                    command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                    command.Parameters.AddWithValue("@sexo", cliente.sexo);
+                    command.Parameters.AddWithValue("@email", cliente.email);
+                    command.Parameters.AddWithValue("@telefone", cliente.telefone);
+                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascFundacao);
+                    command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
+                    command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
+                    command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                    command.Parameters.AddWithValue("@bairro", cliente.bairro);
+                    command.Parameters.AddWithValue("@cep", cliente.cep);
+                    command.Parameters.AddWithValue("@tipoCliente", cliente.tipoCliente);
+                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
+                    command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
 
                     await command.ExecuteNonQueryAsync();
-                    return clientes;
+                    return cliente;
                 }
                 finally
                 {
@@ -135,22 +135,22 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<bool> Excluir(Clientes clientes)
+        public override async Task<bool> Excluir(Clientes cliente)
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
                     string sql = @"UPDATE clientes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM clientes WHERE codigo = @codigo";
+                    // string sql = @"DELETE FROM cliente WHERE codigo = @codigo";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@status", clientes.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", clientes.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", clientes.codigo);
+                    command.Parameters.AddWithValue("@status", cliente.status);
+                    command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", cliente.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;
