@@ -23,5 +23,7 @@ namespace DAL.Models
 
         [Required]
         public string conta { get; set; }
+
+        public decimal saldo { get; set; }
     }
 }
