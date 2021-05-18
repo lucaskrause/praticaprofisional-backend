@@ -14,7 +14,7 @@ namespace DAL.DataAccessObject
             using (var conexao = GetCurrentConnection()) {
                 try
                 {
-                    string sql = "@SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complememto, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.status = 'Ativo';";
+                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complemento, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complememto, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.codigo = @codigo AND empresas.status = 'Ativo';";
+                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complemento, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status, cidades.cidade AS nomeCidade FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.codigo = @codigo AND empresas.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -60,7 +60,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status);";
+                    string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
@@ -106,6 +106,7 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
+                    command.Parameters.AddWithValue("@codigo", empresa.codigo);
                     command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
                     command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
                     command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
