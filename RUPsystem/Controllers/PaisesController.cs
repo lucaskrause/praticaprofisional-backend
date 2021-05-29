@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BLL.Service;
 using Microsoft.AspNetCore.Mvc;
 using DAL.Models;
+using BLL.DataTransferObjects;
 
 namespace RUPsystem.Controllers
 {
@@ -19,7 +20,7 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("")]
-        public override async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodos()
         {
             try
             {
@@ -34,7 +35,7 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public override async Task<IActionResult> BuscarPorID(int codigo)
+        public async Task<IActionResult> BuscarPorID(int codigo)
         {
             try
             {
@@ -49,12 +50,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Paises pais)
+        public async Task<IActionResult> Inserir(PaisesDTO pais)
         {
             try
             {
-                Paises newPais = await _service.Inserir(pais);
-                return Ok(newPais);
+                Paises newPais = await _service.Inserir(pais.ToPais());
+                return Created("/api/paises/inserir", newPais);
             }
             catch (Exception ex)
             {
@@ -63,13 +64,13 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar")]
-        public override async Task<IActionResult> Editar(Paises pais)
+        [Route("editar/{codigo}")]
+        public async Task<IActionResult> Editar(PaisesDTO pais, int codigo)
         {
             try
             {
-                pais = await _service.Editar(pais);
-                return Ok(pais);
+                Paises newPais = await _service.Editar(pais.ToPais(codigo));
+                return Ok(newPais);
             }
             catch (Exception ex)
             {
@@ -79,7 +80,7 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir/{codigo}")]
-        public override async Task<IActionResult> Excluir(int codigo)
+        public async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
@@ -94,7 +95,7 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("pesquisar")]
-        public override async Task<IActionResult> Pesquisar(string str)
+        public async Task<IActionResult> Pesquisar(string str)
         {
             try
             {
