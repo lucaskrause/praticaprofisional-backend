@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.DataTransferObjects;
 using BLL.Service;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("")]
-        public override async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodos()
         {
             try
             {
@@ -33,7 +34,7 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public override async Task<IActionResult> BuscarPorID(int codigo)
+        public async Task<IActionResult> BuscarPorID(int codigo)
         {
             try
             {
@@ -48,11 +49,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(FormasPagamento formaPagamento)
+        public async Task<IActionResult> Inserir(FormasPagamentoDTO formaPagamento)
         {
             try
             {
-                FormasPagamento newFormaPagamento = await _service.Inserir(formaPagamento);
+                FormasPagamento newFormaPagamento = await _service.Inserir(formaPagamento.ToFormaPagamento());
                 return Ok(newFormaPagamento);
             }
             catch (Exception)
@@ -62,13 +63,13 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar")]
-        public override async Task<IActionResult> Editar(FormasPagamento formaPagamento)
+        [Route("editar/{codigo}")]
+        public async Task<IActionResult> Editar(FormasPagamentoDTO formaPagamento, int codigo)
         {
             try
             {
-                formaPagamento = await _service.Editar(formaPagamento);
-                return Ok(formaPagamento);
+                FormasPagamento newFormaPagamento = await _service.Editar(formaPagamento.ToFormaPagamento(codigo));
+                return Ok(newFormaPagamento);
             }
             catch (Exception)
             {
@@ -78,7 +79,7 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir/{codigo}")]
-        public override async Task<IActionResult> Excluir(int codigo)
+        public async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("pesquisar")]
-        public override async Task<IActionResult> Pesquisar(string str)
+        public async Task<IActionResult> Pesquisar(string str)
         {
             try
             {
