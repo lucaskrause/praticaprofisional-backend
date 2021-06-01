@@ -1,4 +1,5 @@
-﻿using BLL.Service;
+﻿using BLL.DataTransferObjects;
+using BLL.Service;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,8 +19,23 @@ namespace RUPsystem.Controllers
         }
 
         [HttpGet]
+        [Route("empresa/{codigo}")]
+        public async Task<IActionResult> BuscarPorEmpresa(int codigo)
+        {
+            try
+            {
+                ContasBancarias contaBancaria = await _service.BuscarPorEmpresa(codigo);
+                return Ok(contaBancaria);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("")]
-        public override async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodos()
         {
             try
             {
@@ -34,7 +50,7 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public override async Task<IActionResult> BuscarPorID(int codigo)
+        public async Task<IActionResult> BuscarPorID(int codigo)
         {
             try
             {
@@ -49,11 +65,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(ContasBancarias contaBancaria)
+        public async Task<IActionResult> Inserir(ContasBancariasDTO contaBancaria)
         {
             try
             {
-                ContasBancarias newContaBancaria = await _service.Inserir(contaBancaria);
+                ContasBancarias newContaBancaria = await _service.Inserir(contaBancaria.ToContaBancaria());
                 return Ok(newContaBancaria);
             }
             catch (Exception ex)
@@ -63,12 +79,12 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar")]
-        public override async Task<IActionResult> Editar(ContasBancarias contaBancaria)
+        [Route("editar/{codigo}")]
+        public async Task<IActionResult> Editar(ContasBancariasDTO contaBancaria, int codigo)
         {
             try
             {
-                ContasBancarias newContaBancaria = await _service.Editar(contaBancaria);
+                ContasBancarias newContaBancaria = await _service.Editar(contaBancaria.ToContaBancaria(codigo));
                 return Ok(newContaBancaria);
             }
             catch (Exception ex)
@@ -79,7 +95,7 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir/{codigo}")]
-        public override async Task<IActionResult> Excluir(int codigo)
+        public async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
@@ -94,7 +110,7 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("pesquisar")]
-        public override async Task<IActionResult> Pesquisar(string str)
+        public async Task<IActionResult> Pesquisar(string str)
         {
             try
             {

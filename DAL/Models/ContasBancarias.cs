@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -8,12 +9,7 @@ namespace DAL.Models
     public class ContasBancarias : AbstractEntity
     {
         [Required]
-        public int codigoEmpresa { get; set; }
-
-        public Empresas empresa { get; set; }
-
-        [Required]
-        public string banco { get; set; }
+        public string instituicao { get; set; }
 
         [Required]
         public string numeroBanco { get; set; }
@@ -25,5 +21,11 @@ namespace DAL.Models
         public string conta { get; set; }
 
         public decimal saldo { get; set; }
+
+        [Required]
+        public int codigoEmpresa { get; set; }
+
+        [JsonIgnore]
+        public Empresas empresa { get; set; }
     }
 }

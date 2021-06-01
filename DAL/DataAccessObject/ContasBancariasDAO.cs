@@ -9,13 +9,37 @@ namespace DAL.DataAccessObject
 {
     public class ContasBancariasDAO : DAO<ContasBancarias>
     {
+        public async Task<ContasBancarias> BuscarPorEmpresa(int codigo)
+        {
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE codigoempresa = @codigo AND status = 'Ativo';";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", codigo);
+
+                    List<ContasBancarias> list = await GetResultSet(command);
+                    return list[0];
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
+        }
+
         public override async Task<IList<ContasBancarias>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE status = 'Ativo';";
 
                     conexao.Open();
 
@@ -37,7 +61,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE codigo = @codigo AND status = 'Ativo';";
 
                     conexao.Open();
 
@@ -61,18 +85,18 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"INSERT INTO contasbancarias(instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@instituicao, @numeroBanco, @agencia, @conta, @saldo, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigoEmpresa", contaBancaria.codigoEmpresa);
-                    command.Parameters.AddWithValue("@banco", contaBancaria.banco);
-                    command.Parameters.AddWithValue("@numeroBanco", contaBancaria.numeroBanco);
+                    command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                    command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
                     command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
                     command.Parameters.AddWithValue("@conta", contaBancaria.conta);
                     command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                    command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
                     command.Parameters.AddWithValue("@dtCadastro", contaBancaria.dtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
                     command.Parameters.AddWithValue("@status", contaBancaria.status);
@@ -94,18 +118,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@banco", contaBancaria.banco);
-                    command.Parameters.AddWithValue("@numeroBanco", contaBancaria.numeroBanco);
+                    command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                    command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
                     command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
                     command.Parameters.AddWithValue("@conta", contaBancaria.conta);
                     command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                    command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
                     command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return contaBancaria;
@@ -123,7 +149,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE CREATE TABLE contasBancarias SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    string sql = @"UPDATE contasBancarias SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
                     // string sql = @"DELETE FROM contasBancarias WHERE codigo = @codigo";
 
                     conexao.Open();
