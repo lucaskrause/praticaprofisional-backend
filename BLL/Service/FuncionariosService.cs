@@ -25,6 +25,7 @@ namespace BLL.Service
 
         public async Task<Funcionarios> Inserir(Funcionarios funcionario)
         {
+            funcionario.codigoEmpresa = 1;
             funcionario.Ativar();
             funcionario.PrepareSave();
             return await funcionariosDao.Inserir(funcionario);
@@ -32,6 +33,7 @@ namespace BLL.Service
 
         public async Task<Funcionarios> Editar(Funcionarios funcionario)
         {
+            funcionario.codigoEmpresa = 1;
             funcionario.PrepareSave();
             return await funcionariosDao.Editar(funcionario);
         }

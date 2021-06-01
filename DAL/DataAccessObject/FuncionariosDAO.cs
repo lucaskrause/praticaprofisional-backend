@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT funcionarios.codigo, funcionarios.nome, funcionarios.cpf, funcionarios.rg, funcionarios.sexo, funcionarios.email, funcionarios.telefone, funcionarios.dtnascimento, funcionarios.codigocidade, funcionarios.logradouro, funcionarios.complemento, funcionarios.bairro, funcionarios.cep, funcionarios.codigoempresa, funcionarios.salario, funcionarios.dtadmissao, funcionarios.dtdemissao, funcionarios.dtcadastro, funcionarios.dtalteracao, funcionarios.status, cidades.cidade AS nomeCidade FROM funcionarios INNER JOIN cidades ON codigoCidade = cidades.codigo WHERE funcionarios.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -37,7 +37,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT funcionarios.codigo, funcionarios.nome, funcionarios.cpf, funcionarios.rg, funcionarios.sexo, funcionarios.email, funcionarios.telefone, funcionarios.dtnascimento, funcionarios.codigocidade, funcionarios.logradouro, funcionarios.complemento, funcionarios.bairro, funcionarios.cep, funcionarios.codigoempresa, funcionarios.salario, funcionarios.dtadmissao, funcionarios.dtdemissao, funcionarios.dtcadastro, funcionarios.dtalteracao, funcionarios.status, cidades.cidade AS nomeCidade FROM funcionarios INNER JOIN cidades ON codigoCidade = cidades.codigo WHERE funcionarios.codigo = @codigo AND funcionarios.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -61,7 +61,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"INSERT INTO funcionarios(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigoempresa, salario, dtadmissao, dtdemissao, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoEmpresa, @salario, @dtAdmissao, @dtDemissao, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
@@ -73,7 +73,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@sexo", funcionario.sexo);
                     command.Parameters.AddWithValue("@email", funcionario.email);
                     command.Parameters.AddWithValue("@telefone", funcionario.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", funcionario.dtNascimento);
+                    command.Parameters.AddWithValue("@dtNascimento", funcionario.dtNascimento);
                     command.Parameters.AddWithValue("@codigoCidade", funcionario.codigoCidade);
                     command.Parameters.AddWithValue("@logradouro", funcionario.logradouro);
                     command.Parameters.AddWithValue("@complemento", funcionario.complemento);
@@ -104,7 +104,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"UPDATE funcionarios SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigoempresa = @codigoEmpresa, salario = @salario, dtadmissao = @dtAdmissao, dtDemissao = @dtDemissao, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -116,7 +116,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@sexo", funcionario.sexo);
                     command.Parameters.AddWithValue("@email", funcionario.email);
                     command.Parameters.AddWithValue("@telefone", funcionario.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", funcionario.dtNascimento);
+                    command.Parameters.AddWithValue("@dtNascimento", funcionario.dtNascimento);
                     command.Parameters.AddWithValue("@codigoCidade", funcionario.codigoCidade);
                     command.Parameters.AddWithValue("@logradouro", funcionario.logradouro);
                     command.Parameters.AddWithValue("@complemento", funcionario.complemento);
@@ -127,6 +127,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtAdmissao", funcionario.dtAdmissao);
                     command.Parameters.AddWithValue("@dtDemissao", funcionario.dtDemissao);
                     command.Parameters.AddWithValue("@dtAlteracao", funcionario.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", funcionario.status);
 
                     await command.ExecuteNonQueryAsync();
                     return funcionario;
