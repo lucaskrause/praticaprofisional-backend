@@ -24,8 +24,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                ContasBancarias contaBancaria = await _service.BuscarPorEmpresa(codigo);
-                return Ok(contaBancaria);
+                IList<ContasBancarias> contasBancarias = await _service.BuscarPorEmpresa(codigo);
+                return Ok(contasBancarias.ToList());
             }
             catch (Exception ex)
             {

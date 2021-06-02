@@ -58,6 +58,9 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
+
                 try
                 {
                     string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -85,10 +88,47 @@ namespace DAL.DataAccessObject
 
                     Object idInserido = await command.ExecuteScalarAsync();
                     empresa.codigo = (int)idInserido;
+
+                    int qtdContas = empresa.contasBancarias.Count;
+                    if (qtdContas > 0)
+                    {
+                        for (int i = 0; i < qtdContas; i++)
+                        {
+                            ContasBancarias contaBancaria = empresa.contasBancarias[i];
+                            contaBancaria.codigoEmpresa = empresa.codigo;
+                            contaBancaria.Ativar();
+                            contaBancaria.PrepareSave();
+
+                            sql = @"INSERT INTO contasbancarias(instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@instituicao, @numeroBanco, @agencia, @conta, @saldo, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                            command = new NpgsqlCommand(sql, conexao);
+
+                            command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                            command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
+                            command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
+                            command.Parameters.AddWithValue("@conta", contaBancaria.conta);
+                            command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                            command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
+                            command.Parameters.AddWithValue("@dtCadastro", contaBancaria.dtCadastro);
+                            command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                            command.Parameters.AddWithValue("@status", contaBancaria.status);
+
+                            idInserido = await command.ExecuteScalarAsync();
+                            contaBancaria.codigo = (int)idInserido;
+                            empresa.contasBancarias[i] = contaBancaria;
+                        }
+                    }
+
                     return empresa;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {
+                    transaction.Commit();
                     conexao.Close();
                 }
             }

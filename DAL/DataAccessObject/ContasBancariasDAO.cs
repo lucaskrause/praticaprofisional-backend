@@ -9,7 +9,7 @@ namespace DAL.DataAccessObject
 {
     public class ContasBancariasDAO : DAO<ContasBancarias>
     {
-        public async Task<ContasBancarias> BuscarPorEmpresa(int codigo)
+        public async Task<IList<ContasBancarias>> BuscarPorEmpresa(int codigo)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -24,7 +24,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<ContasBancarias> list = await GetResultSet(command);
-                    return list[0];
+                    return list;
                 }
                 finally
                 {

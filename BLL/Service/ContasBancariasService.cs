@@ -13,7 +13,7 @@ namespace BLL.Service
 
         public ContasBancariasService() => this.contasBancariasDao = new ContasBancariasDAO();
 
-        public async Task<ContasBancarias> BuscarPorEmpresa(int codigo)
+        public async Task<IList<ContasBancarias>> BuscarPorEmpresa(int codigo)
         {
             return await contasBancariasDao.BuscarPorEmpresa(codigo);
         }
@@ -30,7 +30,6 @@ namespace BLL.Service
 
         public async Task<ContasBancarias> Inserir(ContasBancarias contaBancaria)
         {
-            contaBancaria.codigoEmpresa = 1;
             contaBancaria.Ativar();
             contaBancaria.PrepareSave();
             return await contasBancariasDao.Inserir(contaBancaria);
@@ -38,7 +37,6 @@ namespace BLL.Service
 
         public async Task<ContasBancarias> Editar(ContasBancarias contaBancaria)
         {
-            contaBancaria.codigoEmpresa = 1;
             contaBancaria.PrepareSave();
             return await contasBancariasDao.Editar(contaBancaria);
         }

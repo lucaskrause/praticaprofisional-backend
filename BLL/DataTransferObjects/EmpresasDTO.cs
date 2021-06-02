@@ -48,6 +48,8 @@ namespace BLL.DataTransferObjects
         [Required]
         public string cep { get; set; }
 
+        public List<ContasBancarias>? contasBancarias { get; set; }
+
         public Empresas ToEmpresa()
         {
             return new Empresas()
@@ -64,7 +66,8 @@ namespace BLL.DataTransferObjects
                 logradouro = this.logradouro,
                 complemento = this.complemento,
                 bairro = this.bairro,
-                cep = this.cep
+                cep = this.cep,
+                contasBancarias = this.contasBancarias,
             };
         }
 
@@ -85,7 +88,8 @@ namespace BLL.DataTransferObjects
                 logradouro = this.logradouro,
                 complemento = this.complemento,
                 bairro = this.bairro,
-                cep = this.cep
+                cep = this.cep,
+                contasBancarias = this.contasBancarias,
             };
         }
     }
