@@ -65,8 +65,6 @@ namespace DAL.DataAccessObject
                 {
                     string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    conexao.Open();
-
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
@@ -119,6 +117,7 @@ namespace DAL.DataAccessObject
                         }
                     }
 
+                    transaction.Commit();
                     return empresa;
                 }
                 catch
@@ -128,7 +127,6 @@ namespace DAL.DataAccessObject
                 }
                 finally
                 {
-                    transaction.Commit();
                     conexao.Close();
                 }
             }
