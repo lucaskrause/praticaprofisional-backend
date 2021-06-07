@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN formaspagamento ON (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.status = 'Ativo';";
+                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.codigocondicaopagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, condicoespagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN condicoespagamento ON (clientes.codigocondicaopagamento = condicoespagamento.codigo) WHERE clientes.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.tipocliente, clientes.codigoformapagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, formaspagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN formaspagamento ON (clientes.codigoformapagamento = formaspagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo';";
+                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.codigocondicaopagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, condicoespagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN condicoespagamento ON (clientes.codigocondicaopagamento = condicoespagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -60,7 +60,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO clientes (nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, tipocliente, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @tipoCliente, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+                    string sql = @"INSERT INTO clientes(nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
@@ -73,13 +73,12 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@sexo", cliente.sexo);
                     command.Parameters.AddWithValue("@email", cliente.email);
                     command.Parameters.AddWithValue("@telefone", cliente.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascFundacao);
+                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
                     command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
                     command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
                     command.Parameters.AddWithValue("@complemento", cliente.complemento);
                     command.Parameters.AddWithValue("@bairro", cliente.bairro);
                     command.Parameters.AddWithValue("@cep", cliente.cep);
-                    command.Parameters.AddWithValue("@tipoCliente", cliente.tipoCliente);
                     command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
                     command.Parameters.AddWithValue("@dtCadastro", cliente.dtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
@@ -102,7 +101,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, tipocliente = @tipoCliente, codigoformapagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+                    string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -115,13 +114,12 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@sexo", cliente.sexo);
                     command.Parameters.AddWithValue("@email", cliente.email);
                     command.Parameters.AddWithValue("@telefone", cliente.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascFundacao);
+                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
                     command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
                     command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
                     command.Parameters.AddWithValue("@complemento", cliente.complemento);
                     command.Parameters.AddWithValue("@bairro", cliente.bairro);
                     command.Parameters.AddWithValue("@cep", cliente.cep);
-                    command.Parameters.AddWithValue("@tipoCliente", cliente.tipoCliente);
                     command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
                     command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
 
