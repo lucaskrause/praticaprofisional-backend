@@ -23,26 +23,28 @@ namespace BLL.Service
             return await cotasDao.BuscarPorID(codigo);
         }
 
-        public async Task<Cotas> Inserir(Cotas cotas)
+        public async Task<Cotas> Inserir(Cotas cota)
         {
-            cotas.Ativar();
-            cotas.PrepareSave();
-            return await cotasDao.Inserir(cotas);
+            cota.codigoEmpresa = 1;
+            cota.Ativar();
+            cota.PrepareSave();
+            return await cotasDao.Inserir(cota);
         }
 
-        public async Task<Cotas> Editar(Cotas cotas)
+        public async Task<Cotas> Editar(Cotas cota)
         {
-            cotas.PrepareSave();
-            return await cotasDao.Editar(cotas);
+            cota.codigoEmpresa = 1;
+            cota.PrepareSave();
+            return await cotasDao.Editar(cota);
         }
 
         public async Task<bool> Excluir(int codigo)
         {
-            Cotas cotas = new Cotas();
-            cotas.codigo = codigo;
-            cotas.Inativar();
-            cotas.PrepareSave();
-            return await cotasDao.Excluir(cotas);
+            Cotas cota = new Cotas();
+            cota.codigo = codigo;
+            cota.Inativar();
+            cota.PrepareSave();
+            return await cotasDao.Excluir(cota);
         }
 
         public async Task<IList<Cotas>> Pesquisar(string str)

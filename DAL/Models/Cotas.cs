@@ -27,8 +27,5 @@ namespace DAL.Models
 
         [Required]
         public int codigoEmpresa { get; set; }
-
-        [JsonIgnore]
-        public Empresas empresa { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT cotas.codigo, cotas.codigocliente, cotas.valor, cotas.dtinicio, cotas.dttermino, cotas.codigoempresa, cotas.dtcadastro, cotas.dtalteracao, cotas.status, clientes.nome as nomeCliente FROM cotas INNER JOIN clientes ON (cotas.codigocliente = clientes.codigo) WHERE cotas.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -37,7 +37,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"SELECT cotas.codigo, cotas.codigocliente, cotas.valor, cotas.dtinicio, cotas.dttermino, cotas.codigoempresa, cotas.dtcadastro, cotas.dtalteracao, cotas.status, clientes.nome as nomeCliente FROM cotas INNER JOIN clientes ON (cotas.codigocliente = clientes.codigo) WHERE cotas.codigo = @codigo AND cotas.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -61,7 +61,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"INSERT INTO cotas(codigocliente, valor, dtinicio, dttermino, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@codigoCliente, @valor, @dtInicio, @dtTermino, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
@@ -93,7 +93,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"";
+                    string sql = @"UPDATE cotas SET codigocliente = @codigoCliente, valor = @valor, dtinicio = @dtInicio, dttermino = @dtTermino, codigoempresa = @codigoEmpresa, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -105,6 +105,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtTermino", cota.dtTermino);
                     command.Parameters.AddWithValue("@codigoEmpresa", cota.codigoEmpresa);
                     command.Parameters.AddWithValue("@dtAlteracao", cota.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", cota.codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return cota;
