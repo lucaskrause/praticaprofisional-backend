@@ -63,12 +63,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
-                conexao.Open();
-                NpgsqlTransaction transaction = conexao.BeginTransaction();
-
                 try
                 {
                     string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+                    
+                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -83,14 +82,8 @@ namespace DAL.DataAccessObject
                     pais.codigo = (int)idInserido;
                     return pais;
                 }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
                 finally
                 {
-                    transaction.Commit();
                     conexao.Close();
                 }            
             }

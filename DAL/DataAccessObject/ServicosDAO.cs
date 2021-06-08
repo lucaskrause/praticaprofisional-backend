@@ -64,12 +64,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
-                conexao.Open();
-                NpgsqlTransaction transaction = conexao.BeginTransaction();
-
                 try
                 {
                     string sql = @"INSERT INTO servicos(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -81,16 +80,11 @@ namespace DAL.DataAccessObject
 
                     Object idInserido = await command.ExecuteScalarAsync();
                     servico.codigo = (int)idInserido;
+
                     return servico;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
                 }
                 finally
                 {
-                    transaction.Commit();
                     conexao.Close();
                 }
             }
