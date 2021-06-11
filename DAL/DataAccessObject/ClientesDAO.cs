@@ -1,7 +1,10 @@
 ﻿using DAL.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +12,64 @@ namespace DAL.DataAccessObject
 {
     public class ClientesDAO : DAO<Clientes>
     {
+        public async Task<List<Cotas>> GetCotasResultSet(NpgsqlCommand command)
+        {
+            List<Cotas> list = new List<Cotas>();
+
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                Cotas p = JsonConvert.DeserializeObject<Cotas>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
+
+        public async Task<List<Dependentes>> GetDependentesResultSet(NpgsqlCommand command)
+        {
+            List<Dependentes> list = new List<Dependentes>();
+
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                Dependentes p = JsonConvert.DeserializeObject<Dependentes>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
+
         public override async Task<IList<Clientes>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -45,6 +106,36 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Clientes> list = await GetResultSet(command);
+
+                    if (list.Count > 0)
+                    {
+                        sql = @"SELECT dependentes.codigo, dependentes.nome, dependentes.cpf, dependentes.rg, dependentes.sexo, dependentes.email, dependentes.telefone, dependentes.dtnascimento, dependentes.codigocidade, dependentes.logradouro, dependentes.complemento, dependentes.bairro, dependentes.cep, dependentes.codigocliente, dependentes.dtcadastro, dependentes.dtalteracao, dependentes.status, cidades.cidade as nomeCidade, clientes.nome as nomeCliente FROM dependentes INNER JOIN cidades ON (dependentes.codigoCidade = cidades.codigo) INNER JOIN clientes ON (dependentes.codigoCliente = clientes.codigo) WHERE dependentes.codigocliente = @codigo AND dependentes.status = 'Ativo';";
+
+                        command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@codigo", codigo);
+
+                        List<Dependentes> listDependentes = await GetDependentesResultSet(command);
+
+                        if (listDependentes.Count > 0)
+                        {
+                            list[0].dependentes = listDependentes;
+                        }
+
+                        sql = @"SELECT * FROM cotas WHERE cotas.codigoCliente = @codigo AND cotas.status = 'Ativo';";
+
+                        command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@codigo", codigo);
+
+                        List<Cotas> listCotas = await GetCotasResultSet(command);
+
+                        if (listCotas.Count > 0)
+                        {
+                            list[0].isSocio = true;
+                        }
+                    }
+
                     return list[0];
                 }
                 finally
@@ -58,11 +149,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"INSERT INTO clientes(nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -86,7 +177,51 @@ namespace DAL.DataAccessObject
 
                     Object idInserido = await command.ExecuteScalarAsync();
                     cliente.codigo = (int)idInserido;
+
+                    int qtdDependentes = cliente.dependentes.Count;
+                    if (qtdDependentes > 0)
+                    {
+                        for (int i = 0; i < qtdDependentes; i++)
+                        {
+                            Dependentes dependente = cliente.dependentes[i];
+                            dependente.codigoCliente = cliente.codigo;
+                            dependente.Ativar();
+                            dependente.PrepareSave();
+
+                            sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                            command = new NpgsqlCommand(sql, conexao);
+
+                            command.Parameters.AddWithValue("@nome", dependente.nome);
+                            command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                            command.Parameters.AddWithValue("@rg", dependente.rg);
+                            command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                            command.Parameters.AddWithValue("@email", dependente.email);
+                            command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                            command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                            command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                            command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                            command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                            command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                            command.Parameters.AddWithValue("@cep", dependente.cep);
+                            command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                            command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
+                            command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                            command.Parameters.AddWithValue("@status", dependente.status);
+
+                            idInserido = await command.ExecuteScalarAsync();
+                            dependente.codigo = (int)idInserido;
+                            cliente.dependentes[i] = dependente;
+                        }
+                    }
+
+                    transaction.Commit();
                     return cliente;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {
@@ -99,11 +234,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -124,7 +259,49 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
 
                     await command.ExecuteNonQueryAsync();
+                    
+                    int qtdDependentes = cliente.dependentes.Count;
+                    if (qtdDependentes > 0)
+                    {
+                        for (int i = 0; i < qtdDependentes; i++)
+                        {
+                            Dependentes dependente = cliente.dependentes[i];
+                            dependente.codigoCliente = cliente.codigo;
+                            dependente.PrepareSave();
+
+                            sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
+
+                            command = new NpgsqlCommand(sql, conexao);
+
+                            command.Parameters.AddWithValue("@nome", dependente.nome);
+                            command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                            command.Parameters.AddWithValue("@rg", dependente.rg);
+                            command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                            command.Parameters.AddWithValue("@email", dependente.email);
+                            command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                            command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                            command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                            command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                            command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                            command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                            command.Parameters.AddWithValue("@cep", dependente.cep);
+                            command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                            command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                            command.Parameters.AddWithValue("@status", dependente.status);
+                            command.Parameters.AddWithValue("@codigo", dependente.codigo);
+
+                            await command.ExecuteNonQueryAsync();
+                            cliente.dependentes[i] = dependente;
+                        }
+                    }
+
+                    transaction.Commit();
                     return cliente;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {

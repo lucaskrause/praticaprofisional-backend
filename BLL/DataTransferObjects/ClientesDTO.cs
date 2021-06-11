@@ -53,6 +53,7 @@ namespace BLL.DataTransferObjects
 
         [Required]
         public int codigoCondicaoPagamento { get; set; }
+        public List<Dependentes> dependentes { get; set; }
 
         public Clientes ToCliente()
         {
@@ -72,6 +73,7 @@ namespace BLL.DataTransferObjects
                 complemento = this.complemento,
                 logradouro = this.logradouro,
                 codigoCondicaoPagamento = this.codigoCondicaoPagamento,
+                dependentes = this.dependentes
             };
         }
 
@@ -94,6 +96,7 @@ namespace BLL.DataTransferObjects
                 complemento = this.complemento,
                 logradouro = this.logradouro,
                 codigoCondicaoPagamento = this.codigoCondicaoPagamento,
+                dependentes = this.dependentes
             };
         }
     }

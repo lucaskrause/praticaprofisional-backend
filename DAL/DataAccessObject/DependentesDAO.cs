@@ -101,7 +101,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE public.dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+                    string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
