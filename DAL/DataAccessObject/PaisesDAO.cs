@@ -89,8 +89,6 @@ namespace DAL.DataAccessObject
             }
         }
 
-
-
         public override async Task<Paises> Editar(Paises pais)
         {
             using (var conexao = GetCurrentConnection())
