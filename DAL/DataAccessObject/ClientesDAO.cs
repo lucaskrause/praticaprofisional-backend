@@ -257,6 +257,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@cep", cliente.cep);
                     command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
                     command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", cliente.codigo);
 
                     await command.ExecuteNonQueryAsync();
                     
