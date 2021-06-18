@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM precificacoes WHERE status = 'Ativo'";
+                    string sql = @"SELECT * FROM precificacoes WHERE status = 'Ativo';";
 
                     conexao.Open();
 
@@ -37,7 +37,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM precificacoes WHERE codigo = @codigo AND status = 'Ativo'";
+                    string sql = @"SELECT * FROM precificacoes WHERE codigo = @codigo AND status = 'Ativo';";
 
                     conexao.Open();
 
@@ -61,16 +61,22 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM precificacoes WHERE codigo = @codigo AND status = 'Ativo'";
+                    string sql = @"INSERT INTO precificacoes(minpessoas, maxpessoas, valor, dtcadastro, dtalteracao, status) VALUES (@minPessoas, @maxPessoas, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigo", preco.codigo) ;
+                    command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
+                    command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
+                    command.Parameters.AddWithValue("@valor", preco.valor);
+                    command.Parameters.AddWithValue("@dtCadastro", preco.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
+                    command.Parameters.AddWithValue("@status", preco.status);
 
-                    List<Precificacoes> list = await GetResultSet(command);
-                    return list[0];
+                    Object idInserido = await command.ExecuteScalarAsync();
+                    preco.codigo = (int)idInserido;
+                    return preco;
                 }
                 finally
                 {
@@ -85,16 +91,19 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM precificacoes WHERE codigo = @codigo AND status = 'Ativo'";
+                    string sql = @"UPDATE precificacoes SET minpessoas = @minPessoas, maxpessoas = @maxPessoas, valor = @valor, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigo", preco.codigo);
+                    command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
+                    command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
+                    command.Parameters.AddWithValue("@valor", preco.valor);
+                    command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
 
-                    List<Precificacoes> list = await GetResultSet(command);
-                    return list[0];
+                    await command.ExecuteNonQueryAsync();
+                    return preco;
                 }
                 finally
                 {

@@ -1,4 +1,5 @@
-﻿using BLL.Service;
+﻿using BLL.DataTransferObjects;
+using BLL.Service;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,12 +20,12 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("")]
-        public override async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodos()
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                IList<Precificacoes> listPrecos = await _service.ListarTodos();
+                return Ok(listPrecos.ToList());
             }
             catch (Exception ex)
             {
@@ -34,12 +35,12 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public override async Task<IActionResult> BuscarPorID(int codigo)
+        public async Task<IActionResult> BuscarPorID(int codigo)
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Precificacoes preco = await _service.BuscarPorID(codigo);
+                return Ok(preco);
             }
             catch (Exception ex)
             {
@@ -49,12 +50,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Precificacoes entity)
+        public async Task<IActionResult> Inserir(PrecificacoesDTO preco)
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Precificacoes newPreco = await _service.Inserir(preco.ToPreco());
+                return Created("/api/precificacoes/inserir", newPreco);
             }
             catch (Exception ex)
             {
@@ -63,13 +64,13 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar")]
-        public override async Task<IActionResult> Editar(Precificacoes preco)
+        [Route("editar/{codigo}")]
+        public async Task<IActionResult> Editar(PrecificacoesDTO preco, int codigo)
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Precificacoes newPreco = await _service.Editar(preco.ToPreco(codigo));
+                return Ok(newPreco);
             }
             catch (Exception ex)
             {
@@ -79,12 +80,12 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir/{codigo}")]
-        public override async Task<IActionResult> Excluir(int codigo)
+        public async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                bool result = await _service.Excluir(codigo);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -94,12 +95,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("pesquisar")]
-        public override async Task<IActionResult> Pesquisar(string str)
+        public async Task<IActionResult> Pesquisar(string str)
         {
             try
             {
-                IList<Precificacoes> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                IList<Precificacoes> listPrecos = await _service.Pesquisar(str);
+                return Ok(listPrecos.ToList());
             }
             catch (Exception ex)
             {
