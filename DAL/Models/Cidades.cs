@@ -18,5 +18,7 @@ namespace DAL.Models
         public Estados estado { get; set; }
 
         public string nomeEstado { set { estado ??= new Estados(); estado.estado = value; } }
+
+        public string nomeUF { set { estado ??= new Estados(); estado.uf = value; } }
     }
 }

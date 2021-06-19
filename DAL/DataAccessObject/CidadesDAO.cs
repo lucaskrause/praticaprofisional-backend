@@ -19,7 +19,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT cidades.codigo, cidades.cidade, cidades.ddd, cidades.codigoestado, cidades.dtcadastro, cidades.dtalteracao, cidades.status, estados.estado as nomeEstado FROM cidades INNER JOIN estados ON cidades.codigoestado = estados.codigo WHERE cidades.status = 'Ativo';";
+                    string sql = @"SELECT cidades.codigo, cidades.cidade, cidades.ddd, cidades.codigoestado, cidades.dtcadastro, cidades.dtalteracao, cidades.status, estados.uf as nomeUF FROM cidades INNER JOIN estados ON cidades.codigoestado = estados.codigo WHERE cidades.status = 'Ativo';";
 
                     conexao.Open();
 
