@@ -1,25 +1,26 @@
-﻿using BLL.Service;
-using DAL.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Service;
+using Microsoft.AspNetCore.Mvc;
+using DAL.Models;
+using BLL.DataTransferObjects;
 
 namespace RUPsystem.Controllers
 {
-    public class ReservasControllers : AbstractController<Reservas>
+    public class ReservasController : AbstractController<Reservas>
     {
         private readonly new ReservasService _service;
 
-        public ReservasControllers()
+        public ReservasController()
         {
             _service = new ReservasService();
         }
 
         [HttpGet]
         [Route("")]
-        public override async Task<IActionResult> ListarTodos()
+        public async Task<IActionResult> ListarTodos()
         {
             try
             {
@@ -34,12 +35,12 @@ namespace RUPsystem.Controllers
 
         [HttpGet]
         [Route("{codigo}")]
-        public override async Task<IActionResult> BuscarPorID(int codigo)
+        public async Task<IActionResult> BuscarPorID(int codigo)
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Reservas reserva = await _service.BuscarPorID(codigo);
+                return Ok(reserva);
             }
             catch (Exception ex)
             {
@@ -49,12 +50,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public override async Task<IActionResult> Inserir(Reservas reserva)
+        public async Task<IActionResult> Inserir(ReservasDTO reserva)
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Reservas newReserva = await _service.Inserir(reserva.ToReserva());
+                return Ok(newReserva);
             }
             catch (Exception ex)
             {
@@ -63,13 +64,13 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar")]
-        public override async Task<IActionResult> Editar(Reservas reserva)
+        [Route("editar/{codigo}")]
+        public async Task<IActionResult> Editar(ReservasDTO reserva, int codigo)
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                Reservas newReserva = await _service.Editar(reserva.ToReserva(codigo));
+                return Ok(newReserva);
             }
             catch (Exception ex)
             {
@@ -79,12 +80,12 @@ namespace RUPsystem.Controllers
 
         [HttpDelete]
         [Route("excluir/{codigo}")]
-        public override async Task<IActionResult> Excluir(int codigo)
+        public async Task<IActionResult> Excluir(int codigo)
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
-                return Ok(list.ToList());
+                bool result = await _service.Excluir(codigo);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -94,11 +95,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("pesquisar")]
-        public override async Task<IActionResult> Pesquisar(string str)
+        public async Task<IActionResult> Pesquisar(string str)
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
+                IList<Reservas> list = await _service.Pesquisar(str);
                 return Ok(list.ToList());
             }
             catch (Exception ex)

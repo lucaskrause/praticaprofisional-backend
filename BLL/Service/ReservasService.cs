@@ -25,6 +25,7 @@ namespace BLL.Service
 
         public async Task<Reservas> Inserir(Reservas reserva)
         {
+            reserva.codigoEmpresa = 1;
             reserva.PrepareSave();
             reserva.Ativar();
             return await reservasDao.Inserir(reserva);
