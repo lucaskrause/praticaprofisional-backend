@@ -28,6 +28,13 @@ namespace DAL.Models
         [Required]
         public decimal valor { get; set; }
 
+        [Required]
+        public int codigoCondicaoPagamento { get; set; }
+
+        public CondicoesPagamento condicaoPagamento { get; set; }
+
+        public string nomeCondicao { set { condicaoPagamento ??= new CondicoesPagamento(); condicaoPagamento.descricao = value; } }
+
         public List<AreasLocacao> areasLocacao { get; set; }
     }
 }

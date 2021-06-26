@@ -107,7 +107,6 @@ namespace DAL.DataAccessObject
             {
                 conexao.Open();
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
-
                 try
                 {
                     string sql = @"INSERT INTO condicoespagamento(descricao, totalparcelas, multa, juros, desconto, dtcadastro, dtalteracao, status) VALUES (@descricao, @totalParcelas, @multa, @juros, @desconto, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -174,22 +173,30 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"";
-
-                    conexao.Open();
+                    string sql = @"UPDATE condicoespagamento SET descricao = @descricao, totalparcelas = @totalParcelas, multa = @multa, juros = @juros, desconto = @desconto, dtalteracao = @dtAlteracao WHERE codigo = @codigo AND status = 'Ativo';";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@descricao", condicaoPagamento.descricao);
+                    command.Parameters.AddWithValue("@totalParcelas", condicaoPagamento.totalParcelas);
                     command.Parameters.AddWithValue("@multa", condicaoPagamento.multa);
                     command.Parameters.AddWithValue("@juros", condicaoPagamento.juros);
                     command.Parameters.AddWithValue("@desconto", condicaoPagamento.desconto);
                     command.Parameters.AddWithValue("@dtAlteracao", condicaoPagamento.dtAlteracao);
 
                     await command.ExecuteNonQueryAsync();
+
+                    transaction.Commit();
                     return condicaoPagamento;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {

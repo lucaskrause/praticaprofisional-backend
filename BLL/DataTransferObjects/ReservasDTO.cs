@@ -27,6 +27,9 @@ namespace BLL.DataTransferObjects
         [Required]
         public decimal valor { get; set; }
 
+        [Required]
+        public int codigoCondicaoPagamento { get; set; }
+
         public List<AreasLocacao> areasLocacao { get; set; }
 
         public Reservas ToReserva()
@@ -37,6 +40,8 @@ namespace BLL.DataTransferObjects
                 codigoCliente = this.codigoCliente,
                 qtdePessoas = this.qtdePessoas,
                 dtReserva = this.dtReserva,
+                valor = this.valor,
+                codigoCondicaoPagamento = this.codigoCondicaoPagamento,
                 areasLocacao = this.areasLocacao,
             };
         }
@@ -50,6 +55,8 @@ namespace BLL.DataTransferObjects
                 codigoCliente = this.codigoCliente,
                 qtdePessoas = this.qtdePessoas,
                 dtReserva = this.dtReserva,
+                valor = this.valor,
+                codigoCondicaoPagamento = this.codigoCondicaoPagamento,
                 areasLocacao = this.areasLocacao,
             };
         }
