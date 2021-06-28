@@ -101,6 +101,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
                     command.Parameters.AddWithValue("@valor", preco.valor);
                     command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
+                    command.Parameters.AddWithValue("@codigo", preco.codigo);
 
                     await command.ExecuteNonQueryAsync();
                     return preco;
