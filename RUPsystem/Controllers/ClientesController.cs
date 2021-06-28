@@ -48,6 +48,21 @@ namespace RUPsystem.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("socio/{codigo}")]
+        public async Task<IActionResult> BuscarSocioPorID(int codigo)
+        {
+            try
+            {
+                Clientes cliente = await _service.BuscarSocioPorID(codigo);
+                return Ok(cliente);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("inserir")]
         public async Task<IActionResult> Inserir(ClientesDTO cliente)

@@ -23,6 +23,11 @@ namespace BLL.Service
             return await clientesDao.BuscarPorID(codigo);
         }
 
+        public async Task<Clientes> BuscarSocioPorID(int codigo)
+        {
+            return await clientesDao.BuscarSocioPorID(codigo);
+        }
+
         public async Task<Clientes> Inserir(Clientes pessoa)
         {
             pessoa.PrepareSave();

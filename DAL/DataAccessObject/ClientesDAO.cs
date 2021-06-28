@@ -144,6 +144,30 @@ namespace DAL.DataAccessObject
                 }
             }
         }
+        public async Task<Clientes> BuscarSocioPorID(int codigo)
+        {
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.codigocondicaopagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, condicoespagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN condicoespagamento ON (clientes.codigocondicaopagamento = condicoespagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo' AND EXISTS(SELECT codigoCliente FROM cotas WHERE codigoCliente = clientes.codigo AND status = 'Ativo');";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", codigo);
+
+                    List<Clientes> list = await GetResultSet(command);
+
+                    return list[0];
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
+        }
 
         public override async Task<Clientes> Inserir(Clientes cliente)
         {
