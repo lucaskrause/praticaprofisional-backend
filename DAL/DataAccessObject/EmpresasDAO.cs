@@ -1,7 +1,10 @@
 ﻿using DAL.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,12 +12,41 @@ namespace DAL.DataAccessObject
 {
     public class EmpresasDAO : DAO<Empresas>
     {
+        public async Task<List<ContasBancarias>> GetContasBancariasResultSet(NpgsqlCommand command)
+        {
+            List<ContasBancarias> list = new List<ContasBancarias>();
+
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                ContasBancarias p = JsonConvert.DeserializeObject<ContasBancarias>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
+
         public override async Task<IList<Empresas>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection()) {
                 try
                 {
-                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complemento, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.status = 'Ativo';";
+                    string sql = @"SELECT empresas.codigo, empresas.razaosocial, empresas.nomefantasia, empresas.cnpj, empresas.ie, empresas.telefone, empresas.email, empresas.dtfundacao, empresas.qtdecotas, empresas.codigocidade, cidades.cidade, empresas.logradouro, empresas.complemento, empresas.bairro, empresas.cep, empresas.dtcadastro, empresas.dtalteracao, empresas.status FROM empresas INNER JOIN cidades ON empresas.codigocidade = cidades.codigo WHERE empresas.status = 'Ativo' ORDER BY empresas.codigo;";
 
                     conexao.Open();
 
@@ -45,6 +77,23 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Empresas> list = await GetResultSet(command);
+
+                    if (list.Count > 0)
+                    {
+                        sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE codigoEmpresa = @codigo AND status = 'Ativo';";
+
+                        command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@codigo", codigo);
+
+                        List<ContasBancarias> listContasBancarias = await GetContasBancariasResultSet(command);
+
+                        if (listContasBancarias.Count > 0)
+                        {
+                            list[0].contasBancarias = listContasBancarias;
+                        }
+                    }
+
                     return list[0];
                 }
                 finally
@@ -60,7 +109,6 @@ namespace DAL.DataAccessObject
             {
                 conexao.Open();
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
-
                 try
                 {
                     string sql = @"INSERT INTO empresas(razaosocial, nomefantasia, cnpj, ie, telefone, email, dtfundacao, qtdecotas, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@razaoSocial, @nomeFantasia, @cnpj, @ie, @telefone, @email, @dtFundacao, @qtdeCotas, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -136,11 +184,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"UPDATE empresas SET razaosocial = @razaoSocial, nomefantasia = @nomeFantasia, cnpj = @cnpj, ie = @ie, telefone = @telefone, email = @email, dtfundacao = @dtFundacao, qtdecotas = @qtdeCotas, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -161,7 +209,74 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
 
                     await command.ExecuteNonQueryAsync();
+
+                    int qtdContasBancarias = empresa.contasBancarias.Count;
+                    if (qtdContasBancarias > 0)
+                    {
+                        for (int i = 0; i < qtdContasBancarias; i++)
+                        {
+                            ContasBancarias contaBancaria = empresa.contasBancarias[i];
+                            contaBancaria.PrepareSave();
+                            if (contaBancaria.codigo == 0)
+                            {
+                                contaBancaria.codigoEmpresa = empresa.codigo;
+                                contaBancaria.Ativar();
+
+                                sql = @"INSERT INTO contasbancarias(instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@instituicao, @numeroBanco, @agencia, @conta, @saldo, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                                command = new NpgsqlCommand(sql, conexao);
+
+                                command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                                command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
+                                command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
+                                command.Parameters.AddWithValue("@conta", contaBancaria.conta);
+                                command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                                command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
+                                command.Parameters.AddWithValue("@dtCadastro", contaBancaria.dtCadastro);
+                                command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                                command.Parameters.AddWithValue("@status", contaBancaria.status);
+
+                                Object idInserido = await command.ExecuteScalarAsync();
+                                contaBancaria.codigo = (int)idInserido;
+                                empresa.contasBancarias[i] = contaBancaria;
+                            }
+                            else if (contaBancaria.codigo > 0 && contaBancaria.status == "Ativo")
+                            {
+                                sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+
+                                command = new NpgsqlCommand(sql, conexao);
+
+                                command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                                command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
+                                command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
+                                command.Parameters.AddWithValue("@conta", contaBancaria.conta);
+                                command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                                command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
+                                command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                                command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
+
+                                await command.ExecuteNonQueryAsync();
+                            }
+                            else
+                            {
+                                sql = @"DELETE FROM contasbancarias WHERE codigo = @codigo;";
+
+                                command = new NpgsqlCommand(sql, conexao);
+
+                                command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
+
+                                await command.ExecuteNonQueryAsync();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
                     return empresa;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {
