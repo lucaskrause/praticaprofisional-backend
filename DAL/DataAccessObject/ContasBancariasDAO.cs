@@ -39,7 +39,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE status = 'Ativo';";
+                    string sql = @"SELECT codigo, instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status FROM contasbancarias WHERE status = 'Ativo' ORDER BY codigo;";
 
                     conexao.Open();
 

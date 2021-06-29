@@ -18,7 +18,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT estados.codigo, estados.estado, estados.uf, estados.codigopais, estados.dtCadastro, estados.dtAlteracao, paises.pais as nomePais FROM estados INNER JOIN paises ON (estados.codigopais = paises.codigo) WHERE estados.status = 'Ativo';";
+                    string sql = @"SELECT estados.codigo, estados.estado, estados.uf, estados.codigopais, estados.dtCadastro, estados.dtAlteracao, paises.pais as nomePais FROM estados INNER JOIN paises ON (estados.codigopais = paises.codigo) WHERE estados.status = 'Ativo' ORDER BY estados.codigo;";
 
                     conexao.Open();
 

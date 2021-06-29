@@ -47,7 +47,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM condicoesPagamento WHERE status = 'Ativo';";
+                    string sql = @"SELECT * FROM condicoesPagamento WHERE status = 'Ativo' ORDER BY codigo;";
 
                     conexao.Open();
 
@@ -196,10 +196,10 @@ namespace DAL.DataAccessObject
                         for (int i = 0; i < qtdParcelas; i++)
                         {
                             CondicoesParcelas parcela = condicaoPagamento.parcelas[i];
+                            parcela.PrepareSave();
                             if (parcela.codigo == 0) {
                                 parcela.codigoCondicaoPagamento = condicaoPagamento.codigo;
                                 parcela.Ativar();
-                                parcela.PrepareSave();
 
                                 sql = @"INSERT INTO condicoesparcela(codigocondicaopagamento, numeroparcela, numerodias, porcentagem, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCondicaoPagamento, @numeroParcela, @numeroDias, @porcentagem, @codigoFormaPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 

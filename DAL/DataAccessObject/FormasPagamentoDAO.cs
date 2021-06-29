@@ -18,7 +18,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM formasPagamento WHERE status = 'Ativo'";
+                    string sql = @"SELECT * FROM formasPagamento WHERE status = 'Ativo' ORDER BY codigo;";
 
                     conexao.Open();
 

@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT cotas.codigo, cotas.codigocliente, cotas.valor, cotas.dtinicio, cotas.dttermino, cotas.codigoempresa, cotas.dtcadastro, cotas.dtalteracao, cotas.status, clientes.nome as nomeCliente FROM cotas INNER JOIN clientes ON (cotas.codigocliente = clientes.codigo) WHERE cotas.status = 'Ativo';";
+                    string sql = @"SELECT cotas.codigo, cotas.codigocliente, cotas.valor, cotas.dtinicio, cotas.dttermino, cotas.codigoempresa, cotas.dtcadastro, cotas.dtalteracao, cotas.status, clientes.nome as nomeCliente FROM cotas INNER JOIN clientes ON (cotas.codigocliente = clientes.codigo) WHERE cotas.status = 'Ativo' ORDER BY cotas.codigo;";
 
                     conexao.Open();
 

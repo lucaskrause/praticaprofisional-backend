@@ -53,6 +53,7 @@ namespace BLL.DataTransferObjects
 
         [Required]
         public int codigoCondicaoPagamento { get; set; }
+
         public List<Dependentes> dependentes { get; set; }
 
         public Clientes ToCliente()

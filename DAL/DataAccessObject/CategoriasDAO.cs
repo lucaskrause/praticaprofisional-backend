@@ -19,7 +19,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM categorias WHERE status = 'Ativo'";
+                    string sql = @"SELECT * FROM categorias WHERE status = 'Ativo' ORDER BY codigo;";
 
                     conexao.Open();
 
