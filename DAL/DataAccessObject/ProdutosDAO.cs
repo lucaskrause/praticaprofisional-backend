@@ -19,7 +19,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT produtos.codigo, produtos.produto, produtos.unidades, produtos.valorcusto, produtos.estoque, produtos.codigocategoria, produtos.dtultimacompra, produtos.valorultimacompra, produtos.dtcadastro, produtos.dtalteracao, produtos.status, categorias.descricao as nomeCategoria FROM produtos INNER JOIN categorias ON(produtos.codigoCategoria = categorias.codigo) WHERE produtos.status = 'Ativo';";
+                    string sql = @"SELECT produtos.codigo, produtos.produto, produtos.unidades, produtos.valorcusto, produtos.estoque, produtos.codigocategoria, produtos.dtultimacompra, produtos.valorultimacompra, produtos.dtcadastro, produtos.dtalteracao, produtos.status, categorias.descricao as nomeCategoria FROM produtos INNER JOIN categorias ON(produtos.codigoCategoria = categorias.codigo) WHERE produtos.status = 'Ativo' ORDER BY produtos.codigo;";
 
                     conexao.Open();
 
