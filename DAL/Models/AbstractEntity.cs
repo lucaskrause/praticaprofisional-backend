@@ -12,19 +12,12 @@ namespace DAL.Models
             this.status = "Ativo";
         }
 
-        [Key]
-        [Column("id")]
         public int codigo { get; set; }
 
-        [Column("dtCadastro")]
-        [DataType(DataType.DateTime)]
-        public DateTime? dtCadastro { get; set; }
+        public DateTime dtCadastro { get; set; }
 
-        [Column("dtAlteracao")]
-        [DataType(DataType.DateTime)]
-        public DateTime? dtAlteracao { get; set; }
+        public DateTime dtAlteracao { get; set; }
 
-        [Column("status")]
         public string status { get; set; }
 
         public virtual void PrepareSave()

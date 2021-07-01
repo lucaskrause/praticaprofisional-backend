@@ -8,16 +8,12 @@ namespace DAL.Models
 {
     public class Funcionarios : Pessoas
     {
-        [Required]
         public string cpf { get; set; }
 
-        [Required]
         public string rg { get; set; }
 
-        [Required]
         public int codigoEmpresa { get; set; }
 
-        [JsonIgnore]
         public Empresas empresa { get; set; }
 
         public string nomeEmpresa { set { empresa ??= new Empresas(); empresa.razaoSocial = value; } }

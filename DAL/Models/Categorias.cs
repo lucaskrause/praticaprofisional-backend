@@ -7,7 +7,6 @@ namespace DAL.Models
 {
     public class Categorias : AbstractEntity
     {
-        [Required]
         public string descricao { get; set; }
     }
 }

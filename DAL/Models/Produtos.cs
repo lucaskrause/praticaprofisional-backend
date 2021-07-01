@@ -7,19 +7,14 @@ namespace DAL.Models
 {
     public class Produtos : AbstractEntity
     {
-        [Required]
         public string produto { get; set; }
 
-        [Required]
         public int unidades { get; set; }
 
-        [Required]
         public decimal valorCusto { get; set; }
 
-        [Required]
         public int estoque { get; set; }
 
-        [Required]
         public int codigoCategoria { get; set; }
 
         public Categorias categoria { get; set; }
