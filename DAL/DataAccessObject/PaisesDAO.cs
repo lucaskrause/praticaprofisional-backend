@@ -12,6 +12,23 @@ namespace DAL.DataAccessObject
         {
         }
 
+        public async Task<bool> checkPais(NpgsqlConnection conexao, Paises pais)
+        {
+            string sql = @"SELECT * FROM paises WHERE pais = @pais;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@pais", pais.pais);
+
+            List<Paises> list = await GetResultSet(command);
+
+            if(list.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override async Task<IList<Paises>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -50,7 +67,13 @@ namespace DAL.DataAccessObject
 
                     List<Paises> list = await GetResultSet(command);
 
-                    return list[0];
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    } else
+                    {
+                        throw new Exception("País não encontrado");
+                    }
                 }
                 finally
                 {
@@ -65,22 +88,29 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-                    
                     conexao.Open();
+                    bool exists = await checkPais(conexao, pais);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@pais", pais.pais);
-                    command.Parameters.AddWithValue("@sigla", pais.sigla);
-                    command.Parameters.AddWithValue("@ddi", pais.ddi);
-                    command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", pais.status);
+                        command.Parameters.AddWithValue("@pais", pais.pais);
+                        command.Parameters.AddWithValue("@sigla", pais.sigla);
+                        command.Parameters.AddWithValue("@ddi", pais.ddi);
+                        command.Parameters.AddWithValue("@dtCadastro", pais.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", pais.status);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    pais.codigo = (int)idInserido;
-                    return pais;
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        pais.codigo = (int)idInserido;
+                        return pais;
+                    } else
+                    {
+                        throw new Exception("País já existente");
+                    }
+                    
                 }
                 finally
                 {
@@ -123,10 +153,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM paises WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", pais.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
