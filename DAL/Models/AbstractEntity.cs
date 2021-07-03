@@ -14,9 +14,9 @@ namespace DAL.Models
 
         public int codigo { get; set; }
 
-        public DateTime dtCadastro { get; set; }
+        public DateTime? dtCadastro { get; set; }
 
-        public DateTime dtAlteracao { get; set; }
+        public DateTime? dtAlteracao { get; set; }
 
         public string status { get; set; }
 
