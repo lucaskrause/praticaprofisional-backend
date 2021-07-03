@@ -13,6 +13,18 @@ namespace BLL.Service
 
         public CategoriasService() => this.categoriasDao = new CategoriasDAO();
 
+        public string validaCategoria(Categorias categoria)
+        {
+            if (categoria.descricao == null || categoria.descricao == "")
+            {
+                return "Categoria obrigatória";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<Categorias>> ListarTodos()
         {
             return await categoriasDao.ListarTodos();
@@ -25,15 +37,29 @@ namespace BLL.Service
 
         public async Task<Categorias> Inserir(Categorias categoria)
         {
-            categoria.PrepareSave();
-            categoria.Ativar();
-            return await categoriasDao.Inserir(categoria);
+            string error = validaCategoria(categoria);
+            if (error == null) {
+                categoria.PrepareSave();
+                categoria.Ativar();
+                return await categoriasDao.Inserir(categoria);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Categorias> Editar(Categorias categoria)
         {
-            categoria.PrepareSave();
-            return await categoriasDao.Editar(categoria);
+            string error = validaCategoria(categoria);
+            if (error == null)
+            {
+                categoria.PrepareSave();
+                return await categoriasDao.Editar(categoria);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

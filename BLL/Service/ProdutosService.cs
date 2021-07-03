@@ -13,6 +13,30 @@ namespace BLL.Service
 
         public ProdutosService() => this.produtosDao = new ProdutosDAO();
 
+        public string validaProduto(Produtos produto)
+        {
+            if (produto.produto == null || produto.produto == "")
+            {
+                return "Produto obrigatório";
+            }
+            else if (produto.unidades < 1)
+            {
+                return "Unidades obrigatória";
+            }
+            else if (produto.valorCusto <= 0)
+            {
+                return "Valor de Custo obrigatório";
+            }
+            else if (produto.codigoCategoria <= 0)
+            {
+                return "Categoria obrigatória";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<Produtos>> ListarTodos()
         {
             return await produtosDao.ListarTodos();
@@ -25,15 +49,30 @@ namespace BLL.Service
 
         public async Task<Produtos> Inserir(Produtos produto)
         {
-            produto.PrepareSave();
-            produto.Ativar();
-            return await produtosDao.Inserir(produto);
+            string error = validaProduto(produto);
+            if (error == null)
+            {
+                produto.PrepareSave();
+                produto.Ativar();
+                return await produtosDao.Inserir(produto);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Produtos> Editar(Produtos produto)
         {
-            produto.PrepareSave();
-            return await produtosDao.Editar(produto);
+            string error = validaProduto(produto);
+            if (error == null)
+            {
+                produto.PrepareSave();
+                return await produtosDao.Editar(produto);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

@@ -13,6 +13,22 @@ namespace BLL.Service
 
         public AreasLocacaoService() => this.areaLocacaoDao = new AreasLocacaoDAO();
 
+        public string validaAreaLocacao(AreasLocacao area)
+        {
+            if (area.descricao == null || area.descricao == "")
+            {
+                return "Área de Locação obrigatória";
+            }
+            else if (area.valor <= 0)
+            {
+                return "Valor obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<AreasLocacao>> ListarTodos()
         {
             return await areaLocacaoDao.ListarTodos();
@@ -25,15 +41,29 @@ namespace BLL.Service
 
         public async Task<AreasLocacao> Inserir(AreasLocacao area)
         {
-            area.PrepareSave();
-            area.Ativar();
-            return await areaLocacaoDao.Inserir(area);
+            string error = validaAreaLocacao(area);
+            if (error == null) {
+                area.PrepareSave();
+                area.Ativar();
+                return await areaLocacaoDao.Inserir(area);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<AreasLocacao> Editar(AreasLocacao area)
         {
-            area.PrepareSave();
-            return await areaLocacaoDao.Editar(area);
+            string error = validaAreaLocacao(area);
+            if (error == null)
+            {
+                area.PrepareSave();
+                return await areaLocacaoDao.Editar(area);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

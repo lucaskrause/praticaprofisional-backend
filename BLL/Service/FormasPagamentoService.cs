@@ -13,6 +13,18 @@ namespace BLL.Service
 
         public FormasPagamentoService() => this.formasPagamentoDao = new FormasPagamentoDAO();
 
+        public string validaFormaPagamento(FormasPagamento formaPagamento)
+        {
+            if (formaPagamento.descricao == null || formaPagamento.descricao == "")
+            {
+                return "Forma de Pagamento obrigatória";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<FormasPagamento>> ListarTodos()
         {
             return await formasPagamentoDao.ListarTodos();
@@ -25,15 +37,30 @@ namespace BLL.Service
 
         public async Task<FormasPagamento> Inserir(FormasPagamento formaPagamento)
         {
-            formaPagamento.PrepareSave();
-            formaPagamento.Ativar();
-            return await formasPagamentoDao.Inserir(formaPagamento);
+            string error = validaFormaPagamento(formaPagamento);
+            if (error == null) {
+                formaPagamento.PrepareSave();
+                formaPagamento.Ativar();
+                return await formasPagamentoDao.Inserir(formaPagamento);
+            } 
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<FormasPagamento> Editar(FormasPagamento formaPagamento)
         {
-            formaPagamento.PrepareSave();
-            return await formasPagamentoDao.Editar(formaPagamento);
+            string error = validaFormaPagamento(formaPagamento);
+            if (error == null)
+            {
+                formaPagamento.PrepareSave();
+                return await formasPagamentoDao.Editar(formaPagamento);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

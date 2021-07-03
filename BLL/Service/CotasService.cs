@@ -13,6 +13,30 @@ namespace BLL.Service
 
         public CotasService() => this.cotasDao = new CotasDAO();
 
+        public string validaCota(Cotas cota)
+        {
+            if (cota.codigoCliente <= 0)
+            {
+                return "Cliente obrigatório";
+            }
+            else if (cota.valor <= 0)
+            {
+                return "Valor obrigatória";
+            }
+            else if (cota.dtInicio == null || cota.dtInicio.Date < (DateTime.Now).Date)
+            {
+                return "Data de Inicio obrigatória, e deve ser data de hoje ou maior";
+            }
+            else if (cota.dtTermino == null || cota.dtTermino <= cota.dtInicio)
+            {
+                return "Data de Termino obrigatória, e deve ser maior que a data de inicio";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<Cotas>> ListarTodos()
         {
             return await cotasDao.ListarTodos();
@@ -25,17 +49,31 @@ namespace BLL.Service
 
         public async Task<Cotas> Inserir(Cotas cota)
         {
-            cota.codigoEmpresa = 1;
-            cota.Ativar();
-            cota.PrepareSave();
-            return await cotasDao.Inserir(cota);
+            string error = validaCota(cota);
+            if (error == null) {
+                cota.codigoEmpresa = 1;
+                cota.Ativar();
+                cota.PrepareSave();
+                return await cotasDao.Inserir(cota);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Cotas> Editar(Cotas cota)
         {
-            cota.codigoEmpresa = 1;
-            cota.PrepareSave();
-            return await cotasDao.Editar(cota);
+            string error = validaCota(cota);
+            if (error == null)
+            {
+                cota.codigoEmpresa = 1;
+                cota.PrepareSave();
+                return await cotasDao.Editar(cota);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

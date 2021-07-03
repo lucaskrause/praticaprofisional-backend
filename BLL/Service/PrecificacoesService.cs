@@ -13,6 +13,26 @@ namespace BLL.Service
 
         public PrecificacoesService() => this.precificacoesDao = new PrecificacoesDAO();
 
+        public string validaPreco(Precificacoes preco)
+        {
+            if (preco.minPessoas <= 0)
+            {
+                return "Mínimo de Pessoas obrigatório";
+            }
+            else if (preco.maxPessoas <= 0)
+            {
+                return "Máximo de Pessoas obrigatório";
+            }
+            else if (preco.valor <= 0)
+            {
+                return "Valor obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<Precificacoes>> ListarTodos()
         {
             return await precificacoesDao.ListarTodos();
@@ -25,15 +45,29 @@ namespace BLL.Service
 
         public async Task<Precificacoes> Inserir(Precificacoes preco)
         {
-            preco.PrepareSave();
-            preco.Ativar();
-            return await precificacoesDao.Inserir(preco);
+            string error = validaPreco(preco);
+            if (error == null) {
+                preco.PrepareSave();
+                preco.Ativar();
+                return await precificacoesDao.Inserir(preco);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Precificacoes> Editar(Precificacoes preco)
         {
-            preco.PrepareSave();
-            return await precificacoesDao.Editar(preco);
+            string error = validaPreco(preco);
+            if (error == null)
+            {
+                preco.PrepareSave();
+                return await precificacoesDao.Editar(preco);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

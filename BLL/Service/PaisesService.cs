@@ -13,6 +13,23 @@ namespace BLL.Service
 
         public PaisesService() => this.paisesDao = new PaisesDAO();
 
+        public string validaPais(Paises pais)
+        {
+            if (pais.pais == null || pais.pais == "")
+            {
+                return "País obrigatório";
+            } else if (pais.sigla == null || pais.sigla == "")
+            {
+                return "Sigla obrigatória";
+            } else if (pais.ddi == null || pais.ddi == "")
+            {
+                return "DDI obrigatório";
+            } else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<Paises>> ListarTodos()
         {
             return await paisesDao.ListarTodos();
@@ -25,15 +42,30 @@ namespace BLL.Service
 
         public async Task<Paises> Inserir(Paises pais)
         {
-            pais.PrepareSave();
-            pais.Ativar();
-            return await paisesDao.Inserir(pais);
+            string error = validaPais(pais);
+            if (error == null)
+            {
+                pais.PrepareSave();
+                pais.Ativar();
+                return await paisesDao.Inserir(pais);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Paises> Editar(Paises pais)
         {
-            pais.PrepareSave();
-            return await paisesDao.Editar(pais);
+            string error = validaPais(pais);
+            if (error == null)
+            {
+                pais.PrepareSave();
+                return await paisesDao.Editar(pais);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

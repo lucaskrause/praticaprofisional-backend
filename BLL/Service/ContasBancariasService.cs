@@ -13,6 +13,30 @@ namespace BLL.Service
 
         public ContasBancariasService() => this.contasBancariasDao = new ContasBancariasDAO();
 
+        public string validaContaBancaria(ContasBancarias contaBancaria)
+        {
+            if (contaBancaria.instituicao == null || contaBancaria.instituicao == "")
+            {
+                return "Instituição obrigatória";
+            }
+            else if (contaBancaria.numeroBanco == null || contaBancaria.numeroBanco == "")
+            {
+                return "Número do Banco obrigatório";
+            }
+            else if (contaBancaria.agencia == null || contaBancaria.agencia == "")
+            {
+                return "Agencia obrigatória";
+            }
+            else if (contaBancaria.conta == null || contaBancaria.conta == "")
+            {
+                return "Número da Conta obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<IList<ContasBancarias>> BuscarPorEmpresa(int codigo)
         {
             return await contasBancariasDao.BuscarPorEmpresa(codigo);
@@ -30,15 +54,29 @@ namespace BLL.Service
 
         public async Task<ContasBancarias> Inserir(ContasBancarias contaBancaria)
         {
-            contaBancaria.Ativar();
-            contaBancaria.PrepareSave();
-            return await contasBancariasDao.Inserir(contaBancaria);
+            string error = validaContaBancaria(contaBancaria);
+            if (error == null) {
+                contaBancaria.Ativar();
+                contaBancaria.PrepareSave();
+                return await contasBancariasDao.Inserir(contaBancaria);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<ContasBancarias> Editar(ContasBancarias contaBancaria)
         {
-            contaBancaria.PrepareSave();
-            return await contasBancariasDao.Editar(contaBancaria);
+            string error = validaContaBancaria(contaBancaria);
+            if (error == null)
+            {
+                contaBancaria.PrepareSave();
+                return await contasBancariasDao.Editar(contaBancaria);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)
