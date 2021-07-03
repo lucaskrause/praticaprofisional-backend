@@ -29,7 +29,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -44,7 +48,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -59,37 +67,50 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(ContasBancariasDTO contaBancaria)
+        public async Task<IActionResult> Inserir(ContasBancarias contaBancaria)
         {
             try
             {
-                ContasBancarias newContaBancaria = await _service.Inserir(contaBancaria.ToContaBancaria());
+                ContasBancarias newContaBancaria = await _service.Inserir(contaBancaria);
                 return Ok(newContaBancaria);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(ContasBancariasDTO contaBancaria, int codigo)
+        public async Task<IActionResult> Editar(ContasBancarias contaBancaria, int codigo)
         {
             try
             {
-                ContasBancarias newContaBancaria = await _service.Editar(contaBancaria.ToContaBancaria(codigo));
+                contaBancaria.codigo = codigo;
+                ContasBancarias newContaBancaria = await _service.Editar(contaBancaria);
                 return Ok(newContaBancaria);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -104,7 +125,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -119,7 +144,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
     }

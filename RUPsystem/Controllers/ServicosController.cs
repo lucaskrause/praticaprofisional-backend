@@ -29,7 +29,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -44,37 +48,50 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(ServicosDTO servico)
+        public async Task<IActionResult> Inserir(Servicos servico)
         {
             try
             {
-                Servicos newServico = await _service.Inserir(servico.toServico());
+                Servicos newServico = await _service.Inserir(servico);
                 return Created("/api/servicos/inserir", newServico);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(ServicosDTO servico, int codigo)
+        public async Task<IActionResult> Editar(Servicos servico, int codigo)
         {
             try
             {
-                Servicos newServico = await _service.Editar(servico.toServico(codigo));
+                servico.codigo = codigo;
+                Servicos newServico = await _service.Editar(servico);
                 return Ok(newServico);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -89,7 +106,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -104,7 +125,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
     }

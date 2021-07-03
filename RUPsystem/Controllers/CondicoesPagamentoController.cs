@@ -27,7 +27,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -42,37 +46,50 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(CondicoesPagamentoDTO condicoesPagamento)
+        public async Task<IActionResult> Inserir(CondicoesPagamento condicoesPagamento)
         {
             try
             {
-                CondicoesPagamento newCondicoesPagamento = await _service.Inserir(condicoesPagamento.ToCondicaoPagamento());
+                CondicoesPagamento newCondicoesPagamento = await _service.Inserir(condicoesPagamento);
                 return Ok(newCondicoesPagamento);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(CondicoesPagamentoDTO condicoesPagamento, int codigo)
+        public async Task<IActionResult> Editar(CondicoesPagamento condicoesPagamento, int codigo)
         {
             try
             {
-                CondicoesPagamento newCondicoesPagamento = await _service.Editar(condicoesPagamento.ToCondicaoPagamento(codigo));
+                condicoesPagamento.codigo = codigo;
+                CondicoesPagamento newCondicoesPagamento = await _service.Editar(condicoesPagamento);
                 return Ok(newCondicoesPagamento);
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -87,7 +104,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -102,7 +123,11 @@ namespace RUPsystem.Controllers
             }
             catch (Exception ex)
             {
-                return UnprocessableEntity(ex.Message);
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
     }

@@ -26,9 +26,13 @@ namespace RUPsystem.Controllers
                 IList<FormasPagamento> ListaFormasPagamento = await _service.ListarTodos();
                 return Ok(ListaFormasPagamento.ToList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -41,39 +45,52 @@ namespace RUPsystem.Controllers
                 FormasPagamento formaPagamento = await _service.BuscarPorID(codigo);
                 return Ok(formaPagamento);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(FormasPagamentoDTO formaPagamento)
+        public async Task<IActionResult> Inserir(FormasPagamento formaPagamento)
         {
             try
             {
-                FormasPagamento newFormaPagamento = await _service.Inserir(formaPagamento.ToFormaPagamento());
+                FormasPagamento newFormaPagamento = await _service.Inserir(formaPagamento);
                 return Ok(newFormaPagamento);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(FormasPagamentoDTO formaPagamento, int codigo)
+        public async Task<IActionResult> Editar(FormasPagamento formaPagamento, int codigo)
         {
             try
             {
-                FormasPagamento newFormaPagamento = await _service.Editar(formaPagamento.ToFormaPagamento(codigo));
+                formaPagamento.codigo = codigo;
+                FormasPagamento newFormaPagamento = await _service.Editar(formaPagamento);
                 return Ok(newFormaPagamento);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -86,9 +103,13 @@ namespace RUPsystem.Controllers
                 bool result = await _service.Excluir(codigo);
                 return Ok(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
 
@@ -101,9 +122,13 @@ namespace RUPsystem.Controllers
                 IList<FormasPagamento> listFormasPagamentos = await _service.Pesquisar(str);
                 return Ok(listFormasPagamentos.ToList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
             }
         }
     }
