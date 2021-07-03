@@ -48,7 +48,7 @@ namespace BLL.DataTransferObjects
         [Required]
         public string cep { get; set; }
 
-        public List<ContasBancarias>? contasBancarias { get; set; }
+        public List<ContasBancarias> contasBancarias { get; set; }
 
         public Empresas ToEmpresa()
         {
