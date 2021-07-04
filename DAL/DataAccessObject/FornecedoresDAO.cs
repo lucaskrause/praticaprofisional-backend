@@ -68,8 +68,8 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@nome", fornecedor.nome);
                     command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfcnpj);
-                    command.Parameters.AddWithValue("@rgie", fornecedor.rgie);
+                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
+                    command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
                     command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
                     command.Parameters.AddWithValue("@email", fornecedor.email);
                     command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
@@ -108,8 +108,8 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@nome", fornecedor.nome);
                     command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfcnpj);
-                    command.Parameters.AddWithValue("@rgie", fornecedor.rgie);
+                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
+                    command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
                     command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
                     command.Parameters.AddWithValue("@email", fornecedor.email);
                     command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
@@ -137,10 +137,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE fornecedores SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM fornecedor WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM fornecedores WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", fornecedor.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE fornecedores SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

@@ -66,22 +66,31 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO servicos(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "servicos", "descricao", servico.descricao);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO servicos(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@descricao", servico.descricao);
-                    command.Parameters.AddWithValue("@valor", servico.valor);
-                    command.Parameters.AddWithValue("@dtCadastro", servico.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", servico.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", servico.status);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    servico.codigo = (int)idInserido;
+                        command.Parameters.AddWithValue("@descricao", servico.descricao);
+                        command.Parameters.AddWithValue("@valor", servico.valor);
+                        command.Parameters.AddWithValue("@dtCadastro", servico.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", servico.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", servico.status);
 
-                    return servico;
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        servico.codigo = (int)idInserido;
+
+                        return servico;
+                    }
+                    else
+                    {
+                        throw new Exception("Serviço já cadastrado");
+                    }
                 }
                 finally
                 {
@@ -89,8 +98,6 @@ namespace DAL.DataAccessObject
                 }
             }
         }
-
-
 
         public override async Task<Servicos> Editar(Servicos servico)
         {
@@ -125,10 +132,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE servicos SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM servicos WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM servicos WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", servico.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE servicos SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

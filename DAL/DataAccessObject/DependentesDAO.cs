@@ -61,32 +61,41 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "dependentes", "cpf", dependente.cpf);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@nome", dependente.nome);
-                    command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                    command.Parameters.AddWithValue("@rg", dependente.rg);
-                    command.Parameters.AddWithValue("@sexo", dependente.sexo);
-                    command.Parameters.AddWithValue("@email", dependente.email);
-                    command.Parameters.AddWithValue("@telefone", dependente.telefone);
-                    command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                    command.Parameters.AddWithValue("@complemento", dependente.complemento);
-                    command.Parameters.AddWithValue("@bairro", dependente.bairro);
-                    command.Parameters.AddWithValue("@cep", dependente.cep);
-                    command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-                    command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", dependente.status);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    dependente.codigo = (int)idInserido;
-                    return dependente;
+                        command.Parameters.AddWithValue("@nome", dependente.nome);
+                        command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                        command.Parameters.AddWithValue("@rg", dependente.rg);
+                        command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                        command.Parameters.AddWithValue("@email", dependente.email);
+                        command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                        command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                        command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                        command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                        command.Parameters.AddWithValue("@cep", dependente.cep);
+                        command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                        command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", dependente.status);
+
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        dependente.codigo = (int)idInserido;
+                        return dependente;
+                    }
+                    else
+                    {
+                        throw new Exception("Dependente já cadastrado");
+                    }
                 }
                 finally
                 {
@@ -138,10 +147,19 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE dependentes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM dependentes WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM dependentes WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                    command.Parameters.AddWithValue("@codigo", dependente.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE dependentes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

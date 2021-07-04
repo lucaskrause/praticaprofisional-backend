@@ -65,22 +65,29 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO cidades (cidade, ddd, codigoEstado, dtCadastro, dtAlteracao, status) VALUES(@cidade, @ddd, @codigoEstado, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "cidades", "cidade", cidade.cidade);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO cidades (cidade, ddd, codigoEstado, dtCadastro, dtAlteracao, status) VALUES(@cidade, @ddd, @codigoEstado, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@cidade", cidade.cidade);
-                    command.Parameters.AddWithValue("@ddd", cidade.ddd);
-                    command.Parameters.AddWithValue("@codigoEstado", cidade.codigoEstado);
-                    command.Parameters.AddWithValue("@dtCadastro", cidade.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", cidade.status);
+                        command.Parameters.AddWithValue("@cidade", cidade.cidade);
+                        command.Parameters.AddWithValue("@ddd", cidade.ddd);
+                        command.Parameters.AddWithValue("@codigoEstado", cidade.codigoEstado);
+                        command.Parameters.AddWithValue("@dtCadastro", cidade.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", cidade.status);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    cidade.codigo = (int)idInserido;
-                    return cidade;
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        cidade.codigo = (int)idInserido;
+                        return cidade;
+                    }
+                    else
+                    {
+                        throw new Exception("Cidade já cadastrada");
+                    }
                 }
                 finally
                 {
@@ -124,10 +131,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM paises WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", cidade.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

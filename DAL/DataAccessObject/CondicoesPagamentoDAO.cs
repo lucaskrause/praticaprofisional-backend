@@ -41,6 +41,68 @@ namespace DAL.DataAccessObject
             return list;
         }
 
+        public async Task<List<CondicoesParcelas>> GetParcelas(NpgsqlConnection conexao, int codigoCondicao)
+        {
+            string sql = @"SELECT condicoesParcela.codigo, condicoesParcela.codigocondicaopagamento, condicoesParcela.numeroparcela, condicoesParcela.numerodias, condicoesParcela.porcentagem, condicoesParcela.codigoformapagamento, condicoesParcela.dtcadastro, condicoesParcela.dtalteracao, condicoesParcela.status, formasPagamento.descricao as descricaoForma FROM condicoesparcela INNER JOIN formasPagamento ON (condicoesParcela.codigoFormaPagamento = formasPagamento.codigo) WHERE condicoesParcela.codigoCondicaoPagamento = @codigo AND condicoesParcela.status = 'Ativo';";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigo", codigoCondicao);
+
+            List<CondicoesParcelas> listParcelas = await GetParcelasResultSet(command);
+            return listParcelas;
+        }
+
+        public async Task<CondicoesParcelas> InsertParcela(NpgsqlConnection conexao, CondicoesParcelas parcela)
+        {
+            string sql = @"INSERT INTO condicoesparcela(codigocondicaopagamento, numeroparcela, numerodias, porcentagem, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCondicaoPagamento, @numeroParcela, @numeroDias, @porcentagem, @codigoFormaPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigoCondicaoPagamento", parcela.codigoCondicaoPagamento);
+            command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
+            command.Parameters.AddWithValue("@numeroDias", parcela.numeroDias);
+            command.Parameters.AddWithValue("@porcentagem", parcela.porcentagem);
+            command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
+            command.Parameters.AddWithValue("@dtCadastro", parcela.dtCadastro);
+            command.Parameters.AddWithValue("@dtAlteracao", parcela.dtAlteracao);
+            command.Parameters.AddWithValue("@status", parcela.status);
+
+            Object idInserido = await command.ExecuteScalarAsync();
+            parcela.codigo = (int)idInserido;
+            return parcela;
+        }
+
+        public async Task<CondicoesParcelas> UpdateParcela(NpgsqlConnection conexao, CondicoesParcelas parcela)
+        {
+            string sql = @"UPDATE condicoesparcela SET codigocondicaopagamento = @codigoCondicaoPagamento, numeroparcela = @numeroParcela, numerodias = @numeroDias, porcentagem = @porcentagem, codigoformapagamento = @codigoFormaPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigoCondicaoPagamento", parcela.codigoCondicaoPagamento);
+            command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
+            command.Parameters.AddWithValue("@numeroDias", parcela.numeroDias);
+            command.Parameters.AddWithValue("@porcentagem", parcela.porcentagem);
+            command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
+            command.Parameters.AddWithValue("@dtAlteracao", parcela.dtAlteracao);
+            command.Parameters.AddWithValue("@codigo", parcela.codigo);
+
+            await command.ExecuteNonQueryAsync();
+            return parcela;
+        }
+
+        public async Task<bool> DeleteParcela(NpgsqlConnection conexao, int codigoParcela)
+        {
+            string sql = @"DELETE FROM condicoesparcela WHERE codigo = @codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigo", codigoParcela);
+
+            var result = await command.ExecuteNonQueryAsync();
+            return result == 1 ? true : false;
+        }
+
         public override async Task<IList<CondicoesPagamento>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -67,11 +129,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"SELECT * FROM condicoesPagamento WHERE codigo = @codigo AND status = 'Ativo';";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -81,18 +143,16 @@ namespace DAL.DataAccessObject
 
                     if(list.Count > 0)
                     {
-                        sql = @"SELECT condicoesParcela.codigo, condicoesParcela.codigocondicaopagamento, condicoesParcela.numeroparcela, condicoesParcela.numerodias, condicoesParcela.porcentagem, condicoesParcela.codigoformapagamento, condicoesParcela.dtcadastro, condicoesParcela.dtalteracao, condicoesParcela.status, formasPagamento.descricao as descricaoForma FROM condicoesparcela INNER JOIN formasPagamento ON (condicoesParcela.codigoFormaPagamento = formasPagamento.codigo) WHERE condicoesParcela.codigoCondicaoPagamento = @codigo AND condicoesParcela.status = 'Ativo';";
-
-                        command = new NpgsqlCommand(sql, conexao);
-
-                        command.Parameters.AddWithValue("@codigo", codigo);
-
-                        List<CondicoesParcelas> listParcelas = await GetParcelasResultSet(command);
-
-                        list[0].parcelas = listParcelas;
+                        list[0].parcelas = await GetParcelas(conexao, codigo);
                     }
 
+                    transaction.Commit();
                     return list[0];
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {
@@ -109,53 +169,45 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"INSERT INTO condicoespagamento(descricao, totalparcelas, multa, juros, desconto, dtcadastro, dtalteracao, status) VALUES (@descricao, @totalParcelas, @multa, @juros, @desconto, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@descricao", condicaoPagamento.descricao);
-                    command.Parameters.AddWithValue("@totalParcelas", condicaoPagamento.totalParcelas);
-                    command.Parameters.AddWithValue("@multa", condicaoPagamento.multa);
-                    command.Parameters.AddWithValue("@juros", condicaoPagamento.juros);
-                    command.Parameters.AddWithValue("@desconto", condicaoPagamento.desconto);
-                    command.Parameters.AddWithValue("@dtCadastro", condicaoPagamento.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", condicaoPagamento.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", condicaoPagamento.status);
-
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    condicaoPagamento.codigo = (int)idInserido;
-
-                    int qtdParcelas = condicaoPagamento.parcelas.Count;
-                    if (qtdParcelas > 0)
+                    bool exists = await CheckExist(conexao, "condicoespagamento", "descricao", condicaoPagamento.descricao);
+                    if (exists)
                     {
-                        for (int i = 0; i < qtdParcelas; i++)
+                        string sql = @"INSERT INTO condicoespagamento(descricao, totalparcelas, multa, juros, desconto, dtcadastro, dtalteracao, status) VALUES (@descricao, @totalParcelas, @multa, @juros, @desconto, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@descricao", condicaoPagamento.descricao);
+                        command.Parameters.AddWithValue("@totalParcelas", condicaoPagamento.totalParcelas);
+                        command.Parameters.AddWithValue("@multa", condicaoPagamento.multa);
+                        command.Parameters.AddWithValue("@juros", condicaoPagamento.juros);
+                        command.Parameters.AddWithValue("@desconto", condicaoPagamento.desconto);
+                        command.Parameters.AddWithValue("@dtCadastro", condicaoPagamento.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", condicaoPagamento.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", condicaoPagamento.status);
+
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        condicaoPagamento.codigo = (int)idInserido;
+
+                        int qtdParcelas = condicaoPagamento.parcelas.Count;
+                        if (qtdParcelas > 0)
                         {
-                            CondicoesParcelas parcela = condicaoPagamento.parcelas[i];
-                            parcela.codigoCondicaoPagamento = condicaoPagamento.codigo;
-                            parcela.Ativar();
-                            parcela.PrepareSave();
-
-                            sql = @"INSERT INTO condicoesparcela(codigocondicaopagamento, numeroparcela, numerodias, porcentagem, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCondicaoPagamento, @numeroParcela, @numeroDias, @porcentagem, @codigoFormaPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                            command = new NpgsqlCommand(sql, conexao);
-
-                            command.Parameters.AddWithValue("@codigoCondicaoPagamento", parcela.codigoCondicaoPagamento);
-                            command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
-                            command.Parameters.AddWithValue("@numeroDias", parcela.numeroDias);
-                            command.Parameters.AddWithValue("@porcentagem", parcela.porcentagem);
-                            command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
-                            command.Parameters.AddWithValue("@dtCadastro", parcela.dtCadastro);
-                            command.Parameters.AddWithValue("@dtAlteracao", parcela.dtAlteracao);
-                            command.Parameters.AddWithValue("@status", parcela.status);
-
-                            idInserido = await command.ExecuteScalarAsync();
-                            parcela.codigo = (int)idInserido;
-                            condicaoPagamento.parcelas[i] = parcela;
+                            for (int i = 0; i < qtdParcelas; i++)
+                            {
+                                CondicoesParcelas parcela = condicaoPagamento.parcelas[i];
+                                parcela.codigoCondicaoPagamento = condicaoPagamento.codigo;
+                                parcela.Ativar();
+                                parcela.PrepareSave();
+                                condicaoPagamento.parcelas[i] = await InsertParcela(conexao, parcela);
+                            }
                         }
-                    }
 
-                    transaction.Commit();
-                    return condicaoPagamento;
+                        transaction.Commit();
+                        return condicaoPagamento;
+                    }
+                    else
+                    {
+                        throw new Exception("Condição de Pagamento já cadastrado");
+                    }
                 }
                 catch
                 {
@@ -200,49 +252,16 @@ namespace DAL.DataAccessObject
                             if (parcela.codigo == 0) {
                                 parcela.codigoCondicaoPagamento = condicaoPagamento.codigo;
                                 parcela.Ativar();
-
-                                sql = @"INSERT INTO condicoesparcela(codigocondicaopagamento, numeroparcela, numerodias, porcentagem, codigoformapagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCondicaoPagamento, @numeroParcela, @numeroDias, @porcentagem, @codigoFormaPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@codigoCondicaoPagamento", parcela.codigoCondicaoPagamento);
-                                command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
-                                command.Parameters.AddWithValue("@numeroDias", parcela.numeroDias);
-                                command.Parameters.AddWithValue("@porcentagem", parcela.porcentagem);
-                                command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
-                                command.Parameters.AddWithValue("@dtCadastro", parcela.dtCadastro);
-                                command.Parameters.AddWithValue("@dtAlteracao", parcela.dtAlteracao);
-                                command.Parameters.AddWithValue("@status", parcela.status);
-
-                                Object idInserido = await command.ExecuteScalarAsync();
-                                parcela.codigo = (int)idInserido;
-                                condicaoPagamento.parcelas[i] = parcela;
+                                condicaoPagamento.parcelas[i] = await InsertParcela(conexao, parcela);
                             }
                             else if (parcela.codigo > 0 && parcela.status == "Ativo")
                             {
-                                sql = @"UPDATE condicoesparcela SET codigocondicaopagamento = @codigoCondicaoPagamento, numeroparcela = @numeroParcela, numerodias = @numeroDias, porcentagem = @porcentagem, codigoformapagamento = @codigoFormaPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@codigoCondicaoPagamento", parcela.codigoCondicaoPagamento);
-                                command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
-                                command.Parameters.AddWithValue("@numeroDias", parcela.numeroDias);
-                                command.Parameters.AddWithValue("@porcentagem", parcela.porcentagem);
-                                command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
-                                command.Parameters.AddWithValue("@dtAlteracao", parcela.dtAlteracao);
-                                command.Parameters.AddWithValue("@codigo", parcela.codigo);
-
-                                await command.ExecuteNonQueryAsync();
+                                condicaoPagamento.parcelas[i] = await UpdateParcela(conexao, parcela);
                             }
                             else
                             {
-                                sql = @"DELETE FROM condicoesparcela WHERE codigo = @codigo;";
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@codigo", parcela.codigo);
-
-                                await command.ExecuteNonQueryAsync();
+                                await DeleteParcela(conexao, parcela.codigo);
+                                condicaoPagamento.parcelas.RemoveAt(i);
                             }
                         }
                     }
@@ -266,21 +285,24 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"UPDATE condicoesPagamento SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM condicoesPagamento WHERE codigo = @codigo";
-
-                    conexao.Open();
+                    string sql = @"DELETE FROM condicoesParcela WHERE codigoCondicaoPagamento = @codigo;
+                                   DELETE FROM condicoesPagamento WHERE codigo = @codigo;";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@status", condicaoPagamento.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", condicaoPagamento.dtAlteracao);
                     command.Parameters.AddWithValue("@codigo", condicaoPagamento.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception("Não foi possível excluir a condição de pagamento");
                 }
                 finally
                 {

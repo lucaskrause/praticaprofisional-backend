@@ -119,15 +119,11 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE precificacoes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM precificacoes WHERE codigo = @codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@status", preco.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", preco.dtAlteracao);
                     command.Parameters.AddWithValue("@codigo", preco.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();

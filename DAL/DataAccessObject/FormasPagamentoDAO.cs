@@ -65,20 +65,27 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO formasPagamento(descricao, dtCadastro, dtAlteracao, status) VALUES (@descricao, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "formasPagamento", "descricao", formasPagamento.descricao);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO formasPagamento(descricao, dtCadastro, dtAlteracao, status) VALUES (@descricao, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@descricao", formasPagamento.descricao);
-                    command.Parameters.AddWithValue("@dtCadastro", formasPagamento.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", formasPagamento.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", formasPagamento.status);
+                        command.Parameters.AddWithValue("@descricao", formasPagamento.descricao);
+                        command.Parameters.AddWithValue("@dtCadastro", formasPagamento.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", formasPagamento.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", formasPagamento.status);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    formasPagamento.codigo = (int)idInserido;
-                    return formasPagamento;
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        formasPagamento.codigo = (int)idInserido;
+                        return formasPagamento;
+                    }
+                    else
+                    {
+                        throw new Exception("Forma de Pagamento já cadastrada");
+                    }
                 }
                 finally
                 {
@@ -119,10 +126,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE formasPagamento SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM formasPagamento WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", formasPagamento.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE formasPagamento SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

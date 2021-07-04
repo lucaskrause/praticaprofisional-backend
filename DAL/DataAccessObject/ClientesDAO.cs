@@ -70,6 +70,129 @@ namespace DAL.DataAccessObject
             return list;
         }
 
+        public async Task<bool> CheckExistDependente(NpgsqlConnection conexao, string table, string column, string value)
+        {
+            string sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@value", value);
+
+            List<Dependentes> list = await GetDependentesResultSet(command);
+
+            if (list.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> ClienteIsSocio(NpgsqlConnection conexao, int codigoCliente)
+        {
+            string sql = @"SELECT * FROM cotas WHERE cotas.codigoCliente = @codigo AND cotas.status = 'Ativo';";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigo", codigoCliente);
+
+            List<Cotas> listCotas = await GetCotasResultSet(command);
+
+            if (listCotas.Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<List<Dependentes>> GetDependentes(NpgsqlConnection conexao, int codigoCliente)
+        {
+            string sql = @"SELECT dependentes.codigo, dependentes.nome, dependentes.cpf, dependentes.rg, dependentes.sexo, dependentes.email, dependentes.telefone, dependentes.dtnascimento, dependentes.codigocidade, dependentes.logradouro, dependentes.complemento, dependentes.bairro, dependentes.cep, dependentes.codigocliente, dependentes.dtcadastro, dependentes.dtalteracao, dependentes.status, cidades.cidade as nomeCidade, clientes.nome as nomeCliente FROM dependentes INNER JOIN cidades ON (dependentes.codigoCidade = cidades.codigo) INNER JOIN clientes ON (dependentes.codigoCliente = clientes.codigo) WHERE dependentes.codigocliente = @codigo AND dependentes.status = 'Ativo';";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigo", codigoCliente);
+
+            List<Dependentes> listDependentes = await GetDependentesResultSet(command);
+
+            return listDependentes;
+        }
+
+        public async Task<Dependentes> InsertDependente(NpgsqlConnection conexao, Dependentes dependente)
+        {
+            bool exists = await CheckExistDependente(conexao, "clientes", "cpfcnpj", dependente.cpf);
+            if (exists)
+            {
+                string sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                command.Parameters.AddWithValue("@nome", dependente.nome);
+                command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                command.Parameters.AddWithValue("@rg", dependente.rg);
+                command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                command.Parameters.AddWithValue("@email", dependente.email);
+                command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                command.Parameters.AddWithValue("@cep", dependente.cep);
+                command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
+                command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                command.Parameters.AddWithValue("@status", dependente.status);
+
+                Object idInserido = await command.ExecuteScalarAsync();
+                dependente.codigo = (int)idInserido;
+
+                return dependente;
+            }
+            else
+            {
+                throw new Exception("Dependente " + dependente.nome + " já cadastrado");
+            }
+        }
+
+        public async Task<Dependentes> UpdateDependente(NpgsqlConnection conexao, Dependentes dependente)
+        {
+            string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@nome", dependente.nome);
+            command.Parameters.AddWithValue("@cpf", dependente.cpf);
+            command.Parameters.AddWithValue("@rg", dependente.rg);
+            command.Parameters.AddWithValue("@sexo", dependente.sexo);
+            command.Parameters.AddWithValue("@email", dependente.email);
+            command.Parameters.AddWithValue("@telefone", dependente.telefone);
+            command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+            command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+            command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+            command.Parameters.AddWithValue("@complemento", dependente.complemento);
+            command.Parameters.AddWithValue("@bairro", dependente.bairro);
+            command.Parameters.AddWithValue("@cep", dependente.cep);
+            command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+            command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+            command.Parameters.AddWithValue("@status", dependente.status);
+            command.Parameters.AddWithValue("@codigo", dependente.codigo);
+
+            await command.ExecuteNonQueryAsync();
+            return dependente;
+        }
+
+        public async Task<bool> DeleteDependente(NpgsqlConnection conexao, int codigoDependente)
+        {
+            string sql = @"DELETE FROM dependentes WHERE codigo = @codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@codigo", codigoDependente);
+
+            var result = await command.ExecuteNonQueryAsync();
+            return result == 1 ? true : false;
+        }
+
         public override async Task<IList<Clientes>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -95,11 +218,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"SELECT clientes.codigo, clientes.nome, clientes.tipopessoa, clientes.cpfcnpj, clientes.rgie, clientes.sexo, clientes.email, clientes.telefone, clientes.dtnascfundacao AS dtNascimento, clientes.codigocidade, clientes.logradouro, clientes.complemento, clientes.bairro, clientes.cep, clientes.codigocondicaopagamento, clientes.dtcadastro, clientes.dtalteracao, clientes.status, cidades.cidade as nomeCidade, condicoespagamento.descricao AS nomeCondicao FROM clientes INNER JOIN cidades ON (clientes.codigoCidade = cidades.codigo) INNER JOIN condicoespagamento ON (clientes.codigocondicaopagamento = condicoespagamento.codigo) WHERE clientes.codigo = @codigo AND clientes.status = 'Ativo';";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -109,34 +232,18 @@ namespace DAL.DataAccessObject
 
                     if (list.Count > 0)
                     {
-                        sql = @"SELECT dependentes.codigo, dependentes.nome, dependentes.cpf, dependentes.rg, dependentes.sexo, dependentes.email, dependentes.telefone, dependentes.dtnascimento, dependentes.codigocidade, dependentes.logradouro, dependentes.complemento, dependentes.bairro, dependentes.cep, dependentes.codigocliente, dependentes.dtcadastro, dependentes.dtalteracao, dependentes.status, cidades.cidade as nomeCidade, clientes.nome as nomeCliente FROM dependentes INNER JOIN cidades ON (dependentes.codigoCidade = cidades.codigo) INNER JOIN clientes ON (dependentes.codigoCliente = clientes.codigo) WHERE dependentes.codigocliente = @codigo AND dependentes.status = 'Ativo';";
+                        list[0].dependentes = await GetDependentes(conexao, codigo);
 
-                        command = new NpgsqlCommand(sql, conexao);
-
-                        command.Parameters.AddWithValue("@codigo", codigo);
-
-                        List<Dependentes> listDependentes = await GetDependentesResultSet(command);
-
-                        if (listDependentes.Count > 0)
-                        {
-                            list[0].dependentes = listDependentes;
-                        }
-
-                        sql = @"SELECT * FROM cotas WHERE cotas.codigoCliente = @codigo AND cotas.status = 'Ativo';";
-
-                        command = new NpgsqlCommand(sql, conexao);
-
-                        command.Parameters.AddWithValue("@codigo", codigo);
-
-                        List<Cotas> listCotas = await GetCotasResultSet(command);
-
-                        if (listCotas.Count > 0)
-                        {
-                            list[0].isSocio = true;
-                        }
+                        list[0].isSocio = await ClienteIsSocio(conexao, codigo);
                     }
 
+                    transaction.Commit();
                     return list[0];
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
                 finally
                 {
@@ -144,6 +251,7 @@ namespace DAL.DataAccessObject
                 }
             }
         }
+
         public async Task<Clientes> BuscarSocioPorID(int codigo)
         {
             using (var conexao = GetCurrentConnection())
@@ -177,70 +285,54 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"INSERT INTO clientes(nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@nome", cliente.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", cliente.rgIe);
-                    command.Parameters.AddWithValue("@sexo", cliente.sexo);
-                    command.Parameters.AddWithValue("@email", cliente.email);
-                    command.Parameters.AddWithValue("@telefone", cliente.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
-                    command.Parameters.AddWithValue("@complemento", cliente.complemento);
-                    command.Parameters.AddWithValue("@bairro", cliente.bairro);
-                    command.Parameters.AddWithValue("@cep", cliente.cep);
-                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
-                    command.Parameters.AddWithValue("@dtCadastro", cliente.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", cliente.status);
-
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    cliente.codigo = (int)idInserido;
-
-                    int qtdDependentes = cliente.dependentes.Count;
-                    if (qtdDependentes > 0)
+                    bool exists = await CheckExist(conexao, "clientes", "cpfcnpj", cliente.cpfCnpj);
+                    if (exists)
                     {
-                        for (int i = 0; i < qtdDependentes; i++)
+                        string sql = @"INSERT INTO clientes(nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@nome", cliente.nome);
+                        command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
+                        command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
+                        command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                        command.Parameters.AddWithValue("@sexo", cliente.sexo);
+                        command.Parameters.AddWithValue("@email", cliente.email);
+                        command.Parameters.AddWithValue("@telefone", cliente.telefone);
+                        command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
+                        command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                        command.Parameters.AddWithValue("@bairro", cliente.bairro);
+                        command.Parameters.AddWithValue("@cep", cliente.cep);
+                        command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
+                        command.Parameters.AddWithValue("@dtCadastro", cliente.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", cliente.status);
+
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        cliente.codigo = (int)idInserido;
+
+                        int qtdDependentes = cliente.dependentes.Count;
+                        if (qtdDependentes > 0)
                         {
-                            Dependentes dependente = cliente.dependentes[i];
-                            dependente.codigoCliente = cliente.codigo;
-                            dependente.Ativar();
-                            dependente.PrepareSave();
-
-                            sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                            command = new NpgsqlCommand(sql, conexao);
-
-                            command.Parameters.AddWithValue("@nome", dependente.nome);
-                            command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                            command.Parameters.AddWithValue("@rg", dependente.rg);
-                            command.Parameters.AddWithValue("@sexo", dependente.sexo);
-                            command.Parameters.AddWithValue("@email", dependente.email);
-                            command.Parameters.AddWithValue("@telefone", dependente.telefone);
-                            command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-                            command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-                            command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                            command.Parameters.AddWithValue("@complemento", dependente.complemento);
-                            command.Parameters.AddWithValue("@bairro", dependente.bairro);
-                            command.Parameters.AddWithValue("@cep", dependente.cep);
-                            command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-                            command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
-                            command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
-                            command.Parameters.AddWithValue("@status", dependente.status);
-
-                            idInserido = await command.ExecuteScalarAsync();
-                            dependente.codigo = (int)idInserido;
-                            cliente.dependentes[i] = dependente;
+                            for (int i = 0; i < qtdDependentes; i++)
+                            {
+                                Dependentes dependente = cliente.dependentes[i];
+                                dependente.codigoCliente = cliente.codigo;
+                                dependente.PrepareSave();
+                                dependente.Ativar();
+                                cliente.dependentes[i] = await InsertDependente(conexao, dependente);
+                            }
                         }
-                    }
 
-                    transaction.Commit();
-                    return cliente;
+                        transaction.Commit();
+                        return cliente;
+                    }
+                    else
+                    {
+                        throw new Exception("Cliente já cadastrado");
+                    }
                 }
                 catch
                 {
@@ -296,68 +388,16 @@ namespace DAL.DataAccessObject
                             {
                                 dependente.codigoCliente = cliente.codigo;
                                 dependente.Ativar();
-
-                                sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                                conexao.Open();
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@nome", dependente.nome);
-                                command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                                command.Parameters.AddWithValue("@rg", dependente.rg);
-                                command.Parameters.AddWithValue("@sexo", dependente.sexo);
-                                command.Parameters.AddWithValue("@email", dependente.email);
-                                command.Parameters.AddWithValue("@telefone", dependente.telefone);
-                                command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-                                command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-                                command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                                command.Parameters.AddWithValue("@complemento", dependente.complemento);
-                                command.Parameters.AddWithValue("@bairro", dependente.bairro);
-                                command.Parameters.AddWithValue("@cep", dependente.cep);
-                                command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-                                command.Parameters.AddWithValue("@dtCadastro", dependente.dtCadastro);
-                                command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
-                                command.Parameters.AddWithValue("@status", dependente.status);
-
-                                Object idInserido = await command.ExecuteScalarAsync();
-                                dependente.codigo = (int)idInserido;
-                                cliente.dependentes[i] = dependente;
+                                cliente.dependentes[i] = await InsertDependente(conexao, dependente);
                             }
                             else if (dependente.codigo > 0 && dependente.status == "Ativo")
                             {
-                                sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@nome", dependente.nome);
-                                command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                                command.Parameters.AddWithValue("@rg", dependente.rg);
-                                command.Parameters.AddWithValue("@sexo", dependente.sexo);
-                                command.Parameters.AddWithValue("@email", dependente.email);
-                                command.Parameters.AddWithValue("@telefone", dependente.telefone);
-                                command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-                                command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-                                command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                                command.Parameters.AddWithValue("@complemento", dependente.complemento);
-                                command.Parameters.AddWithValue("@bairro", dependente.bairro);
-                                command.Parameters.AddWithValue("@cep", dependente.cep);
-                                command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-                                command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
-                                command.Parameters.AddWithValue("@status", dependente.status);
-                                command.Parameters.AddWithValue("@codigo", dependente.codigo);
-
-                                await command.ExecuteNonQueryAsync();
+                                cliente.dependentes[i] = await UpdateDependente(conexao, dependente);
                             }
                             else
                             {
-                                sql = @"DELETE FROM dependentes WHERE codigo = @codigo;";
-
-                                command = new NpgsqlCommand(sql, conexao);
-
-                                command.Parameters.AddWithValue("@codigo", dependente.codigo);
-
-                                await command.ExecuteNonQueryAsync();
+                                await DeleteDependente(conexao, dependente.codigo);
+                                cliente.dependentes.RemoveAt(i);
                             }
                         }
                     }
@@ -383,10 +423,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE clientes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM cliente WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM cliente WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", cliente.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE clientes SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

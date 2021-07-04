@@ -66,26 +66,34 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO produtos(produto, unidades, valorcusto, estoque, codigocategoria, dtultimacompra, valorultimacompra, dtcadastro, dtalteracao, status) VALUES (@produto, @unidades, @valorCusto, @estoque, @codigoCategoria, @dtUltimaCompra, @valorUltimaCompra, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "produtos", "produto", produto.produto);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO produtos(produto, unidades, valorcusto, estoque, codigocategoria, dtultimacompra, valorultimacompra, dtcadastro, dtalteracao, status) VALUES (@produto, @unidades, @valorCusto, @estoque, @codigoCategoria, @dtUltimaCompra, @valorUltimaCompra, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@produto", produto.produto);
-                    command.Parameters.AddWithValue("@unidades", produto.unidades);
-                    command.Parameters.AddWithValue("@valorCusto", produto.valorCusto);
-                    command.Parameters.AddWithValue("@estoque", produto.estoque);
-                    command.Parameters.AddWithValue("@codigoCategoria", produto.codigoCategoria);
-                    command.Parameters.AddWithValue("@dtUltimaCompra", produto.dtUltimaCompra ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@valorUltimaCompra", produto.valorUltimaCompra ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@dtCadastro", produto.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", produto.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", produto.status);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    produto.codigo = (int)idInserido;
-                    return produto;
+                        command.Parameters.AddWithValue("@produto", produto.produto);
+                        command.Parameters.AddWithValue("@unidades", produto.unidades);
+                        command.Parameters.AddWithValue("@valorCusto", produto.valorCusto);
+                        command.Parameters.AddWithValue("@estoque", produto.estoque);
+                        command.Parameters.AddWithValue("@codigoCategoria", produto.codigoCategoria);
+                        command.Parameters.AddWithValue("@dtUltimaCompra", produto.dtUltimaCompra ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@valorUltimaCompra", produto.valorUltimaCompra ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@dtCadastro", produto.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", produto.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", produto.status);
+
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        produto.codigo = (int)idInserido;
+                        return produto;
+                    } else
+                    {
+                        throw new Exception("Produto já cadastrado");
+                    }
                 }
                 finally
                 {
@@ -132,10 +140,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE produtos SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM produtos WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM produtos WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", produto.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE produtos SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

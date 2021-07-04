@@ -65,21 +65,30 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO areasLocacao(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "areasLocacao", "descricao", area.descricao);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO areasLocacao(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@descricao", area.descricao);
-                    command.Parameters.AddWithValue("@valor", area.valor);
-                    command.Parameters.AddWithValue("@dtCadastro", area.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", area.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", area.status);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    area.codigo = (int)idInserido;
-                    return area;
+                        command.Parameters.AddWithValue("@descricao", area.descricao);
+                        command.Parameters.AddWithValue("@valor", area.valor);
+                        command.Parameters.AddWithValue("@dtCadastro", area.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", area.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", area.status);
+
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        area.codigo = (int)idInserido;
+                        return area;
+                    }
+                    else
+                    {
+                        throw new Exception("Área já cadastrada");
+                    }
                 }
                 finally
                 {
@@ -121,10 +130,20 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE areasLocacao SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-                    // string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM areasLocacao WHERE codigo = @codigo";
 
                     conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigo", area.codigo);
+
+                    var result = await command.ExecuteNonQueryAsync();
+                    return result == 1 ? true : false;
+                }
+                catch
+                {
+                    string sql = @"UPDATE areasLocacao SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

@@ -12,23 +12,6 @@ namespace DAL.DataAccessObject
         {
         }
 
-        public async Task<bool> checkPais(NpgsqlConnection conexao, Paises pais)
-        {
-            string sql = @"SELECT * FROM paises WHERE pais = @pais;";
-
-            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-            command.Parameters.AddWithValue("@pais", pais.pais);
-
-            List<Paises> list = await GetResultSet(command);
-
-            if(list.Count > 0)
-            {
-                return false;
-            }
-            return true;
-        }
-
         public override async Task<IList<Paises>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -89,7 +72,7 @@ namespace DAL.DataAccessObject
                 try
                 {
                     conexao.Open();
-                    bool exists = await checkPais(conexao, pais);
+                    bool exists = await CheckExist(conexao, "paises", "pais", pais.pais);
                     if (exists)
                     {
                         string sql = @"INSERT INTO paises(pais, sigla, ddi, dtCadastro, dtAlteracao, status) VALUES (@pais, @sigla, @ddi, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -108,9 +91,8 @@ namespace DAL.DataAccessObject
                         return pais;
                     } else
                     {
-                        throw new Exception("País já existente");
+                        throw new Exception("País já cadastrado");
                     }
-                    
                 }
                 finally
                 {
