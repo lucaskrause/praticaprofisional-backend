@@ -15,6 +15,10 @@ namespace DAL.Models
             {
                 return "Categoria obrigatória";
             }
+            else if (this.descricao.Length > 50)
+            {
+                return "Categoria deve ter no máximo 50 caracteres";
+            }
             else
             {
                 return null;

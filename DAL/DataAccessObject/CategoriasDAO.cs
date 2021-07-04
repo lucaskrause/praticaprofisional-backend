@@ -51,7 +51,14 @@ namespace DAL.DataAccessObject
 
                     List<Categorias> list = await GetResultSet(command);
 
-                    return list[0];
+                    if(list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Categoria não encontrada");
+                    }
                 }
                 finally
                 {
@@ -71,8 +78,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"INSERT INTO categorias(descricao, dtCadastro, dtAlteracao, status) VALUES (@descricao, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -104,12 +109,10 @@ namespace DAL.DataAccessObject
                 try
                 {
                     conexao.Open();
-                    bool exists = await CheckExist(conexao, "categorias", "descricao", categoria.descricao);
+                    bool exists = await CheckExist(conexao, "categorias", "descricao", categoria.descricao, categoria.codigo);
                     if (exists)
                     {
                         string sql = @"UPDATE categorias SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
