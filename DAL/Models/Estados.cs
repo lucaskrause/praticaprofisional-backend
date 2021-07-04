@@ -21,9 +21,17 @@ namespace DAL.Models
             {
                 return "Estado obrigatório";
             }
+            else if (this.estado.Length > 50)
+            {
+                return "Estado deve ter no máximo 50 caracteres";
+            }
             else if (this.uf == null || this.uf == "")
             {
                 return "UF obrigatório";
+            }
+            else if (this.uf.Length == 1 || this.uf.Length > 4)
+            {
+                return "UF deve ter entre 2 e 4 caracteres";
             }
             else if (this.codigoPais <= 0)
             {

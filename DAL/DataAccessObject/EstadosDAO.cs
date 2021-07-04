@@ -49,7 +49,15 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Estados> list = await GetResultSet(command);
+
+                    if (list.Count >0 )
+                    {
                     return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Estado não encontrado");
+                    }
                 }
                 finally
                 {
@@ -106,8 +114,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"UPDATE estados SET estado = @estado, uf = @uf, codigoPais = @codigoPais, dtAlteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
