@@ -61,15 +61,15 @@ namespace BLL.Service
             {
                 return "Condição de Pagamento obrigatório";
             }
-            else if (condicaoPagamento.multa <= 0)
+            else if (condicaoPagamento.multa < 0)
             {
                 return "Multa obrigatória";
             }
-            else if (condicaoPagamento.juros <= 0)
+            else if (condicaoPagamento.juros < 0)
             {
                 return "Juros obrigatório";
             }
-            else if (condicaoPagamento.desconto <= 0)
+            else if (condicaoPagamento.desconto < 0)
             {
                 return "Descontro obrigatório";
             }
