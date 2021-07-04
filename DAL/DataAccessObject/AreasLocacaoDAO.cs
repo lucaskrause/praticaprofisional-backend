@@ -50,7 +50,14 @@ namespace DAL.DataAccessObject
 
                     List<AreasLocacao> list = await GetResultSet(command);
 
-                    return list[0];
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Área de Locação não encontrada");
+                    }
                 }
                 finally
                 {
@@ -70,8 +77,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"INSERT INTO areasLocacao(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -108,8 +113,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"UPDATE areasLocacao SET descricao = @descricao, valor = @valor, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
