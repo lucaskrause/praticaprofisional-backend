@@ -9,8 +9,8 @@ namespace DAL.Models
     {
         public string tipoPessoa { get; set; }
 
-        public string cpfcnpj { get; set; }
+        public string cpfCnpj { get; set; }
 
-        public string rgie { get; set; }
+        public string rgIe { get; set; }
     }
 }
