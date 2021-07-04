@@ -15,7 +15,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM precificacoes WHERE status = 'Ativo' ORDER BY codigo;";
+                    string sql = @"SELECT * FROM precificacoes WHERE status = 'Ativo' ORDER BY minpessoas;";
 
                     conexao.Open();
 
@@ -46,7 +46,14 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Precificacoes> list = await GetResultSet(command);
-                    return list[0];
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Precificação não encontrada");
+                    }
                 }
                 finally
                 {
@@ -61,22 +68,37 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO precificacoes(minpessoas, maxpessoas, valor, dtcadastro, dtalteracao, status) VALUES (@minPessoas, @maxPessoas, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "precificacoes", "minpessoas", preco.minPessoas);
+                    if (exists)
+                    {
+                        exists = await CheckExist(conexao, "precificacoes", "maxpessoas", preco.maxPessoas);
+                        if (exists)
+                        {
+                            string sql = @"INSERT INTO precificacoes(minpessoas, maxpessoas, valor, dtcadastro, dtalteracao, status) VALUES (@minPessoas, @maxPessoas, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
-                    command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
-                    command.Parameters.AddWithValue("@valor", preco.valor);
-                    command.Parameters.AddWithValue("@dtCadastro", preco.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
-                    command.Parameters.AddWithValue("@status", preco.status);
+                            command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
+                            command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
+                            command.Parameters.AddWithValue("@valor", preco.valor);
+                            command.Parameters.AddWithValue("@dtCadastro", preco.dtCadastro);
+                            command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
+                            command.Parameters.AddWithValue("@status", preco.status);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    preco.codigo = (int)idInserido;
-                    return preco;
+                            Object idInserido = await command.ExecuteScalarAsync();
+                            preco.codigo = (int)idInserido;
+                            return preco;
+                        }
+                        else
+                        {
+                            throw new Exception("Precificação com máximo de pessoas igual a " + preco.maxPessoas + " já cadastra");
+                        }
+                     }
+                    else
+                    {
+                        throw new Exception("Precificação com mínimo de pessoas igual a " + preco.minPessoas + " já cadastra");
+                    }
                 }
                 finally
                 {
@@ -91,20 +113,35 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE precificacoes SET minpessoas = @minPessoas, maxpessoas = @maxPessoas, valor = @valor, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "precificacoes", "minpessoas", preco.minPessoas, preco.codigo);
+                    if (exists)
+                    {
+                        exists = await CheckExist(conexao, "precificacoes", "maxpessoas", preco.maxPessoas, preco.codigo);
+                        if (exists)
+                        {
+                            string sql = @"UPDATE precificacoes SET minpessoas = @minPessoas, maxpessoas = @maxPessoas, valor = @valor, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
-                    command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
-                    command.Parameters.AddWithValue("@valor", preco.valor);
-                    command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
-                    command.Parameters.AddWithValue("@codigo", preco.codigo);
+                            command.Parameters.AddWithValue("@minPessoas", preco.minPessoas);
+                            command.Parameters.AddWithValue("@maxPessoas", preco.maxPessoas);
+                            command.Parameters.AddWithValue("@valor", preco.valor);
+                            command.Parameters.AddWithValue("@dtAlteracao", preco.dtCadastro);
+                            command.Parameters.AddWithValue("@codigo", preco.codigo);
 
-                    await command.ExecuteNonQueryAsync();
-                    return preco;
+                            await command.ExecuteNonQueryAsync();
+                            return preco;
+                        }
+                        else
+                        {
+                            throw new Exception("Precificação com máximo de pessoas igual a " + preco.maxPessoas + " já cadastra");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Precificação com mínimo de pessoas igual a " + preco.minPessoas + " já cadastra");
+                    }
                 }
                 finally
                 {
