@@ -17,7 +17,11 @@ namespace DAL.Models
             {
                 return "Serviço obrigatório";
             }
-            else if (this.valor <= 0)
+            else if (this.descricao.Length > 50)
+            {
+                return "Serviço deve ter no máximo 50 caracteres";
+            }
+            else if (this.valor <= Convert.ToDecimal(0.00) || this.valor > Convert.ToDecimal(99999999.99))
             {
                 return "valor obrigatório";
             }

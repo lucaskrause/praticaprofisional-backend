@@ -51,7 +51,14 @@ namespace DAL.DataAccessObject
 
                     List<Servicos> list = await GetResultSet(command);
 
-                    return list[0];
+                    if(list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Serviço não encontrado");
+                    }
                 }
                 finally
                 {
@@ -71,8 +78,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"INSERT INTO servicos(descricao, valor, dtCadastro, dtAlteracao, status) VALUES (@descricao, @valor, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -110,8 +115,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"UPDATE servicos SET descricao = @descricao, valor = @valor, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
