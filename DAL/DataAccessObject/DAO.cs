@@ -60,7 +60,7 @@ namespace DAL.DataAccessObject
             return list;
         }
 
-        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string column, string value, int codigo = 0)
+        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string column, dynamic value, int codigo = 0)
         {
             string sql = "";
             if (codigo > 0)
