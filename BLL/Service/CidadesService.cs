@@ -13,26 +13,6 @@ namespace BLL.Service
 
         public CidadesService() => this.CidadesDao = new CidadesDAO();
 
-        public string validaCidade(Cidades cidade)
-        {
-            if (cidade.cidade == null || cidade.cidade == "")
-            {
-                return "Cidade obrigatória";
-            }
-            else if (cidade.ddd == null || cidade.ddd == "")
-            {
-                return "DDD obrigatório";
-            }
-            else if (cidade.codigoEstado <= 0)
-            {
-                return "Estado obrigatório";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Cidades>> ListarTodos()
         {
             return await CidadesDao.ListarTodos();
@@ -45,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Cidades> Inserir(Cidades cidade)
         {
-            string error = validaCidade(cidade);
+            string error = cidade.Validation();
             if (error == null) {
             cidade.PrepareSave();
             cidade.Ativar();
@@ -58,7 +38,7 @@ namespace BLL.Service
 
         public async Task<Cidades> Editar(Cidades cidade)
         {
-            string error = validaCidade(cidade);
+            string error = cidade.Validation();
             if (error == null)
             {
                 cidade.PrepareSave();

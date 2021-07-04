@@ -13,6 +13,8 @@ namespace BLL.Service
 
         public EmpresasService() => this.empresasDao = new EmpresasDAO();
 
+        public List<ContasBancarias> contasBancarias { get; set; }
+
         public async Task<IList<Empresas>> ListarTodos()
         {
             return await empresasDao.ListarTodos();
@@ -25,15 +27,31 @@ namespace BLL.Service
 
         public async Task<Empresas> Inserir(Empresas empresa)
         {
-            empresa.Ativar();
-            empresa.PrepareSave();
-            return await empresasDao.Inserir(empresa);
+            string error = empresa.Validation();
+            if(error == null)
+            {
+                empresa.Ativar();
+                empresa.PrepareSave();
+                return await empresasDao.Inserir(empresa);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Empresas> Editar(Empresas empresa)
         {
-            empresa.PrepareSave();
-            return await empresasDao.Editar(empresa);
+            string error = empresa.Validation();
+            if (error == null)
+            {
+                empresa.PrepareSave();
+                return await empresasDao.Editar(empresa);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

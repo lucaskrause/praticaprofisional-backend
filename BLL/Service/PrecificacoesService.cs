@@ -13,26 +13,6 @@ namespace BLL.Service
 
         public PrecificacoesService() => this.precificacoesDao = new PrecificacoesDAO();
 
-        public string validaPreco(Precificacoes preco)
-        {
-            if (preco.minPessoas <= 0)
-            {
-                return "Mínimo de Pessoas obrigatório";
-            }
-            else if (preco.maxPessoas <= 0)
-            {
-                return "Máximo de Pessoas obrigatório";
-            }
-            else if (preco.valor <= 0)
-            {
-                return "Valor obrigatório";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Precificacoes>> ListarTodos()
         {
             return await precificacoesDao.ListarTodos();
@@ -45,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Precificacoes> Inserir(Precificacoes preco)
         {
-            string error = validaPreco(preco);
+            string error = preco.Validation();
             if (error == null) {
                 preco.PrepareSave();
                 preco.Ativar();
@@ -58,7 +38,7 @@ namespace BLL.Service
 
         public async Task<Precificacoes> Editar(Precificacoes preco)
         {
-            string error = validaPreco(preco);
+            string error = preco.Validation();
             if (error == null)
             {
                 preco.PrepareSave();

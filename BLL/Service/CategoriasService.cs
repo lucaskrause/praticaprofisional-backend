@@ -13,18 +13,6 @@ namespace BLL.Service
 
         public CategoriasService() => this.categoriasDao = new CategoriasDAO();
 
-        public string validaCategoria(Categorias categoria)
-        {
-            if (categoria.descricao == null || categoria.descricao == "")
-            {
-                return "Categoria obrigatória";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Categorias>> ListarTodos()
         {
             return await categoriasDao.ListarTodos();
@@ -37,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Categorias> Inserir(Categorias categoria)
         {
-            string error = validaCategoria(categoria);
+            string error = categoria.Validation();
             if (error == null) {
                 categoria.PrepareSave();
                 categoria.Ativar();
@@ -50,7 +38,7 @@ namespace BLL.Service
 
         public async Task<Categorias> Editar(Categorias categoria)
         {
-            string error = validaCategoria(categoria);
+            string error = categoria.Validation();
             if (error == null)
             {
                 categoria.PrepareSave();

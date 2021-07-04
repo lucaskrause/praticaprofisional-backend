@@ -31,5 +31,41 @@ namespace DAL.Models
         public string logradouro { get; set; }
 
         public string complemento { get; set; }
+
+        public override string Validation()
+        {
+            if (this.nome == null || this.nome == "")
+            {
+                return "Cliente obrigatório";
+            }
+            else if (this.telefone == null || this.telefone == "")
+            {
+                return "Telefone obrigatório";
+            }
+            else if (this.email == null || this.email == "")
+            {
+                return "Email obrigatório";
+            }
+            else if (this.codigoCidade <= 0)
+            {
+                return "Cidade obrigatória";
+            }
+            else if (this.logradouro == null || this.logradouro == "")
+            {
+                return "Logradouro obrigatório";
+            }
+            else if (this.bairro == null || this.bairro == "")
+            {
+                return "Bairro obrigatório";
+            }
+            else if (this.cep == null || this.cep == "")
+            {
+                return "CEP obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

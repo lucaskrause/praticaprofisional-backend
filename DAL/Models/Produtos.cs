@@ -24,5 +24,29 @@ namespace DAL.Models
         public DateTime? dtUltimaCompra { get; set; }
 
         public decimal? valorUltimaCompra { get; set; }
+
+        public override string Validation()
+        {
+            if (this.produto == null || this.produto == "")
+            {
+                return "Produto obrigatório";
+            }
+            else if (this.unidades < 1)
+            {
+                return "Unidades obrigatória";
+            }
+            else if (this.valorCusto <= 0)
+            {
+                return "Valor de Custo obrigatório";
+            }
+            else if (this.codigoCategoria <= 0)
+            {
+                return "Categoria obrigatória";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

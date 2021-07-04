@@ -13,80 +13,6 @@ namespace BLL.Service
 
         public CondicoesPagamentoService() => this.condicoesPagamentoDao = new CondicoesPagamentoDAO();
 
-        public string validaParcelas(List<CondicoesParcelas> parcelas)
-        {
-            if (parcelas.Count > 0)
-            {
-                decimal perc = 100;
-                for (int i = 0; i < parcelas.Count; i++)
-                {
-                    CondicoesParcelas parcela = parcelas[i];
-                    perc -= parcela.porcentagem;
-
-                    if (parcela.numeroDias < 1 && parcela.numeroDias <= parcelas[i - 1].numeroDias)
-                    {
-                        return "Número de dias precisa ser maior que 0 e maior que a parcela anterior";
-                    }
-                    else if (parcela.porcentagem <= 0)
-                    {
-                        return "Porcentagem é obrigatória em todas as parcelas";
-                    }
-                    else if (parcela.codigoFormaPagamento <= 0)
-                    {
-                        return "Forma de Pagamento é obrigatória em todas as parcelas";
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                
-                if (perc != 0)
-                {
-                    return "A soma das porcentagens está inválida";
-                }
-                else
-                {
-                    return null;
-                }
-            } else
-            {
-                return "Adicione pelo menos 1 parcela";
-            }
-        }
-
-        public string validaCondicaoPagamento(CondicoesPagamento condicaoPagamento)
-        {
-            if (condicaoPagamento.descricao == null || condicaoPagamento.descricao == "")
-            {
-                return "Condição de Pagamento obrigatório";
-            }
-            else if (condicaoPagamento.multa < 0)
-            {
-                return "Multa obrigatória";
-            }
-            else if (condicaoPagamento.juros < 0)
-            {
-                return "Juros obrigatório";
-            }
-            else if (condicaoPagamento.desconto < 0)
-            {
-                return "Descontro obrigatório";
-            }
-            else
-            {
-                string error = validaParcelas(condicaoPagamento.parcelas);
-                if (error != null)
-                {
-                    return error;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
         public async Task<IList<CondicoesPagamento>> ListarTodos()
         {
             return await condicoesPagamentoDao.ListarTodos();
@@ -99,7 +25,7 @@ namespace BLL.Service
 
         public async Task<CondicoesPagamento> Inserir(CondicoesPagamento condicaoPagamento)
         {
-            string error = validaCondicaoPagamento(condicaoPagamento);
+            string error = condicaoPagamento.Validation();
             if (error == null)
             {
                 condicaoPagamento.Ativar();
@@ -114,7 +40,7 @@ namespace BLL.Service
 
         public async Task<CondicoesPagamento> Editar(CondicoesPagamento condicaoPagamento)
         {
-            string error = validaCondicaoPagamento(condicaoPagamento);
+            string error = condicaoPagamento.Validation();
             if (error == null)
             {
                 condicaoPagamento.PrepareSave();

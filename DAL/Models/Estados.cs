@@ -15,5 +15,25 @@ namespace DAL.Models
 
         public string nomePais { set { pais ??= new Paises(); pais.pais = value; } }
 
+        public override string Validation()
+        {
+            if (this.estado == null || this.estado == "")
+            {
+                return "Estado obrigatório";
+            }
+            else if (this.uf == null || this.uf == "")
+            {
+                return "UF obrigatório";
+            }
+            else if (this.codigoPais <= 0)
+            {
+                return "País obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

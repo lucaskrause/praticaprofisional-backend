@@ -25,15 +25,31 @@ namespace BLL.Service
 
         public async Task<Dependentes> Inserir(Dependentes dependente)
         {
-            dependente.Ativar();
-            dependente.PrepareSave();
-            return await dependentesDao.Inserir(dependente);
+            string error = dependente.Validation();
+            if (error == null)
+            {
+                dependente.Ativar();
+                dependente.PrepareSave();
+                return await dependentesDao.Inserir(dependente);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Dependentes> Editar(Dependentes dependente)
         {
-            dependente.PrepareSave();
-            return await dependentesDao.Editar(dependente);
+            string error = dependente.Validation();
+            if (error == null)
+            {
+                dependente.PrepareSave();
+                return await dependentesDao.Editar(dependente);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

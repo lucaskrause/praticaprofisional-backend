@@ -13,21 +13,6 @@ namespace BLL.Service
 
         public ServicosService() => this.servicosDao = new ServicosDAO();
 
-        public string validaServico(Servicos servico)
-        {
-            if (servico.descricao == null || servico.descricao == "")
-            {
-                return "Serviço obrigatório";
-            }
-            else if (servico.valor <= 0)
-            {
-                return "valor obrigatório";
-            } else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Servicos>> ListarTodos()
         {
             return await servicosDao.ListarTodos();
@@ -40,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Servicos> Inserir(Servicos servico)
         {
-            string error = validaServico(servico);
+            string error = servico.Validation();
             if (error == null)
             {
                 servico.PrepareSave();
@@ -54,7 +39,7 @@ namespace BLL.Service
 
         public async Task<Servicos> Editar(Servicos servico)
         {
-            string error = validaServico(servico);
+            string error = servico.Validation();
             if (error == null)
             {
                 servico.PrepareSave();

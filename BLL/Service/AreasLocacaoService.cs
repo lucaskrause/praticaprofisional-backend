@@ -13,22 +13,6 @@ namespace BLL.Service
 
         public AreasLocacaoService() => this.areaLocacaoDao = new AreasLocacaoDAO();
 
-        public string validaAreaLocacao(AreasLocacao area)
-        {
-            if (area.descricao == null || area.descricao == "")
-            {
-                return "Área de Locação obrigatória";
-            }
-            else if (area.valor <= 0)
-            {
-                return "Valor obrigatório";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<AreasLocacao>> ListarTodos()
         {
             return await areaLocacaoDao.ListarTodos();
@@ -41,7 +25,7 @@ namespace BLL.Service
 
         public async Task<AreasLocacao> Inserir(AreasLocacao area)
         {
-            string error = validaAreaLocacao(area);
+            string error = area.Validation();
             if (error == null) {
                 area.PrepareSave();
                 area.Ativar();
@@ -54,7 +38,7 @@ namespace BLL.Service
 
         public async Task<AreasLocacao> Editar(AreasLocacao area)
         {
-            string error = validaAreaLocacao(area);
+            string error = area.Validation();
             if (error == null)
             {
                 area.PrepareSave();

@@ -35,5 +35,7 @@ namespace DAL.Models
         {
             this.status = "Inativo";
         }
+
+        public abstract string Validation();
     }
 }

@@ -25,17 +25,31 @@ namespace BLL.Service
 
         public async Task<Funcionarios> Inserir(Funcionarios funcionario)
         {
-            funcionario.codigoEmpresa = 1;
-            funcionario.Ativar();
-            funcionario.PrepareSave();
-            return await funcionariosDao.Inserir(funcionario);
+            string error = funcionario.Validation();
+            if (error == null) {
+                funcionario.codigoEmpresa = 1;
+                funcionario.Ativar();
+                funcionario.PrepareSave();
+                return await funcionariosDao.Inserir(funcionario);
+            } else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<Funcionarios> Editar(Funcionarios funcionario)
         {
-            funcionario.codigoEmpresa = 1;
-            funcionario.PrepareSave();
-            return await funcionariosDao.Editar(funcionario);
+            string error = funcionario.Validation();
+            if (error == null)
+            {
+                funcionario.codigoEmpresa = 1;
+                funcionario.PrepareSave();
+                return await funcionariosDao.Editar(funcionario);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

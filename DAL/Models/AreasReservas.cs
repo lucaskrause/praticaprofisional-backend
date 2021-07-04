@@ -9,7 +9,5 @@ namespace DAL.Models
         public int codigoReserva { get; set; }
 
         public int codigoArea { get; set; }
-
-        public string status { get; set; }
     }
 }

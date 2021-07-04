@@ -30,5 +30,37 @@ namespace DAL.Models
         public string nomeCondicao { set { condicaoPagamento ??= new CondicoesPagamento(); condicaoPagamento.descricao = value; } }
 
         public List<AreasLocacao> areasLocacao { get; set; }
+
+        public override string Validation()
+        {
+            if (this.codigoCliente <= 0)
+            {
+                return "Cliente obrigatório";
+            }
+            else if (this.qtdePessoas <= 0)
+            {
+                return "Quantidade de Pessoas obrigatória";
+            }
+            else if (this.dtReserva == null || this.dtReserva.Date < (DateTime.Now).Date)
+            {
+                return "Data da Reserva obrigatória";
+            }
+            else if (this.valor <= 0)
+            {
+                return "Data da Reserva obrigatória";
+            }
+            else if (this.codigoCondicaoPagamento <= 0)
+            {
+                return "Condição de Pagamento obrigatório";
+            }
+            else if (this.areasLocacao == null || this.areasLocacao.Count == 0)
+            {
+                return "Áreas de Locação obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

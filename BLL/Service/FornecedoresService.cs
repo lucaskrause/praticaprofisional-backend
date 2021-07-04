@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Service
 {
-    public class FornecedoresService
+    public class FornecedoresService : IService<Fornecedores>
     {
         private readonly FornecedoresDAO fornecedorsDao = null;
 
@@ -23,17 +23,33 @@ namespace BLL.Service
             return await fornecedorsDao.BuscarPorID(codigo);
         }
 
-        public async Task<Fornecedores> Inserir(Fornecedores pessoa)
+        public async Task<Fornecedores> Inserir(Fornecedores fornecedor)
         {
-            pessoa.PrepareSave();
-            pessoa.Ativar();
-            return await fornecedorsDao.Inserir(pessoa);
+            string error = fornecedor.Validation();
+            if (error == null)
+            {
+                fornecedor.PrepareSave();
+                fornecedor.Ativar();
+                return await fornecedorsDao.Inserir(fornecedor);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public async Task<Fornecedores> Editar(Fornecedores pessoa)
+        public async Task<Fornecedores> Editar(Fornecedores fornecedor)
         {
-            pessoa.PrepareSave();
-            return await fornecedorsDao.Editar(pessoa);
+            string error = fornecedor.Validation();
+            if (error == null)
+            {
+                fornecedor.PrepareSave();
+                return await fornecedorsDao.Editar(fornecedor);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

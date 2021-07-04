@@ -13,18 +13,6 @@ namespace BLL.Service
 
         public FormasPagamentoService() => this.formasPagamentoDao = new FormasPagamentoDAO();
 
-        public string validaFormaPagamento(FormasPagamento formaPagamento)
-        {
-            if (formaPagamento.descricao == null || formaPagamento.descricao == "")
-            {
-                return "Forma de Pagamento obrigatória";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<FormasPagamento>> ListarTodos()
         {
             return await formasPagamentoDao.ListarTodos();
@@ -37,7 +25,7 @@ namespace BLL.Service
 
         public async Task<FormasPagamento> Inserir(FormasPagamento formaPagamento)
         {
-            string error = validaFormaPagamento(formaPagamento);
+            string error = formaPagamento.Validation();
             if (error == null) {
                 formaPagamento.PrepareSave();
                 formaPagamento.Ativar();
@@ -51,7 +39,7 @@ namespace BLL.Service
 
         public async Task<FormasPagamento> Editar(FormasPagamento formaPagamento)
         {
-            string error = validaFormaPagamento(formaPagamento);
+            string error = formaPagamento.Validation();
             if (error == null)
             {
                 formaPagamento.PrepareSave();

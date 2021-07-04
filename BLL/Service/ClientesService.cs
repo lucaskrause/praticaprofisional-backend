@@ -28,17 +28,33 @@ namespace BLL.Service
             return await clientesDao.BuscarSocioPorID(codigo);
         }
 
-        public async Task<Clientes> Inserir(Clientes pessoa)
+        public async Task<Clientes> Inserir(Clientes cliente)
         {
-            pessoa.PrepareSave();
-            pessoa.Ativar();
-            return await clientesDao.Inserir(pessoa);
+            string error = cliente.Validation();
+            if (error == null)
+            {
+                cliente.PrepareSave();
+                cliente.Ativar();
+                return await clientesDao.Inserir(cliente);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public async Task<Clientes> Editar(Clientes pessoa)
+        public async Task<Clientes> Editar(Clientes cliente)
         {
-            pessoa.PrepareSave();
-            return await clientesDao.Editar(pessoa);
+            string error = cliente.Validation();
+            if (error == null)
+            {
+                cliente.PrepareSave();
+                return await clientesDao.Editar(cliente);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
         public async Task<bool> Excluir(int codigo)

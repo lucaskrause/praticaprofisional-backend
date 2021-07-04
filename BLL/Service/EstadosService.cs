@@ -13,26 +13,6 @@ namespace BLL.Service
 
         public EstadosService() => this.estadosDao = new EstadosDAO();
 
-        public string validaEstado(Estados estado)
-        {
-            if (estado.estado == null || estado.estado == "")
-            {
-                return "Estado obrigatório";
-            }
-            else if (estado.uf == null || estado.uf == "")
-            {
-                return "UF obrigatório";
-            }
-            else if (estado.codigoPais <= 0)
-            {
-                return "País obrigatório";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Estados>> ListarTodos()
         {
             return await estadosDao.ListarTodos();
@@ -45,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Estados> Inserir(Estados estado)
         {
-            string error = validaEstado(estado);
+            string error = estado.Validation();
             if (error == null) {
                 estado.PrepareSave();
                 estado.Ativar();
@@ -58,7 +38,7 @@ namespace BLL.Service
 
         public async Task<Estados> Editar(Estados estado)
         {
-            string error = validaEstado(estado);
+            string error = estado.Validation();
             if (error == null)
             {
                 estado.PrepareSave();

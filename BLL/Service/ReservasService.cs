@@ -13,38 +13,6 @@ namespace BLL.Service
 
         public ReservasService() => this.reservasDao = new ReservasDAO();
 
-        public string validaReserva(Reservas reserva)
-        {
-            if (reserva.codigoCliente <= 0)
-            {
-                return "Cliente obrigatório";
-            }
-            else if (reserva.qtdePessoas <= 0)
-            {
-                return "Quantidade de Pessoas obrigatória";
-            }
-            else if (reserva.dtReserva == null || reserva.dtReserva.Date < (DateTime.Now).Date)
-            {
-                return "Data da Reserva obrigatória";
-            } 
-            else if (reserva.valor <= 0)
-            {
-                return "Data da Reserva obrigatória";
-            }
-            else if (reserva.codigoCondicaoPagamento <= 0)
-            {
-                return "Condição de Pagamento obrigatório";
-            }
-            else if (reserva.areasLocacao == null || reserva.areasLocacao.Count == 0)
-            {
-                return "Áreas de Locação obrigatório";
-            } 
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<Reservas>> ListarTodos()
         {
             return await reservasDao.ListarTodos();
@@ -57,7 +25,7 @@ namespace BLL.Service
 
         public async Task<Reservas> Inserir(Reservas reserva)
         {
-            string error = validaReserva(reserva);
+            string error = reserva.Validation();
             if (error == null) {
                 reserva.codigoEmpresa = 1;
                 reserva.PrepareSave();
@@ -71,7 +39,7 @@ namespace BLL.Service
 
         public async Task<Reservas> Editar(Reservas reserva)
         {
-            string error = validaReserva(reserva);
+            string error = reserva.Validation();
             if (error == null)
             {
                 reserva.PrepareSave();

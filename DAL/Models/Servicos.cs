@@ -10,5 +10,21 @@ namespace DAL.Models
         public string descricao { get; set; }
 
         public decimal valor { get; set; }
+
+        public override string Validation()
+        {
+            if (this.descricao == null || this.descricao == "")
+            {
+                return "Serviço obrigatório";
+            }
+            else if (this.valor <= 0)
+            {
+                return "valor obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

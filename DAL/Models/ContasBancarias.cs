@@ -21,5 +21,29 @@ namespace DAL.Models
         public int codigoEmpresa { get; set; }
 
         public Empresas empresa { get; set; }
+
+        public override string Validation()
+        {
+            if (this.instituicao == null || this.instituicao == "")
+            {
+                return "Instituição obrigatória";
+            }
+            else if (this.numeroBanco == null || this.numeroBanco == "")
+            {
+                return "Número do Banco obrigatório";
+            }
+            else if (this.agencia == null || this.agencia == "")
+            {
+                return "Agencia obrigatória";
+            }
+            else if (this.conta == null || this.conta == "")
+            {
+                return "Número da Conta obrigatório";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DAL.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +18,33 @@ namespace DAL.Models
         public Clientes cliente { get; set; }
 
         public string nomeCliente { set { cliente ??= new Clientes(); cliente.nome = value; } }
+
+        public override string Validation()
+        {
+            string error = base.Validation();
+            if(error == null)
+            {
+                if (this.cpf == null || this.cpf == "")
+                {
+                    return "CPF obrigatório";
+                }
+                else if (!Validadores.validadorCPF(this.cpf))
+                {
+                    return "CPF inválido";
+                }
+                else if (this.dtNascimento == null || this.dtNascimento > DateTime.Now)
+                {
+                    return "Data de Nascimento obrigatória";
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return error;
+            }
+        }
     }
 }

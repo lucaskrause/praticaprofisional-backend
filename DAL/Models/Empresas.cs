@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DAL.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,5 +40,73 @@ namespace DAL.Models
         public string cep { get; set; }
 
         public List<ContasBancarias> contasBancarias { get; set; }
+
+        public override string Validation()
+        {
+            if (this.razaoSocial == null || this.razaoSocial == "")
+            {
+                return "Razão Social obrigatória";
+            }
+            else if (this.cnpj == null || this.cnpj == "")
+            {
+                return "CNPJ obrigatória";
+            }
+            else if (!Validadores.validadorCNPJ(this.cnpj))
+            {
+                return "CNPJ inválido";
+            }
+            else if (this.telefone == null || this.telefone == "")
+            {
+                return "Telefone obrigatório";
+            }
+            else if (this.email == null || this.email == "")
+            {
+                return "Email obrigatório";
+            }
+            else if (this.dtFundacao == null || this.dtFundacao > DateTime.Now)
+            {
+                return "Data de Fundação obrigatória";
+            }
+            else if (this.codigoCidade <= 0)
+            {
+                return "Cidade obrigatória";
+            }
+            else if (this.logradouro == null || this.logradouro == "")
+            {
+                return "Logradouro obrigatório";
+            }
+            else if (this.bairro == null || this.bairro == "")
+            {
+                return "Logradouro obrigatório";
+            }
+            else if (this.cep == null || this.cep == "")
+            {
+                return "CEP obrigatório";
+            }
+            else
+            {
+                if (this.contasBancarias.Count > 0)
+                {
+                    for (int i = 0; i < this.contasBancarias.Count; i++)
+                    {
+                        ContasBancarias contaBancaria = this.contasBancarias[i];
+                        string error = contaBancaria.Validation();
+                        if (error == null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            return error;
+                        }
+                    }
+                    return null;
+                }
+                else
+                {
+                    return "Adicione ao menos uma conta bancaria";
+                }
+            }
+        }
     }
 }

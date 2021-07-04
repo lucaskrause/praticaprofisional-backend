@@ -8,5 +8,17 @@ namespace DAL.Models
     public class Categorias : AbstractEntity
     {
         public string descricao { get; set; }
+
+        public override string Validation()
+        {
+            if (this.descricao == null || this.descricao == "")
+            {
+                return "Categoria obrigatória";
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

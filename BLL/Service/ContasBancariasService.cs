@@ -13,30 +13,6 @@ namespace BLL.Service
 
         public ContasBancariasService() => this.contasBancariasDao = new ContasBancariasDAO();
 
-        public string validaContaBancaria(ContasBancarias contaBancaria)
-        {
-            if (contaBancaria.instituicao == null || contaBancaria.instituicao == "")
-            {
-                return "Instituição obrigatória";
-            }
-            else if (contaBancaria.numeroBanco == null || contaBancaria.numeroBanco == "")
-            {
-                return "Número do Banco obrigatório";
-            }
-            else if (contaBancaria.agencia == null || contaBancaria.agencia == "")
-            {
-                return "Agencia obrigatória";
-            }
-            else if (contaBancaria.conta == null || contaBancaria.conta == "")
-            {
-                return "Número da Conta obrigatório";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public async Task<IList<ContasBancarias>> BuscarPorEmpresa(int codigo)
         {
             return await contasBancariasDao.BuscarPorEmpresa(codigo);
@@ -54,7 +30,7 @@ namespace BLL.Service
 
         public async Task<ContasBancarias> Inserir(ContasBancarias contaBancaria)
         {
-            string error = validaContaBancaria(contaBancaria);
+            string error = contaBancaria.Validation();
             if (error == null) {
                 contaBancaria.Ativar();
                 contaBancaria.PrepareSave();
@@ -67,7 +43,7 @@ namespace BLL.Service
 
         public async Task<ContasBancarias> Editar(ContasBancarias contaBancaria)
         {
-            string error = validaContaBancaria(contaBancaria);
+            string error = contaBancaria.Validation();
             if (error == null)
             {
                 contaBancaria.PrepareSave();
