@@ -50,7 +50,12 @@ namespace DAL.DataAccessObject
 
                     List<FormasPagamento> list = await GetResultSet(command);
 
-                    return list[0];
+                    if (list.Count > 0) {
+                        return list[0];
+                    } else
+                    {
+                        throw new Exception("Forma de Pagamento não encontrada");
+                    }
                 }
                 finally
                 {
@@ -105,8 +110,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"UPDATE formasPagamento SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

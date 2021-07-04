@@ -12,6 +12,10 @@ namespace DAL.Models
             {
                 return "Forma de Pagamento obrigatória";
             }
+            else if (this.descricao.Length > 50)
+            {
+                return "Forma de Pagamento deve ter no máximo 50 caracteres";
+            }
             else
             {
                 return null;
