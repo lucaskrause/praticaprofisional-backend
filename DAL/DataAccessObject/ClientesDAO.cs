@@ -70,13 +70,22 @@ namespace DAL.DataAccessObject
             return list;
         }
 
-        public async Task<bool> CheckExistDependente(NpgsqlConnection conexao, string table, string column, string value)
+        public async Task<bool> CheckExistDependente(NpgsqlConnection conexao, string table, string column, string value, int codigo = 0)
         {
-            string sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            string sql = "";
+            if (codigo > 0)
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value AND codigo != @codigo;";
+            }
+            else
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            }
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
             command.Parameters.AddWithValue("@value", value);
+            command.Parameters.AddWithValue("@codigo", codigo);
 
             List<Dependentes> list = await GetDependentesResultSet(command);
 
@@ -156,29 +165,37 @@ namespace DAL.DataAccessObject
 
         public async Task<Dependentes> UpdateDependente(NpgsqlConnection conexao, Dependentes dependente)
         {
-            string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
+            bool exists = await CheckExistDependente(conexao, "clientes", "cpfcnpj", dependente.cpf, dependente.codigo);
+            if (exists)
+            {
+                string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-            command.Parameters.AddWithValue("@nome", dependente.nome);
-            command.Parameters.AddWithValue("@cpf", dependente.cpf);
-            command.Parameters.AddWithValue("@rg", dependente.rg);
-            command.Parameters.AddWithValue("@sexo", dependente.sexo);
-            command.Parameters.AddWithValue("@email", dependente.email);
-            command.Parameters.AddWithValue("@telefone", dependente.telefone);
-            command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-            command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-            command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-            command.Parameters.AddWithValue("@complemento", dependente.complemento);
-            command.Parameters.AddWithValue("@bairro", dependente.bairro);
-            command.Parameters.AddWithValue("@cep", dependente.cep);
-            command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-            command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
-            command.Parameters.AddWithValue("@status", dependente.status);
-            command.Parameters.AddWithValue("@codigo", dependente.codigo);
+                command.Parameters.AddWithValue("@nome", dependente.nome);
+                command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                command.Parameters.AddWithValue("@rg", dependente.rg);
+                command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                command.Parameters.AddWithValue("@email", dependente.email);
+                command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                command.Parameters.AddWithValue("@cep", dependente.cep);
+                command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                command.Parameters.AddWithValue("@status", dependente.status);
+                command.Parameters.AddWithValue("@codigo", dependente.codigo);
 
-            await command.ExecuteNonQueryAsync();
-            return dependente;
+                await command.ExecuteNonQueryAsync();
+                return dependente;
+            }
+            else
+            {
+                throw new Exception("Dependente " + dependente.nome + " já cadastrado");
+            }
         }
 
         public async Task<bool> DeleteDependente(NpgsqlConnection conexao, int codigoDependente)
@@ -354,56 +371,64 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@nome", cliente.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", cliente.rgIe);
-                    command.Parameters.AddWithValue("@sexo", cliente.sexo);
-                    command.Parameters.AddWithValue("@email", cliente.email);
-                    command.Parameters.AddWithValue("@telefone", cliente.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
-                    command.Parameters.AddWithValue("@complemento", cliente.complemento);
-                    command.Parameters.AddWithValue("@bairro", cliente.bairro);
-                    command.Parameters.AddWithValue("@cep", cliente.cep);
-                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
-                    command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", cliente.codigo);
-
-                    await command.ExecuteNonQueryAsync();
-
-                    int qtdDependentes = cliente.dependentes.Count;
-                    if (qtdDependentes > 0)
+                    bool exists = await CheckExist(conexao, "clientes", "cpfcnpj", cliente.cpfCnpj, cliente.codigo);
+                    if (exists)
                     {
-                        for (int i = 0; i < qtdDependentes; i++)
+                        string sql = @"UPDATE clientes SET codigo = @codigo, nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@nome", cliente.nome);
+                        command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
+                        command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
+                        command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                        command.Parameters.AddWithValue("@sexo", cliente.sexo);
+                        command.Parameters.AddWithValue("@email", cliente.email);
+                        command.Parameters.AddWithValue("@telefone", cliente.telefone);
+                        command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
+                        command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                        command.Parameters.AddWithValue("@bairro", cliente.bairro);
+                        command.Parameters.AddWithValue("@cep", cliente.cep);
+                        command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
+                        command.Parameters.AddWithValue("@dtAlteracao", cliente.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", cliente.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        int qtdDependentes = cliente.dependentes.Count;
+                        if (qtdDependentes > 0)
                         {
-                            Dependentes dependente = cliente.dependentes[i];
-                            dependente.PrepareSave();
-                            if (dependente.codigo == 0)
+                            for (int i = 0; i < qtdDependentes; i++)
                             {
-                                dependente.codigoCliente = cliente.codigo;
-                                dependente.Ativar();
-                                cliente.dependentes[i] = await InsertDependente(conexao, dependente);
-                            }
-                            else if (dependente.codigo > 0 && dependente.status == "Ativo")
-                            {
-                                cliente.dependentes[i] = await UpdateDependente(conexao, dependente);
-                            }
-                            else
-                            {
-                                await DeleteDependente(conexao, dependente.codigo);
-                                cliente.dependentes.RemoveAt(i);
+                                Dependentes dependente = cliente.dependentes[i];
+                                dependente.PrepareSave();
+                                if (dependente.codigo == 0)
+                                {
+                                    dependente.codigoCliente = cliente.codigo;
+                                    dependente.Ativar();
+                                    cliente.dependentes[i] = await InsertDependente(conexao, dependente);
+                                }
+                                else if (dependente.codigo > 0 && dependente.status == "Ativo")
+                                {
+                                    cliente.dependentes[i] = await UpdateDependente(conexao, dependente);
+                                }
+                                else
+                                {
+                                    await DeleteDependente(conexao, dependente.codigo);
+                                    cliente.dependentes.RemoveAt(i);
+                                }
                             }
                         }
-                    }
 
-                    transaction.Commit();
-                    return cliente;
+                        transaction.Commit();
+                        return cliente;
+                    }
+                    else
+                    {
+                        throw new Exception("Cliente já cadastrado");
+                    }
                 }
                 catch
                 {

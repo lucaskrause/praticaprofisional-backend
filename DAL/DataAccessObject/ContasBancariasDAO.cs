@@ -127,23 +127,32 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "contasbancarias", "numerobanco", contaBancaria.numeroBanco, contaBancaria.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
-                    command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
-                    command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
-                    command.Parameters.AddWithValue("@conta", contaBancaria.conta);
-                    command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
-                    command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
-                    command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return contaBancaria;
+                        command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                        command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
+                        command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
+                        command.Parameters.AddWithValue("@conta", contaBancaria.conta);
+                        command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                        command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
+                        command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return contaBancaria;
+                    }
+                    else
+                    {
+                        throw new Exception("Conta já cadastrada");
+                    }
                 }
                 finally
                 {

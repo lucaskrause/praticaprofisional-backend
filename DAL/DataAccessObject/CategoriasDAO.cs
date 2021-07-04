@@ -103,18 +103,27 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE categorias SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "categorias", "descricao", categoria.descricao);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE categorias SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@descricao", categoria.descricao);
-                    command.Parameters.AddWithValue("@dtAlteracao", categoria.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", categoria.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return categoria;
+                        command.Parameters.AddWithValue("@descricao", categoria.descricao);
+                        command.Parameters.AddWithValue("@dtAlteracao", categoria.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", categoria.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return categoria;
+                    }
+                    else
+                    {
+                        throw new Exception("Categorias já cadastrada");
+                    }
                 }
                 finally
                 {

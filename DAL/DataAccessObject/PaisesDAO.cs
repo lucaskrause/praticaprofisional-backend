@@ -107,20 +107,27 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE paises SET pais = @pais, sigla = @sigla, ddi = @ddi, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "paises", "pais", pais.pais, pais.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE paises SET pais = @pais, sigla = @sigla, ddi = @ddi, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@pais", pais.pais);
-                    command.Parameters.AddWithValue("@sigla", pais.sigla);
-                    command.Parameters.AddWithValue("@ddi", pais.ddi);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", pais.codigo);
+                        command.Parameters.AddWithValue("@pais", pais.pais);
+                        command.Parameters.AddWithValue("@sigla", pais.sigla);
+                        command.Parameters.AddWithValue("@ddi", pais.ddi);
+                        command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", pais.codigo);
 
-                    await command.ExecuteNonQueryAsync();
-                    return pais;
+                        await command.ExecuteNonQueryAsync();
+                        return pais;
+                    }
+                    else
+                    {
+                        throw new Exception("País já cadastrado");
+                    }
                 }
                 finally
                 {

@@ -103,19 +103,28 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE areasLocacao SET descricao = @descricao, valor = @valor, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "areasLocacao", "descricao", area.descricao, area.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE areasLocacao SET descricao = @descricao, valor = @valor, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@descricao", area.descricao);
-                    command.Parameters.AddWithValue("@valor", area.valor);
-                    command.Parameters.AddWithValue("@dtAlteracao", area.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", area.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return area;
+                        command.Parameters.AddWithValue("@descricao", area.descricao);
+                        command.Parameters.AddWithValue("@valor", area.valor);
+                        command.Parameters.AddWithValue("@dtAlteracao", area.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", area.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return area;
+                    }
+                    else
+                    {
+                        throw new Exception("Área já cadastrada");
+                    }
                 }
                 finally
                 {

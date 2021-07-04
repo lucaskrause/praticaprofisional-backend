@@ -60,13 +60,22 @@ namespace DAL.DataAccessObject
             return list;
         }
 
-        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string column, string value)
+        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string column, string value, int codigo = 0)
         {
-            string sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            string sql = "";
+            if (codigo > 0)
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value AND codigo != @codigo;";
+            }
+            else
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            }
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
             command.Parameters.AddWithValue("@value", value);
+            command.Parameters.AddWithValue("@codigo", codigo);
 
             List<T> list = await GetResultSet(command);
 

@@ -102,21 +102,30 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE cidades SET cidade = @cidade, ddd = @ddd, codigoEstado = @codigoEstado, dtAlteracao = @dtAlteracao, status = @status WHERE codigo = @codigo";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "cidades", "cidade", cidade.cidade);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE cidades SET cidade = @cidade, ddd = @ddd, codigoEstado = @codigoEstado, dtAlteracao = @dtAlteracao, status = @status WHERE codigo = @codigo";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@cidade", cidade.cidade);
-                    command.Parameters.AddWithValue("@ddd", cidade.ddd);
-                    command.Parameters.AddWithValue("@codigoEstado", cidade.codigoEstado);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", cidade.status);
-                    command.Parameters.AddWithValue("@codigo", cidade.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return cidade;
+                        command.Parameters.AddWithValue("@cidade", cidade.cidade);
+                        command.Parameters.AddWithValue("@ddd", cidade.ddd);
+                        command.Parameters.AddWithValue("@codigoEstado", cidade.codigoEstado);
+                        command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", cidade.status);
+                        command.Parameters.AddWithValue("@codigo", cidade.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return cidade;
+                    }
+                    else
+                    {
+                        throw new Exception("Cidade já cadastrada");
+                    }
                 }
                 finally
                 {

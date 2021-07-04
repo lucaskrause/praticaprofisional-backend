@@ -108,24 +108,33 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE produtos SET produto = @produto, unidades = @unidades, valorcusto = @valorCusto, estoque = @estoque, codigocategoria = @codigoCategoria, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "produtos", "produto", produto.produto, produto.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE produtos SET produto = @produto, unidades = @unidades, valorcusto = @valorCusto, estoque = @estoque, codigocategoria = @codigoCategoria, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@produto", produto.produto);
-                    command.Parameters.AddWithValue("@unidades", produto.unidades);
-                    command.Parameters.AddWithValue("@valorCusto", produto.valorCusto);
-                    command.Parameters.AddWithValue("@estoque", produto.estoque);
-                    command.Parameters.AddWithValue("@codigoCategoria", produto.codigoCategoria);
-                    command.Parameters.AddWithValue("@dtUltimaCompra", produto.dtUltimaCompra);
-                    command.Parameters.AddWithValue("@valorUltimaCompra", produto.valorUltimaCompra);
-                    command.Parameters.AddWithValue("@dtAlteracao", produto.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", produto.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return produto;
+                        command.Parameters.AddWithValue("@produto", produto.produto);
+                        command.Parameters.AddWithValue("@unidades", produto.unidades);
+                        command.Parameters.AddWithValue("@valorCusto", produto.valorCusto);
+                        command.Parameters.AddWithValue("@estoque", produto.estoque);
+                        command.Parameters.AddWithValue("@codigoCategoria", produto.codigoCategoria);
+                        command.Parameters.AddWithValue("@dtUltimaCompra", produto.dtUltimaCompra);
+                        command.Parameters.AddWithValue("@valorUltimaCompra", produto.valorUltimaCompra);
+                        command.Parameters.AddWithValue("@dtAlteracao", produto.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", produto.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return produto;
+                    }
+                    else
+                    {
+                        throw new Exception("Produto já cadastrado");
+                    }
                 }
                 finally
                 {

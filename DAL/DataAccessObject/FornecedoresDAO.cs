@@ -60,32 +60,39 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"INSERT INTO fornecedores (nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "fornecedores", "cpfcnpj", fornecedor.cpfCnpj);
+                    if (exists)
+                    {
+                        string sql = @"INSERT INTO fornecedores (nome, tipopessoa, cpfcnpj, rgie, sexo, email, telefone, dtnascfundacao, codigocidade, logradouro, complemento, bairro, cep, dtcadastro, dtalteracao, status) VALUES (@nome, @tipoPessoa, @cpfcnpj, @rgie, @sexo, @email, @telefone, @dtnascfundacao, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@nome", fornecedor.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
-                    command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
-                    command.Parameters.AddWithValue("@email", fornecedor.email);
-                    command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
-                    command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
-                    command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
-                    command.Parameters.AddWithValue("@cep", fornecedor.cep);
-                    command.Parameters.AddWithValue("@dtCadastro", fornecedor.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", fornecedor.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", fornecedor.status);
+                        command.Parameters.AddWithValue("@nome", fornecedor.nome);
+                        command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
+                        command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
+                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
+                        command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
+                        command.Parameters.AddWithValue("@email", fornecedor.email);
+                        command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
+                        command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
+                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
+                        command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
+                        command.Parameters.AddWithValue("@cep", fornecedor.cep);
+                        command.Parameters.AddWithValue("@dtCadastro", fornecedor.dtCadastro);
+                        command.Parameters.AddWithValue("@dtAlteracao", fornecedor.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", fornecedor.status);
 
-                    Object idInserido = await command.ExecuteScalarAsync();
-                    fornecedor.codigo = (int)idInserido;
-                    return fornecedor;
+                        Object idInserido = await command.ExecuteScalarAsync();
+                        fornecedor.codigo = (int)idInserido;
+                        return fornecedor;
+                    }
+                    else
+                    {
+                        throw new Exception("Fornecedor já cadastrado");
+                    }
                 }
                 finally
                 {
@@ -100,29 +107,38 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE fornecedores SET nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "fornecedores", "cpfcnpj", fornecedor.cpfCnpj, fornecedor.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE fornecedores SET nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@nome", fornecedor.nome);
-                    command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
-                    command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
-                    command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
-                    command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
-                    command.Parameters.AddWithValue("@email", fornecedor.email);
-                    command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
-                    command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
-                    command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
-                    command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
-                    command.Parameters.AddWithValue("@cep", fornecedor.cep);
-                    command.Parameters.AddWithValue("@dtAlteracao", fornecedor.dtAlteracao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return fornecedor;
+                        command.Parameters.AddWithValue("@nome", fornecedor.nome);
+                        command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
+                        command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
+                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
+                        command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
+                        command.Parameters.AddWithValue("@email", fornecedor.email);
+                        command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
+                        command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
+                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
+                        command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
+                        command.Parameters.AddWithValue("@cep", fornecedor.cep);
+                        command.Parameters.AddWithValue("@dtAlteracao", fornecedor.dtAlteracao);
+
+                        await command.ExecuteNonQueryAsync();
+                        return fornecedor;
+                    }
+                    else
+                    {
+                        throw new Exception("Fornecedor já cadastrado");
+                    }
                 }
                 finally
                 {

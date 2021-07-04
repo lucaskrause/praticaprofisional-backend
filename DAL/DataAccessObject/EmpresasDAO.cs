@@ -41,13 +41,22 @@ namespace DAL.DataAccessObject
             return list;
         }
 
-        public async Task<bool> CheckExistContasBancarias(NpgsqlConnection conexao, string table, string column, string value)
+        public async Task<bool> CheckExistContasBancarias(NpgsqlConnection conexao, string table, string column, string value, int codigo = 0)
         {
-            string sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            string sql = "";
+            if (codigo > 0)
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value AND codigo != @codigo;";
+            }
+            else
+            {
+                sql = @"SELECT * FROM " + table + " WHERE " + column + " = @value;";
+            }
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
             command.Parameters.AddWithValue("@value", value);
+            command.Parameters.AddWithValue("@codigo", codigo);
 
             List<ContasBancarias> list = await GetContasBancariasResultSet(command);
 
@@ -107,20 +116,28 @@ namespace DAL.DataAccessObject
 
         public async Task<ContasBancarias> UpdateContaBancaria(NpgsqlConnection conexao, ContasBancarias contaBancaria)
         {
-            string sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+            bool exists = await CheckExistContasBancarias(conexao, "contasbancarias", "numerobanco", contaBancaria.numeroBanco, contaBancaria.codigo);
+            if (exists)
+            {
+                string sql = @"UPDATE contasbancarias SET instituicao = @instituicao, numerobanco = @numerobanco, agencia = @agencia, conta = @conta, saldo = @saldo, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-            command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
-            command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
-            command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
-            command.Parameters.AddWithValue("@conta", contaBancaria.conta);
-            command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
-            command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
-            command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
-            command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
+                command.Parameters.AddWithValue("@instituicao", contaBancaria.instituicao);
+                command.Parameters.AddWithValue("@numerobanco", contaBancaria.numeroBanco);
+                command.Parameters.AddWithValue("@agencia", contaBancaria.agencia);
+                command.Parameters.AddWithValue("@conta", contaBancaria.conta);
+                command.Parameters.AddWithValue("@saldo", contaBancaria.saldo);
+                command.Parameters.AddWithValue("@codigoempresa", contaBancaria.codigoEmpresa);
+                command.Parameters.AddWithValue("@dtAlteracao", contaBancaria.dtAlteracao);
+                command.Parameters.AddWithValue("@codigo", contaBancaria.codigo);
 
-            await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                throw new Exception("Conta Bancaria onde o número da conta é " + contaBancaria.numeroBanco + " já está cadastrada");
+            }
             return contaBancaria;
         }
 
@@ -268,52 +285,60 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"UPDATE empresas SET razaosocial = @razaoSocial, nomefantasia = @nomeFantasia, cnpj = @cnpj, ie = @ie, telefone = @telefone, email = @email, dtfundacao = @dtFundacao, qtdecotas = @qtdeCotas, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@codigo", empresa.codigo);
-                    command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
-                    command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
-                    command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
-                    command.Parameters.AddWithValue("@ie", empresa.ie);
-                    command.Parameters.AddWithValue("@telefone", empresa.telefone);
-                    command.Parameters.AddWithValue("@email", empresa.email);
-                    command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
-                    command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
-                    command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
-                    command.Parameters.AddWithValue("@complemento", empresa.complemento);
-                    command.Parameters.AddWithValue("@bairro", empresa.bairro);
-                    command.Parameters.AddWithValue("@cep", empresa.cep);
-                    command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
-
-                    await command.ExecuteNonQueryAsync();
-
-                    int qtdContas = empresa.contasBancarias.Count;
-                    if (qtdContas > 0)
+                    bool exists = await CheckExist(conexao, "empresas", "cnpj", empresa.cnpj, empresa.codigo);
+                    if (exists)
                     {
-                        for (int i = 0; i < qtdContas; i++)
+                        string sql = @"UPDATE empresas SET razaosocial = @razaoSocial, nomefantasia = @nomeFantasia, cnpj = @cnpj, ie = @ie, telefone = @telefone, email = @email, dtfundacao = @dtFundacao, qtdecotas = @qtdeCotas, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
+
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@codigo", empresa.codigo);
+                        command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
+                        command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
+                        command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
+                        command.Parameters.AddWithValue("@ie", empresa.ie);
+                        command.Parameters.AddWithValue("@telefone", empresa.telefone);
+                        command.Parameters.AddWithValue("@email", empresa.email);
+                        command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
+                        command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
+                        command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
+                        command.Parameters.AddWithValue("@complemento", empresa.complemento);
+                        command.Parameters.AddWithValue("@bairro", empresa.bairro);
+                        command.Parameters.AddWithValue("@cep", empresa.cep);
+                        command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        int qtdContas = empresa.contasBancarias.Count;
+                        if (qtdContas > 0)
                         {
-                            ContasBancarias contaBancaria = empresa.contasBancarias[i];
-                            if (contaBancaria.codigo == 0)
+                            for (int i = 0; i < qtdContas; i++)
                             {
-                                empresa.contasBancarias[i] = await InsertContaBancaria(conexao, contaBancaria, empresa.codigo);
-                            }
-                            else if (contaBancaria.codigo > 0 && contaBancaria.status == "Ativo")
-                            {
-                                empresa.contasBancarias[i] = await UpdateContaBancaria(conexao, contaBancaria);
-                            }
-                            else
-                            {
-                                await DeleteContaBancaria(conexao, contaBancaria.codigo);
-                                empresa.contasBancarias.RemoveAt(i);
+                                ContasBancarias contaBancaria = empresa.contasBancarias[i];
+                                if (contaBancaria.codigo == 0)
+                                {
+                                    empresa.contasBancarias[i] = await InsertContaBancaria(conexao, contaBancaria, empresa.codigo);
+                                }
+                                else if (contaBancaria.codigo > 0 && contaBancaria.status == "Ativo")
+                                {
+                                    empresa.contasBancarias[i] = await UpdateContaBancaria(conexao, contaBancaria);
+                                }
+                                else
+                                {
+                                    await DeleteContaBancaria(conexao, contaBancaria.codigo);
+                                    empresa.contasBancarias.RemoveAt(i);
+                                }
                             }
                         }
-                    }
 
-                    transaction.Commit();
-                    return empresa;
+                        transaction.Commit();
+                        return empresa;
+                    }
+                    else
+                    {
+                        throw new Exception("Empresa já cadastrada");
+                    }
                 }
                 catch
                 {

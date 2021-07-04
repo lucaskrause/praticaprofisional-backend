@@ -100,18 +100,27 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE formasPagamento SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "formasPagamento", "descricao", formasPagamento.descricao, formasPagamento.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE formasPagamento SET descricao = @descricao, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@descricao", formasPagamento.descricao);
-                    command.Parameters.AddWithValue("@dtAlteracao", formasPagamento.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", formasPagamento.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return formasPagamento;
+                        command.Parameters.AddWithValue("@descricao", formasPagamento.descricao);
+                        command.Parameters.AddWithValue("@dtAlteracao", formasPagamento.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", formasPagamento.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return formasPagamento;
+                    }
+                    else
+                    {
+                        throw new Exception("Forma de Pagamento já cadastrada");
+                    }
                 }
                 finally
                 {

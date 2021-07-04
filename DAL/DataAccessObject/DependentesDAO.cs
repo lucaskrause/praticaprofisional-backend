@@ -67,8 +67,6 @@ namespace DAL.DataAccessObject
                     {
                         string sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
-                        conexao.Open();
-
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                         command.Parameters.AddWithValue("@nome", dependente.nome);
@@ -110,29 +108,36 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "dependentes", "cpf", dependente.cpf, dependente.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@nome", dependente.nome);
-                    command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                    command.Parameters.AddWithValue("@rg", dependente.rg);
-                    command.Parameters.AddWithValue("@sexo", dependente.sexo);
-                    command.Parameters.AddWithValue("@email", dependente.email);
-                    command.Parameters.AddWithValue("@telefone", dependente.telefone);
-                    command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                    command.Parameters.AddWithValue("@complemento", dependente.complemento);
-                    command.Parameters.AddWithValue("@bairro", dependente.bairro);
-                    command.Parameters.AddWithValue("@cep", dependente.cep);
-                    command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
-                    command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                        command.Parameters.AddWithValue("@nome", dependente.nome);
+                        command.Parameters.AddWithValue("@cpf", dependente.cpf);
+                        command.Parameters.AddWithValue("@rg", dependente.rg);
+                        command.Parameters.AddWithValue("@sexo", dependente.sexo);
+                        command.Parameters.AddWithValue("@email", dependente.email);
+                        command.Parameters.AddWithValue("@telefone", dependente.telefone);
+                        command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
+                        command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                        command.Parameters.AddWithValue("@bairro", dependente.bairro);
+                        command.Parameters.AddWithValue("@cep", dependente.cep);
+                        command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
+                        command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return dependente;
+                        await command.ExecuteNonQueryAsync();
+                        return dependente;
+                    }
+                    else
+                    {
+                        throw new Exception("Dependente já cadastrado");
+                    }
                 }
                 finally
                 {

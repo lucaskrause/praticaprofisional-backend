@@ -111,33 +111,42 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE funcionarios SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigoempresa = @codigoEmpresa, salario = @salario, dtadmissao = @dtAdmissao, dtDemissao = @dtDemissao, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "funcionarios", "cpf", funcionario.cpf, funcionario.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE funcionarios SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigoempresa = @codigoEmpresa, salario = @salario, dtadmissao = @dtAdmissao, dtDemissao = @dtDemissao, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@nome", funcionario.nome);
-                    command.Parameters.AddWithValue("@cpf", funcionario.cpf);
-                    command.Parameters.AddWithValue("@rg", funcionario.rg);
-                    command.Parameters.AddWithValue("@sexo", funcionario.sexo);
-                    command.Parameters.AddWithValue("@email", funcionario.email);
-                    command.Parameters.AddWithValue("@telefone", funcionario.telefone);
-                    command.Parameters.AddWithValue("@dtNascimento", funcionario.dtNascimento);
-                    command.Parameters.AddWithValue("@codigoCidade", funcionario.codigoCidade);
-                    command.Parameters.AddWithValue("@logradouro", funcionario.logradouro);
-                    command.Parameters.AddWithValue("@complemento", funcionario.complemento);
-                    command.Parameters.AddWithValue("@bairro", funcionario.bairro);
-                    command.Parameters.AddWithValue("@cep", funcionario.cep);
-                    command.Parameters.AddWithValue("@codigoEmpresa", funcionario.codigoEmpresa);
-                    command.Parameters.AddWithValue("@salario", funcionario.salario);
-                    command.Parameters.AddWithValue("@dtAdmissao", funcionario.dtAdmissao);
-                    command.Parameters.AddWithValue("@dtDemissao", funcionario.dtDemissao);
-                    command.Parameters.AddWithValue("@dtAlteracao", funcionario.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", funcionario.status);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return funcionario;
+                        command.Parameters.AddWithValue("@nome", funcionario.nome);
+                        command.Parameters.AddWithValue("@cpf", funcionario.cpf);
+                        command.Parameters.AddWithValue("@rg", funcionario.rg);
+                        command.Parameters.AddWithValue("@sexo", funcionario.sexo);
+                        command.Parameters.AddWithValue("@email", funcionario.email);
+                        command.Parameters.AddWithValue("@telefone", funcionario.telefone);
+                        command.Parameters.AddWithValue("@dtNascimento", funcionario.dtNascimento);
+                        command.Parameters.AddWithValue("@codigoCidade", funcionario.codigoCidade);
+                        command.Parameters.AddWithValue("@logradouro", funcionario.logradouro);
+                        command.Parameters.AddWithValue("@complemento", funcionario.complemento);
+                        command.Parameters.AddWithValue("@bairro", funcionario.bairro);
+                        command.Parameters.AddWithValue("@cep", funcionario.cep);
+                        command.Parameters.AddWithValue("@codigoEmpresa", funcionario.codigoEmpresa);
+                        command.Parameters.AddWithValue("@salario", funcionario.salario);
+                        command.Parameters.AddWithValue("@dtAdmissao", funcionario.dtAdmissao);
+                        command.Parameters.AddWithValue("@dtDemissao", funcionario.dtDemissao);
+                        command.Parameters.AddWithValue("@dtAlteracao", funcionario.dtAlteracao);
+                        command.Parameters.AddWithValue("@status", funcionario.status);
+
+                        await command.ExecuteNonQueryAsync();
+                        return funcionario;
+                    }
+                    else
+                    {
+                        throw new Exception("Funcionário já cadastrado");
+                    }
                 }
                 finally
                 {

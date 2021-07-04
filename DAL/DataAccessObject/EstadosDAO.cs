@@ -101,20 +101,29 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE estados SET estado = @estado, uf = @uf, codigoPais = @codigoPais, dtAlteracao = @dtAlteracao WHERE codigo = @codigo;";
-
                     conexao.Open();
+                    bool exists = await CheckExist(conexao, "estados", "estado", estado.estado, estado.codigo);
+                    if (exists)
+                    {
+                        string sql = @"UPDATE estados SET estado = @estado, uf = @uf, codigoPais = @codigoPais, dtAlteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                        conexao.Open();
 
-                    command.Parameters.AddWithValue("@estado", estado.estado);
-                    command.Parameters.AddWithValue("@uf", estado.uf);
-                    command.Parameters.AddWithValue("@codigoPais", estado.codigoPais);
-                    command.Parameters.AddWithValue("@dtAlteracao", estado.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", estado.codigo);
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    await command.ExecuteNonQueryAsync();
-                    return estado;
+                        command.Parameters.AddWithValue("@estado", estado.estado);
+                        command.Parameters.AddWithValue("@uf", estado.uf);
+                        command.Parameters.AddWithValue("@codigoPais", estado.codigoPais);
+                        command.Parameters.AddWithValue("@dtAlteracao", estado.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", estado.codigo);
+
+                        await command.ExecuteNonQueryAsync();
+                        return estado;
+                    }
+                    else
+                    {
+                        throw new Exception("Estado já cadastrado");
+                    }
                 }
                 finally
                 {
