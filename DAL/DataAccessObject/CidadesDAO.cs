@@ -50,7 +50,15 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     IList<Cidades> list = await GetResultSet(command);
-                    return list[0];
+
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Cidade não encontrada");
+                    }
                 }
                 finally
                 {
@@ -103,12 +111,10 @@ namespace DAL.DataAccessObject
                 try
                 {
                     conexao.Open();
-                    bool exists = await CheckExist(conexao, "cidades", "cidade", cidade.cidade);
+                    bool exists = await CheckExist(conexao, "cidades", "cidade", cidade.cidade, cidade.codigo);
                     if (exists)
                     {
                         string sql = @"UPDATE cidades SET cidade = @cidade, ddd = @ddd, codigoEstado = @codigoEstado, dtAlteracao = @dtAlteracao, status = @status WHERE codigo = @codigo";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -140,7 +146,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"DELETE FROM paises WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM cidades WHERE codigo = @codigo";
 
                     conexao.Open();
 
@@ -153,7 +159,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    string sql = @"UPDATE cidades SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

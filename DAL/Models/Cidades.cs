@@ -23,9 +23,17 @@ namespace DAL.Models
             {
                 return "Cidade obrigatória";
             }
+            else if (this.cidade.Length > 50)
+            {
+                return "Cidade deve ter no máximo 50 caracteres";
+            }
             else if (this.ddd == null || this.ddd == "")
             {
                 return "DDD obrigatório";
+            }
+            else if (this.ddd.Length == 1 || this.ddd.Length > 4)
+            {
+                return "DDD deve ter entre 2 e 4 caracteres";
             }
             else if (this.codigoEstado <= 0)
             {
