@@ -23,7 +23,7 @@ namespace DAL.Models
             }
             else if (this.valor <= Convert.ToDecimal(0.00) || this.valor > Convert.ToDecimal(99999999.99))
             {
-                return "Valor deve ser entre 0.01 e 99,999,999.99";
+                return "valor deve ser entre 0.01 e 99999999.99";
             }
             else
             {
