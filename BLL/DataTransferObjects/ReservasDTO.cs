@@ -36,7 +36,6 @@ namespace BLL.DataTransferObjects
         {
             return new Reservas()
             {
-                codigoEmpresa = this.codigoEmpresa,
                 codigoCliente = this.codigoCliente,
                 qtdePessoas = this.qtdePessoas,
                 dtReserva = this.dtReserva,
@@ -51,7 +50,6 @@ namespace BLL.DataTransferObjects
             return new Reservas()
             {
                 codigo = codigo,
-                codigoEmpresa = this.codigoEmpresa,
                 codigoCliente = this.codigoCliente,
                 qtdePessoas = this.qtdePessoas,
                 dtReserva = this.dtReserva,

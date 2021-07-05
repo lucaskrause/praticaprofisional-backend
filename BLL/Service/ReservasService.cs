@@ -27,7 +27,6 @@ namespace BLL.Service
         {
             string error = reserva.Validation();
             if (error == null) {
-                reserva.codigoEmpresa = 1;
                 reserva.PrepareSave();
                 reserva.Ativar();
                 return await reservasDao.Inserir(reserva);

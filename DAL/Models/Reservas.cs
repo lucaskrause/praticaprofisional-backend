@@ -7,10 +7,6 @@ namespace DAL.Models
 {
     public class Reservas : AbstractEntity
     {
-        public int codigoEmpresa { get; set; }
-
-        public Empresas empresa { get; set; }
-
         public int codigoCliente { get; set; }
 
         public Clientes cliente { get; set; }
@@ -39,15 +35,15 @@ namespace DAL.Models
             }
             else if (this.qtdePessoas <= 0)
             {
-                return "Quantidade de Pessoas obrigatória";
+                return "Quantidade de Pessoas de ser no mínimo 1";
             }
-            else if (this.dtReserva == null || this.dtReserva.Date < (DateTime.Now).Date)
+            else if (this.dtReserva == null || this.dtReserva.Date < DateTime.Now.AddDays(3).Date)
             {
-                return "Data da Reserva obrigatória";
+                return "Data da Reserva deve ter no mínimo 3 dias de antecedência";
             }
-            else if (this.valor <= 0)
+            else if (this.valor <= Convert.ToDecimal(0.00) || this.valor > Convert.ToDecimal(99999999.99))
             {
-                return "Data da Reserva obrigatória";
+                return "valor deve ser entre 0.01 e 99999999.99";
             }
             else if (this.codigoCondicaoPagamento <= 0)
             {

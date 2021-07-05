@@ -72,7 +72,7 @@ namespace DAL.DataAccessObject
 
         public async Task<List<AreasLocacao>> GetAreasReservas(NpgsqlConnection conexao, int codigoReserva)
         {
-            string sql = @"SELECT * FROM areasreservas WHERE codigoreserva = @codigo AND status = 'Ativo';";
+            string sql = @"SELECT * FROM areasreservas WHERE codigoreserva = @codigo;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -85,7 +85,7 @@ namespace DAL.DataAccessObject
                 List<AreasLocacao> areasLocacao = new List<AreasLocacao>();
                 for (int i = 0; i < listAreasReservas.Count; i++)
                 {
-                    sql = @"SELECT * FROM areasLocacao WHERE codigo = @codigo AND status = 'Ativo';";
+                    sql = @"SELECT * FROM areasLocacao WHERE codigo = @codigo;";
 
                     command = new NpgsqlCommand(sql, conexao);
 
@@ -106,7 +106,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public async Task<bool> InsertAreasLocacao(NpgsqlConnection conexao, List<AreasLocacao> areasLocacao, int codigoReserva)
+        public async Task<bool> InsertAreasReservas(NpgsqlConnection conexao, List<AreasLocacao> areasLocacao, int codigoReserva)
         {
             for (int i = 0; i < areasLocacao.Count; i++)
             {
@@ -144,7 +144,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT reservas.codigo, reservas.codigoempresa, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.status = 'Ativo' ORDER BY reservas.codigo;";
+                    string sql = @"SELECT reservas.codigo, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.status = 'Ativo' ORDER BY reservas.codigo;";
 
                     conexao.Open();
 
@@ -168,7 +168,7 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"SELECT reservas.codigo, reservas.codigoempresa, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.codigo = @codigo AND reservas.status = 'Ativo';";
+                    string sql = @"SELECT reservas.codigo, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.codigo = @codigo AND reservas.status = 'Ativo';";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -208,11 +208,10 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"INSERT INTO reservas(codigoempresa, codigocliente, qtdepessoas, dtreserva, valor, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@codigoEmpresa, @codigoCliente, @qtdePessoas, @dtReserva, @valor, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+                    string sql = @"INSERT INTO reservas(codigocliente, qtdepessoas, dtreserva, valor, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCliente, @qtdePessoas, @dtReserva, @valor, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigoEmpresa", reserva.codigoEmpresa);
                     command.Parameters.AddWithValue("@codigoCliente", reserva.codigoCliente);
                     command.Parameters.AddWithValue("@qtdePessoas", reserva.qtdePessoas);
                     command.Parameters.AddWithValue("@dtReserva", reserva.dtReserva);
@@ -228,7 +227,7 @@ namespace DAL.DataAccessObject
                     int qtdAreasLocacao = reserva.areasLocacao.Count;
                     if (qtdAreasLocacao > 0)
                     {
-                        await InsertAreasLocacao(conexao, reserva.areasLocacao, reserva.codigo);
+                        await InsertAreasReservas(conexao, reserva.areasLocacao, reserva.codigo);
                     }
 
                     transaction.Commit();
@@ -254,11 +253,10 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"UPDATE reservas SET codigoempresa = @codigoEmpresa, codigocliente = @codigoCliente, qtdepessoas = @qtdePessoas, dtreserva = @dtReserva , valor = @valor, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo AND status = 'Ativo';";
+                    string sql = @"UPDATE reservas SET codigocliente = @codigoCliente, qtdepessoas = @qtdePessoas, dtreserva = @dtReserva , valor = @valor, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo AND status = 'Ativo';";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigoEmpresa", reserva.codigoEmpresa);
                     command.Parameters.AddWithValue("@codigoCliente", reserva.codigoCliente);
                     command.Parameters.AddWithValue("@qtdePessoas", reserva.qtdePessoas);
                     command.Parameters.AddWithValue("@dtReserva", reserva.dtReserva);
@@ -274,7 +272,7 @@ namespace DAL.DataAccessObject
                     int qtdAreasLocacao = reserva.areasLocacao.Count;
                     if (qtdAreasLocacao > 0)
                     {
-                        await InsertAreasLocacao(conexao, reserva.areasLocacao, reserva.codigo);
+                        await InsertAreasReservas(conexao, reserva.areasLocacao, reserva.codigo);
                     }
 
                     transaction.Commit();
@@ -311,16 +309,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@status", reserva.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", reserva.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", reserva.codigo);
-
-                    var result = await command.ExecuteNonQueryAsync();
-                    return result == 1 ? true : false;
+                    throw new Exception("Não foi possivel excluir a reserva");
                 }
                 finally
                 {
