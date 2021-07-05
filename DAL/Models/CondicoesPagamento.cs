@@ -45,24 +45,30 @@ namespace DAL.Models
                     for (int i = 0; i < parcelas.Count; i++)
                     {
                         CondicoesParcelas parcela = parcelas[i];
-                        perc -= parcela.porcentagem;
-                        int numDiasAnt = parcelas[i - 1].numeroDias;
-                        string error = parcela.Validation();
+                        if (parcela.status == "Ativo") { 
+                            perc -= parcela.porcentagem;
+                            int numDiasAnt = i == 0 ? 0 : parcelas[i - 1].numeroDias;
+                            string error = parcela.Validation();
 
-                        if(error == null)
-                        {
-                            if (parcela.numeroDias <= numDiasAnt)
+                            if(error == null)
                             {
-                                return "Número de dias das parcelas devem ser crescente e não pode se repetir";
+                                if (parcela.numeroDias <= numDiasAnt)
+                                {
+                                    return "Número de dias das parcelas devem ser crescente e não pode se repetir";
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
                             else
                             {
-                                continue;
+                                return error;
                             }
                         }
                         else
                         {
-                            return error;
+                            continue;
                         }
                     }
 
