@@ -51,7 +51,14 @@ namespace DAL.DataAccessObject
 
                     List<Produtos> list = await GetResultSet(command);
 
-                    return list[0];
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Produto não encontrado");
+                    }
                 }
                 finally
                 {
@@ -71,8 +78,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"INSERT INTO produtos(produto, unidades, valorcusto, estoque, codigocategoria, dtultimacompra, valorultimacompra, dtcadastro, dtalteracao, status) VALUES (@produto, @unidades, @valorCusto, @estoque, @codigoCategoria, @dtUltimaCompra, @valorUltimaCompra, @dtCadastro, @dtAlteracao, @status) returning codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -113,8 +118,6 @@ namespace DAL.DataAccessObject
                     if (exists)
                     {
                         string sql = @"UPDATE produtos SET produto = @produto, unidades = @unidades, valorcusto = @valorCusto, estoque = @estoque, codigocategoria = @codigoCategoria, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
-
-                        conexao.Open();
 
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

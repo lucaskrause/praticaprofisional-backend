@@ -31,13 +31,21 @@ namespace DAL.Models
             {
                 return "Produto obrigatório";
             }
+            else if (this.produto.Length > 50)
+            {
+                return "Produto deve ter no máximo 50 caracteres";
+            }
             else if (this.unidades < 1)
             {
-                return "Unidades obrigatória";
+                return "Unidades deve ser no mínimo 1";
             }
-            else if (this.valorCusto <= 0)
+            else if (this.valorCusto <= Convert.ToDecimal(0.00) || this.valorCusto > Convert.ToDecimal(99999999.99))
             {
-                return "Valor de Custo obrigatório";
+                return "Valor de custo deve ser entre 0.01 e 99999999.99";
+            }
+            else if (this.estoque < 1)
+            {
+                return "Estoque deve ser no mínimo 1";
             }
             else if (this.codigoCategoria <= 0)
             {
