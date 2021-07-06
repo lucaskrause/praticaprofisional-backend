@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DAL.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -36,15 +37,27 @@ namespace DAL.Models
         {
             if (this.nome == null || this.nome == "")
             {
-                return "Cliente obrigatório";
+                return "Nome obrigatório";
+            }
+            else if (this.nome.Length > 50)
+            {
+                return "Nome de ter no máximo 50 caracteres";
             }
             else if (this.telefone == null || this.telefone == "")
             {
                 return "Telefone obrigatório";
             }
+            else if (this.telefone.Length < 14 || this.telefone.Length > 15)
+            {
+                return "Telefone inválido";
+            }
             else if (this.email == null || this.email == "")
             {
                 return "Email obrigatório";
+            }
+            else if (!Validadores.validadorEmail(this.email))
+            {
+                return "Email inválido";
             }
             else if (this.codigoCidade <= 0)
             {
@@ -54,11 +67,23 @@ namespace DAL.Models
             {
                 return "Logradouro obrigatório";
             }
+            else if (this.logradouro.Length > 50)
+            {
+                return "Logradouro deve ter no máximo 50 caracteres";
+            }
             else if (this.bairro == null || this.bairro == "")
             {
                 return "Bairro obrigatório";
             }
+            else if (this.bairro.Length > 50)
+            {
+                return "Bairro deve ter no máximo 50 caracteres";
+            }
             else if (this.cep == null || this.cep == "")
+            {
+                return "CEP obrigatório";
+            }
+            else if (this.cep.Length < 9 || this.cep.Length > 9)
             {
                 return "CEP obrigatório";
             }
