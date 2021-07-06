@@ -87,7 +87,6 @@ namespace DAL.DataAccessObject
             if (exists)
             {
                 contaBancaria.codigoEmpresa = codigoEmpresa;
-                contaBancaria.PrepareSave();
                 contaBancaria.Ativar();
 
                 string sql = @"INSERT INTO contasbancarias(instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@instituicao, @numeroBanco, @agencia, @conta, @saldo, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -193,10 +192,13 @@ namespace DAL.DataAccessObject
                     if (list.Count > 0)
                     {
                         list[0].contasBancarias = await GetContasBancarias(conexao, codigo);
-                    }
 
-                    transaction.Commit();
-                    return list[0];
+                        transaction.Commit();
+                        return list[0];
+                    } else
+                    {
+                        throw new Exception("Empresa não encontrada");
+                    }
                 }
                 catch
                 {
@@ -226,16 +228,16 @@ namespace DAL.DataAccessObject
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                         command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
-                        command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
+                        command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
-                        command.Parameters.AddWithValue("@ie", empresa.ie);
+                        command.Parameters.AddWithValue("@ie", empresa.ie ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@telefone", empresa.telefone);
                         command.Parameters.AddWithValue("@email", empresa.email);
                         command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
                         command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
                         command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
-                        command.Parameters.AddWithValue("@complemento", empresa.complemento);
+                        command.Parameters.AddWithValue("@complemento", empresa.complemento ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", empresa.bairro);
                         command.Parameters.AddWithValue("@cep", empresa.cep);
                         command.Parameters.AddWithValue("@dtCadastro", empresa.dtCadastro);
@@ -292,16 +294,16 @@ namespace DAL.DataAccessObject
 
                         command.Parameters.AddWithValue("@codigo", empresa.codigo);
                         command.Parameters.AddWithValue("@razaoSocial", empresa.razaoSocial);
-                        command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia);
+                        command.Parameters.AddWithValue("@nomeFantasia", empresa.nomeFantasia ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@cnpj", empresa.cnpj);
-                        command.Parameters.AddWithValue("@ie", empresa.ie);
+                        command.Parameters.AddWithValue("@ie", empresa.ie ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@telefone", empresa.telefone);
                         command.Parameters.AddWithValue("@email", empresa.email);
                         command.Parameters.AddWithValue("@dtFundacao", empresa.dtFundacao);
                         command.Parameters.AddWithValue("@qtdeCotas", empresa.qtdeCotas);
                         command.Parameters.AddWithValue("@codigoCidade", empresa.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", empresa.logradouro);
-                        command.Parameters.AddWithValue("@complemento", empresa.complemento);
+                        command.Parameters.AddWithValue("@complemento", empresa.complemento ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", empresa.bairro);
                         command.Parameters.AddWithValue("@cep", empresa.cep);
                         command.Parameters.AddWithValue("@dtAlteracao", empresa.dtAlteracao);
@@ -314,6 +316,7 @@ namespace DAL.DataAccessObject
                             for (int i = 0; i < qtdContas; i++)
                             {
                                 ContasBancarias contaBancaria = empresa.contasBancarias[i];
+                                contaBancaria.PrepareSave();
                                 if (contaBancaria.codigo == 0)
                                 {
                                     empresa.contasBancarias[i] = await InsertContaBancaria(conexao, contaBancaria, empresa.codigo);
@@ -356,7 +359,8 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"DELETE FROM empresa WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM contasbancarias WHERE codigoEmpresa = @codigo;
+                                   DELETE FROM empresas WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -369,7 +373,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE empresas SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
+                    string sql = @"UPDATE empresas SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo;";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

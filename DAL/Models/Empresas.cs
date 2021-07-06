@@ -11,11 +11,11 @@ namespace DAL.Models
     {
         public string razaoSocial { get; set; }
 
-        public string nomeFantasia { get; set; }
+        public string? nomeFantasia { get; set; }
 
         public string cnpj { get; set; }
 
-        public string ie { get; set; }
+        public string? ie { get; set; }
 
         public string telefone { get; set; }
 
@@ -47,6 +47,10 @@ namespace DAL.Models
             {
                 return "Razão Social obrigatória";
             }
+            else if (this.razaoSocial.Length > 50)
+            {
+                return "Razão Social deve ter no máximo 50 caracteres";
+            }
             else if (this.cnpj == null || this.cnpj == "")
             {
                 return "CNPJ obrigatória";
@@ -59,13 +63,21 @@ namespace DAL.Models
             {
                 return "Telefone obrigatório";
             }
+            else if (this.telefone.Length < 14 || this.telefone.Length > 15)
+            {
+                return "Telefone inválido";
+            }
             else if (this.email == null || this.email == "")
             {
                 return "Email obrigatório";
             }
+            else if (!Validadores.validadorEmail(this.email))
+            {
+                return "Email inválido";
+            }
             else if (this.dtFundacao == null || this.dtFundacao > DateTime.Now)
             {
-                return "Data de Fundação obrigatória";
+                return "Data de Fundação obrigatória e deve ser no máximo a data de hoje";
             }
             else if (this.codigoCidade <= 0)
             {
@@ -75,11 +87,23 @@ namespace DAL.Models
             {
                 return "Logradouro obrigatório";
             }
+            else if (this.logradouro.Length > 50)
+            {
+                return "Logradouro deve ter no máximo 50 caracteres";
+            }
             else if (this.bairro == null || this.bairro == "")
             {
-                return "Logradouro obrigatório";
+                return "Bairro obrigatório";
+            }
+            else if (this.bairro.Length > 50)
+            {
+                return "Bairro deve ter no máximo 50 caracteres";
             }
             else if (this.cep == null || this.cep == "")
+            {
+                return "CEP obrigatório";
+            }
+            else if (this.cep.Length < 9 || this.cep.Length > 9)
             {
                 return "CEP obrigatório";
             }
@@ -102,10 +126,7 @@ namespace DAL.Models
                     }
                     return null;
                 }
-                else
-                {
-                    return "Adicione ao menos uma conta bancaria";
-                }
+                return null;
             }
         }
     }
