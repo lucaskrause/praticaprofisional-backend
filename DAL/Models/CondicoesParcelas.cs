@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class CondicoesParcelas : AbstractEntity
+    public class CondicoesParcelas
     {
         public int codigoCondicaoPagamento { get; set; }
 
@@ -21,9 +21,9 @@ namespace DAL.Models
 
         public string descricaoForma { set { formaPagamento ??= new FormasPagamento(); formaPagamento.descricao = value; formaPagamento.codigo = codigoFormaPagamento; } }
 
-        public override string Validation()
+        public string Validation()
         {
-            if (this.numeroParcela < 0)
+            if (this.numeroParcela <= 0)
             {
                 return "Número da parcela precisa ser maior que 0";
             }
