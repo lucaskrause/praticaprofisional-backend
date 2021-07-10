@@ -20,8 +20,6 @@ namespace DAL.Models
 
         public DateTime dtTermino { get; set; }
 
-        public int codigoEmpresa { get; set; }
-
         public override string Validation()
         {
             if (this.codigoCliente <= 0)

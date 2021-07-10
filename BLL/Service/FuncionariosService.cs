@@ -27,7 +27,6 @@ namespace BLL.Service
         {
             string error = funcionario.Validation();
             if (error == null) {
-                funcionario.codigoEmpresa = 1;
                 funcionario.Ativar();
                 funcionario.PrepareSave();
                 return await funcionariosDao.Inserir(funcionario);
@@ -42,7 +41,6 @@ namespace BLL.Service
             string error = funcionario.Validation();
             if (error == null)
             {
-                funcionario.codigoEmpresa = 1;
                 funcionario.PrepareSave();
                 return await funcionariosDao.Editar(funcionario);
             }

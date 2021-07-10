@@ -27,7 +27,6 @@ namespace BLL.Service
         {
             string error = cota.Validation();
             if (error == null) {
-                cota.codigoEmpresa = 1;
                 cota.Ativar();
                 cota.PrepareSave();
                 return await cotasDao.Inserir(cota);
@@ -42,7 +41,6 @@ namespace BLL.Service
             string error = cota.Validation();
             if (error == null)
             {
-                cota.codigoEmpresa = 1;
                 cota.PrepareSave();
                 return await cotasDao.Editar(cota);
             }

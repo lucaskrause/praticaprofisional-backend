@@ -13,17 +13,11 @@ namespace DAL.Models
 
         public string rg { get; set; }
 
-        public int codigoEmpresa { get; set; }
-
-        public Empresas empresa { get; set; }
-
-        public string nomeEmpresa { set { empresa ??= new Empresas(); empresa.razaoSocial = value; } }
-
         public decimal salario { get; set; }
 
         public DateTime dtAdmissao { get; set; }
 
-        public DateTime dtDemissao { get; set; }
+        public DateTime? dtDemissao { get; set; }
 
         public override string Validation()
         {
@@ -46,7 +40,7 @@ namespace DAL.Models
                 {
                     return "Salário obrigatório";
                 }
-                else if (this.dtAdmissao == null || this.dtAdmissao.Year > 1900)
+                else if (this.dtAdmissao == null || this.dtAdmissao.Year < 1900)
                 {
                     return "Data de Admissão obrigatória";
                 }

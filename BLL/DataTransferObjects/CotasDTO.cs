@@ -34,8 +34,7 @@ namespace BLL.DataTransferObjects
                 codigoCliente = this.codigoCliente,
                 valor = this.valor,
                 dtInicio = this.dtInicio,
-                dtTermino = this.dtTermino,
-                codigoEmpresa = this.codigoEmpresa
+                dtTermino = this.dtTermino
             };
         }
 
@@ -47,8 +46,7 @@ namespace BLL.DataTransferObjects
                 codigoCliente = this.codigoCliente,
                 valor = this.valor,
                 dtInicio = this.dtInicio,
-                dtTermino = this.dtTermino,
-                codigoEmpresa = this.codigoEmpresa
+                dtTermino = this.dtTermino
             };
         }
     }
