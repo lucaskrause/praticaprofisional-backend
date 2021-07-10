@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT fornecedores.codigo, fornecedores.nome, fornecedores.tipopessoa, fornecedores.cpfcnpj, fornecedores.rgie, fornecedores.sexo, fornecedores.email, fornecedores.telefone, fornecedores.dtnascfundacao, fornecedores.codigocidade, fornecedores.logradouro, fornecedores.complemento, fornecedores.bairro, fornecedores.cep, fornecedores.dtcadastro, fornecedores.dtalteracao, fornecedores.status, cidades.cidade as nomeCidade FROM fornecedores INNER JOIN cidades ON (fornecedores.codigoCidade = cidades.codigo) WHERE fornecedores.codigo = @codigo AND fornecedores.status = 'Ativo';";
+                    string sql = @"SELECT fornecedores.codigo, fornecedores.nome, fornecedores.tipopessoa, fornecedores.cpfcnpj, fornecedores.rgie, fornecedores.sexo, fornecedores.email, fornecedores.telefone, fornecedores.dtnascfundacao as dtNascimento, fornecedores.codigocidade, fornecedores.logradouro, fornecedores.complemento, fornecedores.bairro, fornecedores.cep, fornecedores.dtcadastro, fornecedores.dtalteracao, fornecedores.status, cidades.cidade as nomeCidade FROM fornecedores INNER JOIN cidades ON (fornecedores.codigoCidade = cidades.codigo) WHERE fornecedores.codigo = @codigo AND fornecedores.status = 'Ativo';";
 
                     conexao.Open();
 
@@ -45,7 +45,14 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Fornecedores> list = await GetResultSet(command);
-                    return list[0];
+                    if(list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Forneceodr não encontrado");
+                    }
                 }
                 finally
                 {
@@ -71,14 +78,14 @@ namespace DAL.DataAccessObject
                         command.Parameters.AddWithValue("@nome", fornecedor.nome);
                         command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
                         command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
-                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
+                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
                         command.Parameters.AddWithValue("@email", fornecedor.email);
                         command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
                         command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
-                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
+                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
                         command.Parameters.AddWithValue("@cep", fornecedor.cep);
                         command.Parameters.AddWithValue("@dtCadastro", fornecedor.dtCadastro);
@@ -113,24 +120,23 @@ namespace DAL.DataAccessObject
                     {
                         string sql = @"UPDATE fornecedores SET nome = @nome, tipopessoa = @tipoPessoa, cpfcnpj = @cpfcnpj, rgie = @rgie, sexo = @sexo, email = @email, telefone = @telefone, dtnascfundacao = @dtNascFundacao, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, dtalteracao = @dtAlteracao WHERE codigo = @codigo;";
 
-                        conexao.Open();
-
                         NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                         command.Parameters.AddWithValue("@nome", fornecedor.nome);
                         command.Parameters.AddWithValue("@tipoPessoa", fornecedor.tipoPessoa);
                         command.Parameters.AddWithValue("@cpfcnpj", fornecedor.cpfCnpj);
-                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe);
+                        command.Parameters.AddWithValue("@rgie", fornecedor.rgIe ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", fornecedor.sexo);
                         command.Parameters.AddWithValue("@email", fornecedor.email);
                         command.Parameters.AddWithValue("@telefone", fornecedor.telefone);
                         command.Parameters.AddWithValue("@dtnascfundacao", fornecedor.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", fornecedor.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", fornecedor.logradouro);
-                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento);
+                        command.Parameters.AddWithValue("@complemento", fornecedor.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", fornecedor.bairro);
                         command.Parameters.AddWithValue("@cep", fornecedor.cep);
                         command.Parameters.AddWithValue("@dtAlteracao", fornecedor.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", fornecedor.codigo);
 
                         await command.ExecuteNonQueryAsync();
                         return fornecedor;

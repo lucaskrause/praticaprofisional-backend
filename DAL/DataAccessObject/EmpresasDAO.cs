@@ -87,8 +87,6 @@ namespace DAL.DataAccessObject
             if (exists)
             {
                 contaBancaria.codigoEmpresa = codigoEmpresa;
-                contaBancaria.Ativar();
-
                 string sql = @"INSERT INTO contasbancarias(instituicao, numerobanco, agencia, conta, saldo, codigoempresa, dtcadastro, dtalteracao, status) VALUES (@instituicao, @numeroBanco, @agencia, @conta, @saldo, @codigoEmpresa, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                 NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
@@ -253,6 +251,8 @@ namespace DAL.DataAccessObject
                             for (int i = 0; i < qtdContas; i++)
                             {
                                 ContasBancarias contaBancaria = empresa.contasBancarias[i];
+                                contaBancaria.PrepareSave();
+                                contaBancaria.Ativar();
                                 empresa.contasBancarias[i] = await InsertContaBancaria(conexao, contaBancaria, empresa.codigo);
                             }
                         }
@@ -369,7 +369,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", empresa.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
-                    return result == 1 ? true : false;
+                    return result > 0 ? true : false;
                 }
                 catch
                 {

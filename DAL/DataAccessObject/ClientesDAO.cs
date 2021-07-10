@@ -128,7 +128,7 @@ namespace DAL.DataAccessObject
 
         public async Task<Dependentes> InsertDependente(NpgsqlConnection conexao, Dependentes dependente)
         {
-            bool exists = await CheckExistDependente(conexao, "clientes", "cpfcnpj", dependente.cpf);
+            bool exists = await CheckExistDependente(conexao, "dependentes", "cpf", dependente.cpf);
             if (exists)
             {
                 string sql = @"INSERT INTO dependentes(nome, cpf, rg, sexo, email, telefone, dtnascimento, codigocidade, logradouro, complemento, bairro, cep, codigocliente, dtcadastro, dtalteracao, status) VALUES (@nome, @cpf, @rg, @sexo, @email, @telefone, @dtNascimento, @codigoCidade, @logradouro, @complemento, @bairro, @cep, @codigoCliente, @dtCadastro, @dtAlteracao, @status) returning codigo;";
@@ -137,14 +137,14 @@ namespace DAL.DataAccessObject
 
                 command.Parameters.AddWithValue("@nome", dependente.nome);
                 command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                command.Parameters.AddWithValue("@rg", dependente.rg);
+                command.Parameters.AddWithValue("@rg", dependente.rg ?? (Object)DBNull.Value);
                 command.Parameters.AddWithValue("@sexo", dependente.sexo);
                 command.Parameters.AddWithValue("@email", dependente.email);
                 command.Parameters.AddWithValue("@telefone", dependente.telefone);
                 command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
                 command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
                 command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                command.Parameters.AddWithValue("@complemento", dependente.complemento ?? (Object)DBNull.Value);
                 command.Parameters.AddWithValue("@bairro", dependente.bairro);
                 command.Parameters.AddWithValue("@cep", dependente.cep);
                 command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
@@ -165,7 +165,7 @@ namespace DAL.DataAccessObject
 
         public async Task<Dependentes> UpdateDependente(NpgsqlConnection conexao, Dependentes dependente)
         {
-            bool exists = await CheckExistDependente(conexao, "clientes", "cpfcnpj", dependente.cpf, dependente.codigo);
+            bool exists = await CheckExistDependente(conexao, "dependentes", "cpf", dependente.cpf, dependente.codigo);
             if (exists)
             {
                 string sql = @"UPDATE dependentes SET nome = @nome, cpf = @cpf, rg = @rg, sexo = @sexo, email = @email, telefone = @telefone, dtnascimento = @dtNascimento, codigocidade = @codigoCidade, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, cep = @cep, codigocliente = @codigoCliente, dtalteracao = @dtAlteracao, status = @status WHERE codigo = @codigo;";
@@ -174,14 +174,14 @@ namespace DAL.DataAccessObject
 
                 command.Parameters.AddWithValue("@nome", dependente.nome);
                 command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                command.Parameters.AddWithValue("@rg", dependente.rg);
+                command.Parameters.AddWithValue("@rg", dependente.rg ?? (Object)DBNull.Value);
                 command.Parameters.AddWithValue("@sexo", dependente.sexo);
                 command.Parameters.AddWithValue("@email", dependente.email);
                 command.Parameters.AddWithValue("@telefone", dependente.telefone);
                 command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
                 command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
                 command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                command.Parameters.AddWithValue("@complemento", dependente.complemento ?? (Object)DBNull.Value);
                 command.Parameters.AddWithValue("@bairro", dependente.bairro);
                 command.Parameters.AddWithValue("@cep", dependente.cep);
                 command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
@@ -247,15 +247,20 @@ namespace DAL.DataAccessObject
 
                     List<Clientes> list = await GetResultSet(command);
 
+
                     if (list.Count > 0)
                     {
                         list[0].dependentes = await GetDependentes(conexao, codigo);
 
                         list[0].isSocio = await ClienteIsSocio(conexao, codigo);
-                    }
 
-                    transaction.Commit();
-                    return list[0];
+                        transaction.Commit();
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Sócio não encontrado");
+                    }
                 }
                 catch
                 {
@@ -284,8 +289,14 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigo", codigo);
 
                     List<Clientes> list = await GetResultSet(command);
-
-                    return list[0];
+                    if(list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        throw new Exception("Sócio não encontrado");
+                    }
                 }
                 finally
                 {
@@ -312,14 +323,14 @@ namespace DAL.DataAccessObject
                         command.Parameters.AddWithValue("@nome", cliente.nome);
                         command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
                         command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
-                        command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                        command.Parameters.AddWithValue("@rgie", cliente.rgIe ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", cliente.sexo);
                         command.Parameters.AddWithValue("@email", cliente.email);
                         command.Parameters.AddWithValue("@telefone", cliente.telefone);
                         command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
-                        command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                        command.Parameters.AddWithValue("@complemento", cliente.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", cliente.bairro);
                         command.Parameters.AddWithValue("@cep", cliente.cep);
                         command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
@@ -381,14 +392,14 @@ namespace DAL.DataAccessObject
                         command.Parameters.AddWithValue("@nome", cliente.nome);
                         command.Parameters.AddWithValue("@tipoPessoa", cliente.tipoPessoa);
                         command.Parameters.AddWithValue("@cpfcnpj", cliente.cpfCnpj);
-                        command.Parameters.AddWithValue("@rgie", cliente.rgIe);
+                        command.Parameters.AddWithValue("@rgie", cliente.rgIe ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", cliente.sexo);
                         command.Parameters.AddWithValue("@email", cliente.email);
                         command.Parameters.AddWithValue("@telefone", cliente.telefone);
                         command.Parameters.AddWithValue("@dtnascfundacao", cliente.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", cliente.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", cliente.logradouro);
-                        command.Parameters.AddWithValue("@complemento", cliente.complemento);
+                        command.Parameters.AddWithValue("@complemento", cliente.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", cliente.bairro);
                         command.Parameters.AddWithValue("@cep", cliente.cep);
                         command.Parameters.AddWithValue("@codigoCondicaoPagamento", cliente.codigoCondicaoPagamento);
@@ -448,7 +459,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"DELETE FROM cliente WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM clientes WHERE codigo = @codigo";
 
                     conexao.Open();
 

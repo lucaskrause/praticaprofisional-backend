@@ -71,14 +71,14 @@ namespace DAL.DataAccessObject
 
                         command.Parameters.AddWithValue("@nome", dependente.nome);
                         command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                        command.Parameters.AddWithValue("@rg", dependente.rg);
+                        command.Parameters.AddWithValue("@rg", dependente.rg ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", dependente.sexo);
                         command.Parameters.AddWithValue("@email", dependente.email);
                         command.Parameters.AddWithValue("@telefone", dependente.telefone);
                         command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                        command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                        command.Parameters.AddWithValue("@complemento", dependente.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", dependente.bairro);
                         command.Parameters.AddWithValue("@cep", dependente.cep);
                         command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
@@ -118,18 +118,19 @@ namespace DAL.DataAccessObject
 
                         command.Parameters.AddWithValue("@nome", dependente.nome);
                         command.Parameters.AddWithValue("@cpf", dependente.cpf);
-                        command.Parameters.AddWithValue("@rg", dependente.rg);
+                        command.Parameters.AddWithValue("@rg", dependente.rg ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@sexo", dependente.sexo);
                         command.Parameters.AddWithValue("@email", dependente.email);
                         command.Parameters.AddWithValue("@telefone", dependente.telefone);
                         command.Parameters.AddWithValue("@dtNascimento", dependente.dtNascimento);
                         command.Parameters.AddWithValue("@codigoCidade", dependente.codigoCidade);
                         command.Parameters.AddWithValue("@logradouro", dependente.logradouro);
-                        command.Parameters.AddWithValue("@complemento", dependente.complemento);
+                        command.Parameters.AddWithValue("@complemento", dependente.complemento ?? (Object)DBNull.Value);
                         command.Parameters.AddWithValue("@bairro", dependente.bairro);
                         command.Parameters.AddWithValue("@cep", dependente.cep);
                         command.Parameters.AddWithValue("@codigoCliente", dependente.codigoCliente);
                         command.Parameters.AddWithValue("@dtAlteracao", dependente.dtAlteracao);
+                        command.Parameters.AddWithValue("@codigo", dependente.codigo);
 
                         await command.ExecuteNonQueryAsync();
                         return dependente;
