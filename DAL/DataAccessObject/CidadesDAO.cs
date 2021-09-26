@@ -159,16 +159,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE cidades SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@status", cidade.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", cidade.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", cidade.codigo);
-
-                    var result = await command.ExecuteNonQueryAsync();
-                    return result == 1 ? true : false;
+                    throw new Exception("Não é possivel excluir a Cidade, pois existe vinculo");
                 }
                 finally
                 {

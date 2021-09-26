@@ -151,16 +151,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE formasPagamento SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@status", formasPagamento.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", formasPagamento.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", formasPagamento.codigo);
-
-                    var result = await command.ExecuteNonQueryAsync();
-                    return result == 1 ? true : false;
+                    throw new Exception("Não foi possivel excluir a Forma de Pagamento, pois está vinculada a uma condição");
                 }
                 finally
                 {

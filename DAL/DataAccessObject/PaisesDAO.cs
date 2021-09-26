@@ -155,16 +155,7 @@ namespace DAL.DataAccessObject
                 }
                 catch
                 {
-                    string sql = @"UPDATE paises SET status = @status, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@status", pais.status);
-                    command.Parameters.AddWithValue("@dtAlteracao", pais.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", pais.codigo);
-
-                    var result = await command.ExecuteNonQueryAsync();
-                    return result == 1 ? true : false;
+                    throw new Exception("Não é possivel excluir o País, pois está vinculado a um Estado");
                 }
                 finally
                 {
