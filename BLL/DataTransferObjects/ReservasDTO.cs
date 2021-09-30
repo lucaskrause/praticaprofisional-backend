@@ -32,9 +32,9 @@ namespace BLL.DataTransferObjects
 
         public List<AreasLocacao> areasLocacao { get; set; }
 
-        public Reservas ToReserva()
+        public Locacoes ToReserva()
         {
-            return new Reservas()
+            return new Locacoes()
             {
                 codigoCliente = this.codigoCliente,
                 qtdePessoas = this.qtdePessoas,
@@ -45,9 +45,9 @@ namespace BLL.DataTransferObjects
             };
         }
 
-        public Reservas ToReserva(int codigo)
+        public Locacoes ToReserva(int codigo)
         {
-            return new Reservas()
+            return new Locacoes()
             {
                 codigo = codigo,
                 codigoCliente = this.codigoCliente,

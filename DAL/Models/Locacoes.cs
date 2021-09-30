@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace DAL.Models
 {
-    public class Reservas : AbstractEntity
+    public class Locacoes : AbstractEntity
     {
         public int codigoCliente { get; set; }
 

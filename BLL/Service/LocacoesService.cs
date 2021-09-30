@@ -7,42 +7,42 @@ using System.Threading.Tasks;
 
 namespace BLL.Service
 {
-    public class ReservasService : IService<Reservas>
+    public class LocacoesService : IService<Locacoes>
     {
-        private readonly ReservasDAO reservasDao = null;
+        private readonly LocacoesDAO locacoesDao = null;
 
-        public ReservasService() => this.reservasDao = new ReservasDAO();
+        public LocacoesService() => this.locacoesDao = new LocacoesDAO();
 
-        public async Task<IList<Reservas>> ListarTodos()
+        public async Task<IList<Locacoes>> ListarTodos()
         {
-            return await reservasDao.ListarTodos();
+            return await locacoesDao.ListarTodos();
         }
 
-        public async Task<Reservas> BuscarPorID(int codigo)
+        public async Task<Locacoes> BuscarPorID(int codigo)
         {
-            return await reservasDao.BuscarPorID(codigo);
+            return await locacoesDao.BuscarPorID(codigo);
         }
 
-        public async Task<Reservas> Inserir(Reservas reserva)
+        public async Task<Locacoes> Inserir(Locacoes reserva)
         {
             string error = reserva.Validation();
             if (error == null) {
                 reserva.PrepareSave();
                 reserva.Ativar();
-                return await reservasDao.Inserir(reserva);
+                return await locacoesDao.Inserir(reserva);
             } else
             {
                 throw new Exception(error);
             }
         }
 
-        public async Task<Reservas> Editar(Reservas reserva)
+        public async Task<Locacoes> Editar(Locacoes reserva)
         {
             string error = reserva.Validation();
             if (error == null)
             {
                 reserva.PrepareSave();
-                return await reservasDao.Editar(reserva);
+                return await locacoesDao.Editar(reserva);
             }
             else
             {
@@ -52,16 +52,16 @@ namespace BLL.Service
 
         public async Task<bool> Excluir(int codigo)
         {
-            Reservas reserva = new Reservas();
+            Locacoes reserva = new Locacoes();
             reserva.codigo = codigo;
             reserva.PrepareSave();
             reserva.Inativar();
-            return await reservasDao.Excluir(reserva);
+            return await locacoesDao.Excluir(reserva);
         }
 
-        public async Task<IList<Reservas>> Pesquisar(string str)
+        public async Task<IList<Locacoes>> Pesquisar(string str)
         {
-            return await reservasDao.Pesquisar(str);
+            return await locacoesDao.Pesquisar(str);
         }
     }
 }

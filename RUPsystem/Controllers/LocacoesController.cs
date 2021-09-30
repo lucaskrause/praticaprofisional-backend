@@ -9,13 +9,13 @@ using BLL.DataTransferObjects;
 
 namespace RUPsystem.Controllers
 {
-    public class ReservasController : AbstractController<Reservas>
+    public class LocacoesController : AbstractController<Locacoes>
     {
-        private readonly new ReservasService _service;
+        private readonly new LocacoesService _service;
 
-        public ReservasController()
+        public LocacoesController()
         {
-            _service = new ReservasService();
+            _service = new LocacoesService();
         }
 
         [HttpGet]
@@ -24,7 +24,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Reservas> list = await _service.ListarTodos();
+                IList<Locacoes> list = await _service.ListarTodos();
                 return Ok(list.ToList());
             }
             catch (Exception ex)
@@ -43,7 +43,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Reservas reserva = await _service.BuscarPorID(codigo);
+                Locacoes reserva = await _service.BuscarPorID(codigo);
                 return Ok(reserva);
             }
             catch (Exception ex)
@@ -58,11 +58,11 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(Reservas reserva)
+        public async Task<IActionResult> Inserir(Locacoes reserva)
         {
             try
             {
-                Reservas newReserva = await _service.Inserir(reserva);
+                Locacoes newReserva = await _service.Inserir(reserva);
                 return Ok(newReserva);
             }
             catch (Exception ex)
@@ -77,12 +77,12 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(Reservas reserva, int codigo)
+        public async Task<IActionResult> Editar(Locacoes reserva, int codigo)
         {
             try
             {
                 reserva.codigo = codigo;
-                Reservas newReserva = await _service.Editar(reserva);
+                Locacoes newReserva = await _service.Editar(reserva);
                 return Ok(newReserva);
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                IList<Reservas> list = await _service.Pesquisar(str);
+                IList<Locacoes> list = await _service.Pesquisar(str);
                 return Ok(list.ToList());
             }
             catch (Exception ex)

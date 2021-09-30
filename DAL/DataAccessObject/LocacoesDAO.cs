@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DAL.DataAccessObject
 {
-    public class ReservasDAO : DAO<Reservas>
+    public class LocacoesDAO : DAO<Locacoes>
     {
         public async Task<List<AreasReservas>> GetAreasReservasResultSet(NpgsqlCommand command)
         {
@@ -138,7 +138,7 @@ namespace DAL.DataAccessObject
             return result == 1 ? true : false;
         }
 
-        public override async Task<IList<Reservas>> ListarTodos()
+        public override async Task<IList<Locacoes>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -150,7 +150,7 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    List<Reservas> list = await GetResultSet(command);
+                    List<Locacoes> list = await GetResultSet(command);
                     return list;
                 }
                 finally
@@ -160,7 +160,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Reservas> BuscarPorID(int codigo)
+        public override async Task<Locacoes> BuscarPorID(int codigo)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -174,7 +174,7 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@codigo", codigo);
 
-                    List<Reservas> listReserva = await GetResultSet(command);
+                    List<Locacoes> listReserva = await GetResultSet(command);
 
                     if (listReserva.Count > 0)
                     {
@@ -200,7 +200,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Reservas> Inserir(Reservas reserva)
+        public override async Task<Locacoes> Inserir(Locacoes reserva)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -245,7 +245,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Reservas> Editar(Reservas reserva)
+        public override async Task<Locacoes> Editar(Locacoes reserva)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -290,7 +290,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<bool> Excluir(Reservas reserva)
+        public override async Task<bool> Excluir(Locacoes reserva)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -318,7 +318,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<IList<Reservas>> Pesquisar(string str)
+        public override async Task<IList<Locacoes>> Pesquisar(string str)
         {
             throw new NotImplementedException();
         }
