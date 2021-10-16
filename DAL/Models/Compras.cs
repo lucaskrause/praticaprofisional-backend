@@ -1,26 +1,30 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DAL.Models
 {
-    class Compras : AbstractEntity
+    public class Compras : AbstractEntity
     {
         public string modelo { get; set; }
         public string serie { get; set; }
-        public string nrNota { get; set; }
+        public string numeroNF { get; set; }
+        public int codigoFornecedor { get; set; }
         public Fornecedores fornecedor { get; set; }
-        public CondicoesPagamento condPagamento { get; set; }
-        public DateTime dtEmissao { get; set; }
-        public DateTime dtChegada { get; set; }
-        public bool cfi { get; set; }
-        public double frete { get; set; }
-        public double seguro { get; set; }
-        public double despesa { get; set; }
-        public double totalProduto { get; set; }
-        public double totalPagar { get; set; }
-        public bool situacao { get; set; }
-        public List<ItensCompra> listaItem { get; set; }
+        public string nomeFornecedor { set { fornecedor ??= new Fornecedores(); fornecedor.nome = value; } }
+        public int codigoCondicaoPagamento { get; set; }
+        public CondicoesPagamento condicaoPagamento { get; set; }
+        public string nomeCondicao { set { condicaoPagamento ??= new CondicoesPagamento(); condicaoPagamento.descricao = value; } }
+        public DateTime? dtEmissao { get; set; }
+        public DateTime? dtEntrega { get; set; }
+        public List<ItensCompra> itens { get; set; }
+
+        public void Cancelar()
+        {
+            this.status = "Cancelado";
+        }
 
         public override string Validation()
         {

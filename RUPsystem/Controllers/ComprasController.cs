@@ -17,6 +17,25 @@ namespace RUPsystem.Controllers
             _service = new ComprasService();
         }
 
+        [HttpPost]
+        [Route("find")]
+        public async Task<IActionResult> Find(Compras compra)
+        {
+            try
+            {
+                bool encontrou = await _service.Find(compra);
+                return Ok(encontrou);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> ListarTodos()
@@ -36,14 +55,14 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{codigo}")]
-        public async Task<IActionResult> BuscarPorID(int codigo)
+        [HttpPost]
+        [Route("getCompra")]
+        public async Task<IActionResult> BuscarCompra(Compras compra)
         {
             try
             {
-                Compras newPais = await _service.BuscarPorID(codigo);
-                return Ok(newPais);
+                Compras newCompra = await _service.BuscarCompra(compra);
+                return Ok(newCompra);
             }
             catch (Exception ex)
             {
@@ -57,12 +76,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(Compras pais)
+        public async Task<IActionResult> Inserir(Compras compra)
         {
             try
             {
-                Compras newPais = await _service.Inserir(pais);
-                return Created("/api/paises/inserir", newPais);
+                Compras newCompras = await _service.Inserir(compra);
+                return Created("/api/compras/inserir", newCompras);
             }
             catch (Exception ex)
             {
@@ -80,7 +99,6 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                pais.codigo = codigo;
                 Compras newPais = await _service.Editar(pais);
                 return Ok(newPais);
             }
@@ -101,6 +119,25 @@ namespace RUPsystem.Controllers
             try
             {
                 bool result = await _service.Excluir(codigo);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
+        [HttpDelete]
+        [Route("cancelar")]
+        public async Task<IActionResult> Cancelar(Compras compra)
+        {
+            try
+            {
+                bool result = await _service.Cancelar(compra);
                 return Ok(result);
             }
             catch (Exception ex)

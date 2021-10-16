@@ -13,6 +13,10 @@ namespace BLL.Service
 
         public ComprasService() => this.comprasDao = new ComprasDAO();
 
+        public async Task<bool> Find(Compras compra)
+        {
+            return await comprasDao.Find(compra);
+        }
         public async Task<IList<Compras>> ListarTodos()
         {
             return await comprasDao.ListarTodos();
@@ -23,41 +27,36 @@ namespace BLL.Service
             return await comprasDao.BuscarPorID(id);
         }
 
+        public async Task<Compras> BuscarCompra(Compras compra)
+        {
+            return await comprasDao.BuscarCompra(compra);
+        }
+
         public async Task<Compras> Inserir(Compras compra)
         {
-            string error = compra.Validation();
-            if (error == null)
-            {
-                compra.PrepareSave();
-                compra.Ativar();
-                return await comprasDao.Inserir(compra);
-            }
-            else
-            {
-                throw new Exception(error);
-            }
+            compra.PrepareSave();
+            compra.Ativar();
+            return await comprasDao.Inserir(compra);
         }
 
         public async Task<Compras> Editar(Compras compra)
         {
-            string error = compra.Validation();
-            if (error == null)
-            {
-                compra.PrepareSave();
-                return await comprasDao.Editar(compra);
-            }
-            else
-            {
-                throw new Exception(error);
-            }
+            compra.PrepareSave();
+            return await comprasDao.Editar(compra);
         }
 
         public async Task<bool> Excluir(int codigo)
         {
             Compras compra = new Compras();
-            compra.codigo = codigo;
             compra.PrepareSave();
-            compra.Inativar();
+            compra.Cancelar();
+            return await comprasDao.Excluir(compra);
+        }
+
+        public async Task<bool> Cancelar(Compras compra)
+        {
+            compra.PrepareSave();
+            compra.Cancelar();
             return await comprasDao.Excluir(compra);
         }
 
