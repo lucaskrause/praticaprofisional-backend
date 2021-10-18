@@ -1,9 +1,11 @@
-﻿using DAL.DataAccessObject;
+﻿using BLL.DataTransferObjects;
+using DAL.DataAccessObject;
 using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace BLL.Service
 {
@@ -43,6 +45,49 @@ namespace BLL.Service
         {
             compra.PrepareSave();
             return await comprasDao.Editar(compra);
+        }
+
+        public async Task<List<ParcelasCompra>> gerarParcelas(ParcelasDTO parcela)
+        {
+            CondicoesPagamentoDAO condicaoDao = new CondicoesPagamentoDAO();
+
+            CondicoesPagamento condicao = await condicaoDao.BuscarPorID(parcela.codigoCondicaoPagamento);
+
+            List<ParcelasCompra> listParcelas = new List<ParcelasCompra>();
+
+            foreach (var p in condicao.parcelas)
+            {
+                var itemParcela = new ParcelasCompra
+                {
+                    numeroParcela = p.numeroParcela,
+                    dtVencimento = parcela.dtEmissao.AddDays((double) p.numeroDias),
+                    codigoFormaPagamento = p.codigoFormaPagamento,
+                    descricaoForma = p.formaPagamento.descricao,
+                    valorParcela = decimal.Round(((p.porcentagem / 100) * parcela.valorTotal), 2)
+                };
+                listParcelas.Add(itemParcela);
+            }
+
+            var totalParcelas = listParcelas.Sum(k => k.valorParcela);
+            if (totalParcelas != parcela.valorTotal)
+            {
+                if (totalParcelas < parcela.valorTotal)
+                {
+                    var dif = parcela.valorTotal - totalParcelas;
+                    var list = listParcelas.OrderBy(u => u.numeroParcela);
+                    list.Last().valorParcela = list.Last().valorParcela + dif;
+                    listParcelas = list.ToList();
+                }
+                if (totalParcelas > parcela.valorTotal)
+                {
+                    var dif = totalParcelas - parcela.valorTotal;
+                    var list = listParcelas.OrderBy(u => u.numeroParcela);
+                    list.Last().valorParcela = list.Last().valorParcela - dif;
+                    listParcelas = list.ToList();
+                }
+            }
+
+            return listParcelas;
         }
 
         public async Task<bool> Excluir(int codigo)

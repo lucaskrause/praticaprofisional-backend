@@ -20,6 +20,7 @@ namespace DAL.Models
         public DateTime? dtEmissao { get; set; }
         public DateTime? dtEntrega { get; set; }
         public List<ItensCompra> itens { get; set; }
+        public List<ParcelasCompra> parcelas { get; set; }
 
         public void Cancelar()
         {

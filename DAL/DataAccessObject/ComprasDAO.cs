@@ -1,7 +1,10 @@
 ﻿using DAL.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,8 +15,52 @@ namespace DAL.DataAccessObject
         public ComprasDAO() : base()
         {
         }
+        public async Task<List<ItensCompra>> GetItensCompraResultSet(NpgsqlCommand command)
+        {
+            List<ItensCompra> list = new List<ItensCompra>();
 
-        public async Task<ItensCompra> inserirItensCompra(NpgsqlConnection conexao, ItensCompra item)
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                ItensCompra p = JsonConvert.DeserializeObject<ItensCompra>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
+
+        public async Task<List<ItensCompra>> BuscarItensCompra(NpgsqlConnection conexao, Compras compra)
+        {
+            string sql = @"SELECT itens_compra.*, produtos.produto FROM itens_compra INNER JOIN produtos ON produtos.codigo = itens_compra.codigoProduto WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@modelo", compra.modelo);
+            command.Parameters.AddWithValue("@serie", compra.serie);
+            command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
+            command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
+
+            List<ItensCompra> itensCompra = await GetItensCompraResultSet(command);
+
+            return itensCompra;
+        }
+
+        public async Task<ItensCompra> InserirItensCompra(NpgsqlConnection conexao, ItensCompra item)
         {
             string sql = @"INSERT INTO itens_compra(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
 
@@ -22,7 +69,7 @@ namespace DAL.DataAccessObject
             command.Parameters.AddWithValue("@serie", item.serie);
             command.Parameters.AddWithValue("@numeroNF", item.numeroNF);
             command.Parameters.AddWithValue("@codigoFornecedor", item.codigoFornecedor);
-            command.Parameters.AddWithValue("@codigoProduto", item.codigo);
+            command.Parameters.AddWithValue("@codigoProduto", item.codigoProduto);
             command.Parameters.AddWithValue("@quantidade", item.quantidade);
             command.Parameters.AddWithValue("@valorUnitario", item.valorUnitario);
             command.Parameters.AddWithValue("@desconto", item.desconto);
@@ -39,7 +86,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT * FROM compras WHERE status = 'Ativo' ORDER BY modelo, serie, numeronf;";
+                    string sql = @"SELECT compras.*, fornecedores.nome as nomeFornecedor FROM compras INNER JOIN fornecedores ON codigoFornecedor = fornecedores.codigo WHERE compras.status = 'Ativo' ORDER BY compras.modelo, compras.serie, compras.numeronf;";
 
                     conexao.Open();
 
@@ -99,11 +146,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"SELECT compras.modelo, compras.serie, compras.numeronf, compras.codigofornecedor, compras.codigocondicaopagamento, compras.dtemissao, compras.dtentrega, compras.dtcadastro, compras.dtalteracao, compras.status, fornecedores.nome as nomeFornecedor, condicoespagamento.descricao as nomeCondicao FROM compras INNER JOIN fornecedores ON fornecedores.codigo = compras.codigofornecedor INNER JOIN condicoespagamento ON condicoespagamento.codigo = compras.codigocondicaopagamento WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;"; // AND status = 'Ativo'
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -116,10 +163,14 @@ namespace DAL.DataAccessObject
 
                     if (list.Count > 0)
                     {
+                        list[0].itens = await BuscarItensCompra(conexao, compra);
+
+                        transaction.Commit();
                         return list[0];
                     }
                     else
                     {
+                        transaction.Rollback();
                         throw new Exception("Compra não encontrada");
                     }
                 }
@@ -164,7 +215,7 @@ namespace DAL.DataAccessObject
                             itemCompra.serie = compra.serie;
                             itemCompra.numeroNF = compra.numeroNF;
                             itemCompra.codigoFornecedor = compra.codigoFornecedor;
-                            compra.itens[i] = await inserirItensCompra(conexao, itemCompra);
+                            compra.itens[i] = await InserirItensCompra(conexao, itemCompra);
                         }
                     }
 
@@ -185,25 +236,7 @@ namespace DAL.DataAccessObject
 
         public override async Task<Compras> Editar(Compras compra)
         {
-            using (var conexao = GetCurrentConnection())
-            {
-                try
-                {
-                    conexao.Open();
-                    string sql = @"UPDATE compras SET compra = @compra, sigla = @sigla, ddi = @ddi, dtAlteracao = @dtAlteracao WHERE codigo = @codigo";
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@dtAlteracao", compra.dtAlteracao);
-
-                    await command.ExecuteNonQueryAsync();
-                    return compra;
-                }
-                finally
-                {
-                    conexao.Close();
-                }
-            }
+            return null;
         }
 
         public override async Task<bool> Excluir(Compras compra)
@@ -212,7 +245,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE compras SET dtalteracao = @dtAlteracao, status = @status WHERE modelo = @codigo AND serie = @codigo AND numeroNF = @codigo AND codigoFornecedor = @codigoFornecedor;";
+                    string sql = @"UPDATE compras SET dtalteracao = @dtAlteracao, status = @status WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;";
 
                     conexao.Open();
 
