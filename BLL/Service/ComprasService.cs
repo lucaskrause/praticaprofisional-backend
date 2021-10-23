@@ -19,6 +19,7 @@ namespace BLL.Service
         {
             return await comprasDao.Find(compra);
         }
+
         public async Task<IList<Compras>> ListarTodos()
         {
             return await comprasDao.ListarTodos();

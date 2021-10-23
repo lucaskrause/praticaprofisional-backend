@@ -18,25 +18,6 @@ namespace RUPsystem.Controllers
             _service = new ComprasService();
         }
 
-        [HttpPost]
-        [Route("find")]
-        public async Task<IActionResult> Find(Compras compra)
-        {
-            try
-            {
-                bool encontrou = await _service.Find(compra);
-                return Ok(encontrou);
-            }
-            catch (Exception ex)
-            {
-                return UnprocessableEntity(new
-                {
-                    ex.Message,
-                    Status = 422
-                });
-            }
-        }
-
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> ListarTodos()
@@ -76,6 +57,25 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPost]
+        [Route("find")]
+        public async Task<IActionResult> Find(Compras compra)
+        {
+            try
+            {
+                bool encontrou = await _service.Find(compra);
+                return Ok(encontrou);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
+        [HttpPost]
         [Route("inserir")]
         public async Task<IActionResult> Inserir(Compras compra)
         {
@@ -94,25 +94,6 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(Compras pais, int codigo)
-        {
-            try
-            {
-                Compras newPais = await _service.Editar(pais);
-                return Ok(newPais);
-            }
-            catch (Exception ex)
-            {
-                return UnprocessableEntity(new
-                {
-                    ex.Message,
-                    Status = 422
-                });
-            }
-        }
-
         [HttpPost]
         [Route("parcelas")]
         public async Task<IActionResult> gerarParcelas(ParcelasDTO parcela)
@@ -120,25 +101,6 @@ namespace RUPsystem.Controllers
             try
             {
                 var result = await _service.gerarParcelas(parcela);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return UnprocessableEntity(new
-                {
-                    ex.Message,
-                    Status = 422
-                });
-            }
-        }
-
-        [HttpDelete]
-        [Route("excluir/{codigo}")]
-        public async Task<IActionResult> Excluir(int codigo)
-        {
-            try
-            {
-                bool result = await _service.Excluir(codigo);
                 return Ok(result);
             }
             catch (Exception ex)

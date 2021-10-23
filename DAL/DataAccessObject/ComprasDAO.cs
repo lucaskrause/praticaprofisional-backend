@@ -43,10 +43,38 @@ namespace DAL.DataAccessObject
             }
             return list;
         }
+        public async Task<List<ParcelasCompra>> GetParcelasCompraResultSet(NpgsqlCommand command)
+        {
+            List<ParcelasCompra> list = new List<ParcelasCompra>();
+
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                ParcelasCompra p = JsonConvert.DeserializeObject<ParcelasCompra>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
 
         public async Task<List<ItensCompra>> BuscarItensCompra(NpgsqlConnection conexao, Compras compra)
         {
-            string sql = @"SELECT itens_compra.*, produtos.produto FROM itens_compra INNER JOIN produtos ON produtos.codigo = itens_compra.codigoProduto WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+            string sql = @"SELECT itenscompra.*, produtos.produto FROM itenscompra INNER JOIN produtos ON produtos.codigo = itenscompra.codigoProduto WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -60,9 +88,25 @@ namespace DAL.DataAccessObject
             return itensCompra;
         }
 
+        public async Task<List<ParcelasCompra>> BuscarParcelasCompra(NpgsqlConnection conexao, Compras compra)
+        {
+            string sql = @"SELECT contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtvencimento, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoFormaPagamento WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@modelo", compra.modelo);
+            command.Parameters.AddWithValue("@serie", compra.serie);
+            command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
+            command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
+
+            List<ParcelasCompra> parcelas = await GetParcelasCompraResultSet(command);
+
+            return parcelas;
+        }
+
         public async Task<ItensCompra> InserirItensCompra(NpgsqlConnection conexao, ItensCompra item)
         {
-            string sql = @"INSERT INTO itens_compra(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
+            string sql = @"INSERT INTO itenscompra(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@modelo", item.modelo);
@@ -78,6 +122,29 @@ namespace DAL.DataAccessObject
             await command.ExecuteScalarAsync();
 
             return item;
+        }
+
+        public async Task<ParcelasCompra> InserirParcelasCompra(NpgsqlConnection conexao, ParcelasCompra parcela, Compras compra)
+        {
+            string sql = @"INSERT INTO contaspagar(modelo, serie, numeronf, codigofornecedor, numeroparcela, valorparcela, codigoformapagamento, dtemissao, dtvencimento, dtpagamento, status)
+                        VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @numeroParcela, @valorParcela, @codigoFormaPagamento, @dtEmissao, @dtVencimento, @dtPagamento, @status);";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@modelo", compra.modelo);
+            command.Parameters.AddWithValue("@serie", compra.serie);
+            command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
+            command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
+            command.Parameters.AddWithValue("@numeroParcela", parcela.numeroParcela);
+            command.Parameters.AddWithValue("@valorParcela", parcela.valorParcela);
+            command.Parameters.AddWithValue("@codigoFormaPagamento", parcela.codigoFormaPagamento);
+            command.Parameters.AddWithValue("@dtEmissao", parcela.dtEmissao);
+            command.Parameters.AddWithValue("@dtVencimento", parcela.dtVencimento);
+            command.Parameters.AddWithValue("@dtPagamento", parcela.dtPagamento ?? (Object)DBNull.Value);
+            command.Parameters.AddWithValue("@status", parcela.status);
+
+            await command.ExecuteScalarAsync();
+
+            return parcela;
         }
 
         public override async Task<IList<Compras>> ListarTodos()
@@ -164,6 +231,7 @@ namespace DAL.DataAccessObject
                     if (list.Count > 0)
                     {
                         list[0].itens = await BuscarItensCompra(conexao, compra);
+                        list[0].parcelas = await BuscarParcelasCompra(conexao, compra);
 
                         transaction.Commit();
                         return list[0];
@@ -206,7 +274,7 @@ namespace DAL.DataAccessObject
                     await command.ExecuteScalarAsync();
 
                     int qtdItens = compra.itens.Count;
-                    if(qtdItens > 0)
+                    if (qtdItens > 0)
                     {
                         for (int i = 0; i < qtdItens; i++)
                         {
@@ -216,6 +284,17 @@ namespace DAL.DataAccessObject
                             itemCompra.numeroNF = compra.numeroNF;
                             itemCompra.codigoFornecedor = compra.codigoFornecedor;
                             compra.itens[i] = await InserirItensCompra(conexao, itemCompra);
+                        }
+                    }
+
+                    int qtdParcelas = compra.parcelas.Count;
+                    if (qtdParcelas > 0)
+                    {
+                        for (int i = 0; i < qtdParcelas; i++)
+                        {
+                            ParcelasCompra parcelaCompra = compra.parcelas[i];
+                            parcelaCompra.pendente();
+                            compra.parcelas[i] = await InserirParcelasCompra(conexao, parcelaCompra, compra);
                         }
                     }
 
