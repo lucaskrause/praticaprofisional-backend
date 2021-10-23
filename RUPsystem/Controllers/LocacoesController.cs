@@ -43,8 +43,8 @@ namespace RUPsystem.Controllers
         {
             try
             {
-                Locacoes reserva = await _service.BuscarPorID(codigo);
-                return Ok(reserva);
+                Locacoes locacao = await _service.BuscarPorID(codigo);
+                return Ok(locacao);
             }
             catch (Exception ex)
             {
@@ -58,12 +58,12 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("inserir")]
-        public async Task<IActionResult> Inserir(Locacoes reserva)
+        public async Task<IActionResult> Inserir(Locacoes locacao)
         {
             try
             {
-                Locacoes newReserva = await _service.Inserir(reserva);
-                return Ok(newReserva);
+                Locacoes newLocacao = await _service.Inserir(locacao);
+                return Ok(newLocacao);
             }
             catch (Exception ex)
             {
@@ -77,13 +77,13 @@ namespace RUPsystem.Controllers
 
         [HttpPut]
         [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(Locacoes reserva, int codigo)
+        public async Task<IActionResult> Editar(Locacoes locacao, int codigo)
         {
             try
             {
-                reserva.codigo = codigo;
-                Locacoes newReserva = await _service.Editar(reserva);
-                return Ok(newReserva);
+                locacao.codigo = codigo;
+                Locacoes newLocacao = await _service.Editar(locacao);
+                return Ok(newLocacao);
             }
             catch (Exception ex)
             {

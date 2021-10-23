@@ -23,26 +23,26 @@ namespace BLL.Service
             return await locacoesDao.BuscarPorID(codigo);
         }
 
-        public async Task<Locacoes> Inserir(Locacoes reserva)
+        public async Task<Locacoes> Inserir(Locacoes locacao)
         {
-            string error = reserva.Validation();
+            string error = locacao.Validation();
             if (error == null) {
-                reserva.PrepareSave();
-                reserva.Ativar();
-                return await locacoesDao.Inserir(reserva);
+                locacao.PrepareSave();
+                locacao.Ativar();
+                return await locacoesDao.Inserir(locacao);
             } else
             {
                 throw new Exception(error);
             }
         }
 
-        public async Task<Locacoes> Editar(Locacoes reserva)
+        public async Task<Locacoes> Editar(Locacoes locacao)
         {
-            string error = reserva.Validation();
+            string error = locacao.Validation();
             if (error == null)
             {
-                reserva.PrepareSave();
-                return await locacoesDao.Editar(reserva);
+                locacao.PrepareSave();
+                return await locacoesDao.Editar(locacao);
             }
             else
             {
@@ -52,11 +52,11 @@ namespace BLL.Service
 
         public async Task<bool> Excluir(int codigo)
         {
-            Locacoes reserva = new Locacoes();
-            reserva.codigo = codigo;
-            reserva.PrepareSave();
-            reserva.Inativar();
-            return await locacoesDao.Excluir(reserva);
+            Locacoes locacao = new Locacoes();
+            locacao.codigo = codigo;
+            locacao.PrepareSave();
+            locacao.Inativar();
+            return await locacoesDao.Excluir(locacao);
         }
 
         public async Task<IList<Locacoes>> Pesquisar(string str)

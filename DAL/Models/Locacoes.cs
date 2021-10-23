@@ -15,7 +15,7 @@ namespace DAL.Models
 
         public int qtdePessoas { get; set; }
 
-        public DateTime dtReserva { get; set; }
+        public DateTime dtLocacao { get; set; }
 
         public decimal valor { get; set; }
 
@@ -37,9 +37,9 @@ namespace DAL.Models
             {
                 return "Quantidade de Pessoas de ser no mínimo 1";
             }
-            else if (this.dtReserva == null || this.dtReserva.Date < DateTime.Now.AddDays(3).Date)
+            else if (this.dtLocacao == null || this.dtLocacao.Date < DateTime.Now.AddDays(3).Date)
             {
-                return "Data da Reserva deve ter no mínimo 3 dias de antecedência";
+                return "Data da Locação deve ter no mínimo 3 dias de antecedência";
             }
             else if (this.valor <= Convert.ToDecimal(0.00) || this.valor > Convert.ToDecimal(99999999.99))
             {

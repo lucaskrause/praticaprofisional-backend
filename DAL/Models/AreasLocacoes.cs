@@ -4,9 +4,9 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class AreasReservas
+    public class AreasLocacoes
     {
-        public int codigoReserva { get; set; }
+        public int codigoLocacao { get; set; }
 
         public int codigoArea { get; set; }
     }

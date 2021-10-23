@@ -12,9 +12,9 @@ namespace DAL.DataAccessObject
 {
     public class LocacoesDAO : DAO<Locacoes>
     {
-        public async Task<List<AreasReservas>> GetAreasReservasResultSet(NpgsqlCommand command)
+        public async Task<List<AreasLocacoes>> GetAreasLocacoesResultSet(NpgsqlCommand command)
         {
-            List<AreasReservas> list = new List<AreasReservas>();
+            List<AreasLocacoes> list = new List<AreasLocacoes>();
 
             command.ExecuteNonQuery();
 
@@ -35,7 +35,7 @@ namespace DAL.DataAccessObject
                 writer.WriteEndObject();
                 JObject o = (JObject)writer.Token;
                 var stringJson = o.ToString();
-                AreasReservas p = JsonConvert.DeserializeObject<AreasReservas>(stringJson);
+                AreasLocacoes p = JsonConvert.DeserializeObject<AreasLocacoes>(stringJson);
                 list.Add(p);
             }
             return list;
@@ -70,26 +70,26 @@ namespace DAL.DataAccessObject
             return list;
         }
 
-        public async Task<List<AreasLocacao>> GetAreasReservas(NpgsqlConnection conexao, int codigoReserva)
+        public async Task<List<AreasLocacao>> GetAreasLocacoes(NpgsqlConnection conexao, int codigoLocacao)
         {
-            string sql = @"SELECT * FROM areasreservas WHERE codigoreserva = @codigo;";
+            string sql = @"SELECT * FROM areaslocacoes WHERE codigolocacao = @codigo;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-            command.Parameters.AddWithValue("@codigo", codigoReserva);
+            command.Parameters.AddWithValue("@codigo", codigoLocacao);
 
-            List<AreasReservas> listAreasReservas = await GetAreasReservasResultSet(command);
+            List<AreasLocacoes> listAreasLocacoes = await GetAreasLocacoesResultSet(command);
 
-            if (listAreasReservas.Count > 0)
+            if (listAreasLocacoes.Count > 0)
             {
                 List<AreasLocacao> areasLocacao = new List<AreasLocacao>();
-                for (int i = 0; i < listAreasReservas.Count; i++)
+                for (int i = 0; i < listAreasLocacoes.Count; i++)
                 {
                     sql = @"SELECT * FROM areasLocacao WHERE codigo = @codigo;";
 
                     command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigo", listAreasReservas[i].codigoArea);
+                    command.Parameters.AddWithValue("@codigo", listAreasLocacoes[i].codigoArea);
 
                     List<AreasLocacao> listAreasLocacao = await GetAreasLocacaoResultSet(command);
 
@@ -106,7 +106,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public async Task<bool> InsertAreasReservas(NpgsqlConnection conexao, List<AreasLocacao> areasLocacao, int codigoReserva)
+        public async Task<bool> InsertAreasLocacoes(NpgsqlConnection conexao, List<AreasLocacao> areasLocacao, int codigoLocacao)
         {
             for (int i = 0; i < areasLocacao.Count; i++)
             {
@@ -114,11 +114,11 @@ namespace DAL.DataAccessObject
                 area.Ativar();
                 area.PrepareSave();
 
-                string sql = @"INSERT INTO areasreservas(codigoreserva, codigoarea) VALUES (@codigoReserva, @codigoArea);";
+                string sql = @"INSERT INTO areaslocacoes(codigolocacao, codigoarea) VALUES (@codigoLocacao, @codigoArea);";
 
                 NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                command.Parameters.AddWithValue("@codigoReserva", codigoReserva);
+                command.Parameters.AddWithValue("@codigoLocacao", codigoLocacao);
                 command.Parameters.AddWithValue("@codigoArea", area.codigo);
 
                 await command.ExecuteNonQueryAsync();
@@ -126,13 +126,13 @@ namespace DAL.DataAccessObject
             return true;
         }
 
-        public async Task<bool> DeleteAreasReservas(NpgsqlConnection conexao, int codigoReserva)
+        public async Task<bool> DeleteAreasLocacoes(NpgsqlConnection conexao, int codigoLocacao)
         {
-            string sql = @"DELETE FROM areasreservas WHERE codigoreserva = @codigo";
+            string sql = @"DELETE FROM areaslocacoes WHERE codigolocacao = @codigo";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-            command.Parameters.AddWithValue("@codigo", codigoReserva);
+            command.Parameters.AddWithValue("@codigo", codigoLocacao);
 
             var result = await command.ExecuteNonQueryAsync();
             return result == 1 ? true : false;
@@ -144,7 +144,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT reservas.codigo, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.status = 'Ativo' ORDER BY reservas.codigo;";
+                    string sql = @"SELECT locacoes.codigo, locacoes.codigocliente, locacoes.qtdepessoas, locacoes.dtlocacao, locacoes.valor, locacoes.codigocondicaopagamento, locacoes.dtcadastro, locacoes.dtalteracao, locacoes.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM locacoes INNER JOIN clientes ON(locacoes.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (locacoes.codigocondicaopagamento = condicoespagamento.codigo) WHERE locacoes.status = 'Ativo' ORDER BY locacoes.codigo;";
 
                     conexao.Open();
 
@@ -168,25 +168,25 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"SELECT reservas.codigo, reservas.codigocliente, reservas.qtdepessoas, reservas.dtreserva, reservas.valor, reservas.codigocondicaopagamento, reservas.dtcadastro, reservas.dtalteracao, reservas.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM reservas INNER JOIN clientes ON(reservas.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (reservas.codigocondicaopagamento = condicoespagamento.codigo) WHERE reservas.codigo = @codigo AND reservas.status = 'Ativo';";
+                    string sql = @"SELECT locacoes.codigo, locacoes.codigocliente, locacoes.qtdepessoas, locacoes.dtlocacao, locacoes.valor, locacoes.codigocondicaopagamento, locacoes.dtcadastro, locacoes.dtalteracao, locacoes.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM locacoes INNER JOIN clientes ON(locacoes.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (locacoes.codigocondicaopagamento = condicoespagamento.codigo) WHERE locacoes.codigo = @codigo AND locacoes.status = 'Ativo';";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     command.Parameters.AddWithValue("@codigo", codigo);
 
-                    List<Locacoes> listReserva = await GetResultSet(command);
+                    List<Locacoes> listLocacao = await GetResultSet(command);
 
-                    if (listReserva.Count > 0)
+                    if (listLocacao.Count > 0)
                     {
-                        listReserva[0].areasLocacao = await GetAreasReservas(conexao, codigo);
+                        listLocacao[0].areasLocacao = await GetAreasLocacoes(conexao, codigo);
                     }
                     else
                     {
-                        throw new Exception("Reserva não encontrada");
+                        throw new Exception("Locação não encontrada");
                     }
 
                     transaction.Commit();
-                    return listReserva[0];
+                    return listLocacao[0];
                 }
                 catch
                 {
@@ -200,7 +200,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Locacoes> Inserir(Locacoes reserva)
+        public override async Task<Locacoes> Inserir(Locacoes locacao)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -208,30 +208,30 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"INSERT INTO reservas(codigocliente, qtdepessoas, dtreserva, valor, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCliente, @qtdePessoas, @dtReserva, @valor, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
+                    string sql = @"INSERT INTO locacoes(codigocliente, qtdepessoas, dtlocacao, valor, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@codigoCliente, @qtdePessoas, @dtLocacao, @valor, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status) returning codigo;";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigoCliente", reserva.codigoCliente);
-                    command.Parameters.AddWithValue("@qtdePessoas", reserva.qtdePessoas);
-                    command.Parameters.AddWithValue("@dtReserva", reserva.dtReserva);
-                    command.Parameters.AddWithValue("@valor", reserva.valor);
-                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", reserva.codigoCondicaoPagamento);
-                    command.Parameters.AddWithValue("@dtCadastro", reserva.dtCadastro);
-                    command.Parameters.AddWithValue("@dtAlteracao", reserva.dtAlteracao);
-                    command.Parameters.AddWithValue("@status", reserva.status);
+                    command.Parameters.AddWithValue("@codigoCliente", locacao.codigoCliente);
+                    command.Parameters.AddWithValue("@qtdePessoas", locacao.qtdePessoas);
+                    command.Parameters.AddWithValue("@dtLocacao", locacao.dtLocacao);
+                    command.Parameters.AddWithValue("@valor", locacao.valor);
+                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", locacao.codigoCondicaoPagamento);
+                    command.Parameters.AddWithValue("@dtCadastro", locacao.dtCadastro);
+                    command.Parameters.AddWithValue("@dtAlteracao", locacao.dtAlteracao);
+                    command.Parameters.AddWithValue("@status", locacao.status);
 
                     Object idInserido = await command.ExecuteScalarAsync();
-                    reserva.codigo = (int)idInserido;
+                    locacao.codigo = (int)idInserido;
 
-                    int qtdAreasLocacao = reserva.areasLocacao.Count;
+                    int qtdAreasLocacao = locacao.areasLocacao.Count;
                     if (qtdAreasLocacao > 0)
                     {
-                        await InsertAreasReservas(conexao, reserva.areasLocacao, reserva.codigo);
+                        await InsertAreasLocacoes(conexao, locacao.areasLocacao, locacao.codigo);
                     }
 
                     transaction.Commit();
-                    return reserva;
+                    return locacao;
                 }
                 catch
                 {
@@ -245,7 +245,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<Locacoes> Editar(Locacoes reserva)
+        public override async Task<Locacoes> Editar(Locacoes locacao)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -253,30 +253,30 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"UPDATE reservas SET codigocliente = @codigoCliente, qtdepessoas = @qtdePessoas, dtreserva = @dtReserva , valor = @valor, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo AND status = 'Ativo';";
+                    string sql = @"UPDATE locacoes SET codigocliente = @codigoCliente, qtdepessoas = @qtdePessoas, dtlocacao = @dtLocacao , valor = @valor, codigocondicaopagamento = @codigoCondicaoPagamento, dtalteracao = @dtAlteracao WHERE codigo = @codigo AND status = 'Ativo';";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigoCliente", reserva.codigoCliente);
-                    command.Parameters.AddWithValue("@qtdePessoas", reserva.qtdePessoas);
-                    command.Parameters.AddWithValue("@dtReserva", reserva.dtReserva);
-                    command.Parameters.AddWithValue("@valor", reserva.valor);
-                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", reserva.codigoCondicaoPagamento);
-                    command.Parameters.AddWithValue("@dtAlteracao", reserva.dtAlteracao);
-                    command.Parameters.AddWithValue("@codigo", reserva.codigo);
+                    command.Parameters.AddWithValue("@codigoCliente", locacao.codigoCliente);
+                    command.Parameters.AddWithValue("@qtdePessoas", locacao.qtdePessoas);
+                    command.Parameters.AddWithValue("@dtLocacao", locacao.dtLocacao);
+                    command.Parameters.AddWithValue("@valor", locacao.valor);
+                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", locacao.codigoCondicaoPagamento);
+                    command.Parameters.AddWithValue("@dtAlteracao", locacao.dtAlteracao);
+                    command.Parameters.AddWithValue("@codigo", locacao.codigo);
 
                     await command.ExecuteNonQueryAsync();
 
-                    await DeleteAreasReservas(conexao, reserva.codigo);
+                    await DeleteAreasLocacoes(conexao, locacao.codigo);
 
-                    int qtdAreasLocacao = reserva.areasLocacao.Count;
+                    int qtdAreasLocacao = locacao.areasLocacao.Count;
                     if (qtdAreasLocacao > 0)
                     {
-                        await InsertAreasReservas(conexao, reserva.areasLocacao, reserva.codigo);
+                        await InsertAreasLocacoes(conexao, locacao.areasLocacao, locacao.codigo);
                     }
 
                     transaction.Commit();
-                    return reserva;
+                    return locacao;
                 }
                 catch
                 {
@@ -290,26 +290,26 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override async Task<bool> Excluir(Locacoes reserva)
+        public override async Task<bool> Excluir(Locacoes locacao)
         {
             using (var conexao = GetCurrentConnection())
             {
                 try
                 {
-                    string sql = @"DELETE FROM reservas WHERE codigo = @codigo";
+                    string sql = @"DELETE FROM locacoes WHERE codigo = @codigo";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@codigo", reserva.codigo);
+                    command.Parameters.AddWithValue("@codigo", locacao.codigo);
 
                     var result = await command.ExecuteNonQueryAsync();
                     return result == 1 ? true : false;
                 }
                 catch
                 {
-                    throw new Exception("Não foi possivel excluir a reserva");
+                    throw new Exception("Não foi possivel excluir a locacao");
                 }
                 finally
                 {
