@@ -17,8 +17,8 @@ namespace DAL.Models
         public int codigoCondicaoPagamento { get; set; }
         public CondicoesPagamento condicaoPagamento { get; set; }
         public string nomeCondicao { set { condicaoPagamento ??= new CondicoesPagamento(); condicaoPagamento.descricao = value; } }
-        public DateTime? dtEmissao { get; set; }
-        public DateTime? dtEntrega { get; set; }
+        public DateTime dtEmissao { get; set; }
+        public DateTime dtEntrega { get; set; }
         public List<ItensCompra> itens { get; set; }
         public List<ParcelasCompra> parcelas { get; set; }
 

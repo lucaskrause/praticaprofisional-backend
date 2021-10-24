@@ -104,6 +104,18 @@ namespace DAL.DataAccessObject
             return parcelas;
         }
 
+        public async Task AtualizarProdutos(NpgsqlConnection conexao, Compras compra, ItensCompra item)
+        {
+            string sql = @"UPDATE produtos SET dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra WHERE codigo = @codigo;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@dtUltimaCompra", compra.dtEmissao);
+            command.Parameters.AddWithValue("@valorUltimaCompra", item.valorUnitario);
+            command.Parameters.AddWithValue("@codigo", item.codigoProduto);
+
+            await command.ExecuteScalarAsync();
+        }
+
         public async Task<ItensCompra> InserirItensCompra(NpgsqlConnection conexao, ItensCompra item)
         {
             string sql = @"INSERT INTO itenscompra(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
@@ -126,8 +138,7 @@ namespace DAL.DataAccessObject
 
         public async Task<ParcelasCompra> InserirParcelasCompra(NpgsqlConnection conexao, ParcelasCompra parcela, Compras compra)
         {
-            string sql = @"INSERT INTO contaspagar(modelo, serie, numeronf, codigofornecedor, numeroparcela, valorparcela, codigoformapagamento, dtemissao, dtvencimento, dtpagamento, status)
-                        VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @numeroParcela, @valorParcela, @codigoFormaPagamento, @dtEmissao, @dtVencimento, @dtPagamento, @status);";
+            string sql = @"INSERT INTO contaspagar(modelo, serie, numeronf, codigofornecedor, numeroparcela, valorparcela, codigoformapagamento, dtemissao, dtvencimento, dtpagamento, status) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @numeroParcela, @valorParcela, @codigoFormaPagamento, @dtEmissao, @dtVencimento, @dtPagamento, @status);";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@modelo", compra.modelo);
@@ -169,7 +180,7 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public async Task<bool> Find(Compras compra)
+        public async Task<bool> Find(string modelo, string serie, string numeroNF, int codigoFornecedor)
         {
             using (var conexao = GetCurrentConnection())
             {
@@ -181,10 +192,10 @@ namespace DAL.DataAccessObject
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
-                    command.Parameters.AddWithValue("@modelo", compra.modelo);
-                    command.Parameters.AddWithValue("@serie", compra.serie);
-                    command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
-                    command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
+                    command.Parameters.AddWithValue("@modelo", modelo);
+                    command.Parameters.AddWithValue("@serie", serie);
+                    command.Parameters.AddWithValue("@numeroNF", numeroNF);
+                    command.Parameters.AddWithValue("@codigoFornecedor", codigoFornecedor);
 
                     List<Compras> list = await GetResultSet(command);
 
@@ -284,6 +295,8 @@ namespace DAL.DataAccessObject
                             itemCompra.numeroNF = compra.numeroNF;
                             itemCompra.codigoFornecedor = compra.codigoFornecedor;
                             compra.itens[i] = await InserirItensCompra(conexao, itemCompra);
+
+                            await AtualizarProdutos(conexao, compra, itemCompra);
                         }
                     }
 
@@ -293,6 +306,7 @@ namespace DAL.DataAccessObject
                         for (int i = 0; i < qtdParcelas; i++)
                         {
                             ParcelasCompra parcelaCompra = compra.parcelas[i];
+                            parcelaCompra.dtEmissao = compra.dtEmissao;
                             parcelaCompra.pendente();
                             compra.parcelas[i] = await InserirParcelasCompra(conexao, parcelaCompra, compra);
                         }

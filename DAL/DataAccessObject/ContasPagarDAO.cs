@@ -42,7 +42,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT compras.modelo, compras.serie, compras.numeronf, compras.codigofornecedor, compras.codigocondicaopagamento, compras.dtemissao, compras.dtentrega, compras.dtcadastro, compras.dtalteracao, compras.status, fornecedores.nome as nomeFornecedor, condicoespagamento.descricao as nomeCondicao FROM compras INNER JOIN fornecedores ON fornecedores.codigo = compras.codigofornecedor INNER JOIN condicoespagamento ON condicoespagamento.codigo = compras.codigocondicaopagamento WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;"; // AND status = 'Ativo'
+                    string sql = @"SELECT contaspagar.modelo, contaspagar.serie, contaspagar.numeronf, contaspagar.codigofornecedor, contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtemissao, contaspagar.dtvencimento, contaspagar.dtpagamento, contaspagar.status, fornecedores.nome as nomeFornecedor, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN fornecedores ON fornecedores.codigo = contaspagar.codigofornecedor INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoformapagamento WHERE contaspagar.modelo = @modelo AND contaspagar.serie = @serie AND contaspagar.numeroNF = @numeroNF AND contaspagar.codigoFornecedor = @codigoFornecedor AND contaspagar.numeroParcela = @numeroParcela;";
 
                     conexao.Open();
 
@@ -52,7 +52,7 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@serie", contaPagar.serie);
                     command.Parameters.AddWithValue("@numeroNF", contaPagar.numeroNF);
                     command.Parameters.AddWithValue("@codigoFornecedor", contaPagar.codigoFornecedor);
-                    command.Parameters.AddWithValue("@numeroNF", contaPagar.numeroNF);
+                    command.Parameters.AddWithValue("@numeroParcela", contaPagar.numeroParcela);
 
                     List<ContasPagar> list = await GetResultSet(command);
 

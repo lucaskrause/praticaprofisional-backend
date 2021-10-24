@@ -58,7 +58,7 @@ namespace RUPsystem.Controllers
 
         [HttpPost]
         [Route("find")]
-        public async Task<IActionResult> Find(Compras compra)
+        public async Task<IActionResult> Find(ComprasDTO compra)
         {
             try
             {

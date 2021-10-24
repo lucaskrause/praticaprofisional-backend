@@ -15,9 +15,9 @@ namespace BLL.Service
 
         public ComprasService() => this.comprasDao = new ComprasDAO();
 
-        public async Task<bool> Find(Compras compra)
+        public async Task<bool> Find(ComprasDTO compra)
         {
-            return await comprasDao.Find(compra);
+            return await comprasDao.Find(compra.modelo, compra.serie, compra.numeroNF, compra.codigoFornecedor);
         }
 
         public async Task<IList<Compras>> ListarTodos()
