@@ -18,9 +18,9 @@ namespace BLL.Service
             return await contasPagarDao.ListarTodos();
         }
 
-        public Task<ContasPagar> BuscarPorID(int codigo)
+        public async Task<ContasPagar> BuscarPorID(int id)
         {
-            throw new NotImplementedException();
+            return await contasPagarDao.BuscarPorID(id);
         }
 
         public async Task<ContasPagar> BuscarParcela(ContasPagar contaPagar)
@@ -28,24 +28,42 @@ namespace BLL.Service
             return await contasPagarDao.BuscarParcela(contaPagar);
         }
 
-        public Task<ContasPagar> Inserir(ContasPagar entity)
+        public async Task<ContasPagar> Inserir(ContasPagar contaPagar)
         {
-            throw new NotImplementedException();
+            string error = contaPagar.Validation();
+            if (error == null)
+            {
+                contaPagar.dtEmissao = new DateTime();
+                contaPagar.pendente();
+                return await contasPagarDao.Inserir(contaPagar);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public Task<ContasPagar> Editar(ContasPagar entity)
+        public async Task<ContasPagar> Editar(ContasPagar contaPagar)
         {
-            throw new NotImplementedException();
+            string error = contaPagar.Validation();
+            if (error == null)
+            {
+                return await contasPagarDao.Editar(contaPagar);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public Task<bool> Excluir(int codigo)
+        public async Task<bool> Excluir(int codigo)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        public Task<IList<ContasPagar>> Pesquisar(string str)
+        public async Task<IList<ContasPagar>> Pesquisar(string str)
         {
-            throw new NotImplementedException();
+            return await contasPagarDao.Pesquisar(str);
         }
     }
 }

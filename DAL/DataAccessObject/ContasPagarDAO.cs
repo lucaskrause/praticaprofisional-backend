@@ -9,6 +9,27 @@ namespace DAL.DataAccessObject
 {
     public class ContasPagarDAO : DAO<ContasPagar>
     {
+        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string modelo, string serie, string numeroNF, int codigoFornecedor, int numeroParcela)
+        {
+            string sql = @"SELECT * FROM contaspagar WHERE contaspagar.modelo = @modelo AND contaspagar.serie = @serie AND contaspagar.numeroNF = @numeroNF AND contaspagar.codigoFornecedor = @codigoFornecedor AND contaspagar.numeroParcela = @numeroParcela;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+            command.Parameters.AddWithValue("@modelo", modelo);
+            command.Parameters.AddWithValue("@serie", serie);
+            command.Parameters.AddWithValue("@numeroNF", numeroNF);
+            command.Parameters.AddWithValue("@codigoFornecedor", codigoFornecedor);
+            command.Parameters.AddWithValue("@numeroParcela", numeroParcela);
+
+            List<ContasPagar> list = await GetResultSet(command);
+
+            if (list.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public async override Task<IList<ContasPagar>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -72,14 +93,77 @@ namespace DAL.DataAccessObject
             }
         }
 
-        public override Task<ContasPagar> Inserir(ContasPagar entity)
+        public async override Task<ContasPagar> Inserir(ContasPagar contaPagar)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                conexao.Open();
+                bool exists = await CheckExist(conexao, "contaspagar", contaPagar.modelo, contaPagar.serie, contaPagar.numeroNF, contaPagar.codigoFornecedor, contaPagar.numeroParcela);
+                if (exists)
+                {
+                    try
+                    {
+                        string sql = @"INSERT INTO contaspagar(modelo, serie, numeronf, codigofornecedor, numeroparcela, valorparcela, codigoformapagamento, dtemissao, dtvencimento, dtpagamento, status) VALUES (@modelo, @serie, @numeronf, @codigoFornecedor, @numeroParcela, @valorParcela, @codigoFormaPagamento, @dtEmissao, @dtVencimento, @dtPagamento, @status);";
+
+                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                        command.Parameters.AddWithValue("@modelo", contaPagar.modelo);
+                        command.Parameters.AddWithValue("@serie", contaPagar.serie);
+                        command.Parameters.AddWithValue("@numeronf", contaPagar.numeroNF);
+                        command.Parameters.AddWithValue("@codigoFornecedor", contaPagar.codigoFornecedor);
+                        command.Parameters.AddWithValue("@numeroParcela", contaPagar.numeroParcela);
+                        command.Parameters.AddWithValue("@valorParcela", contaPagar.valorParcela);
+                        command.Parameters.AddWithValue("@codigoFormaPagamento", contaPagar.codigoFormaPagamento);
+                        command.Parameters.AddWithValue("@dtEmissao", contaPagar.dtEmissao);
+                        command.Parameters.AddWithValue("@dtVencimento", contaPagar.dtVencimento);
+                        command.Parameters.AddWithValue("@dtPagamento", contaPagar.dtPagamento ?? (Object)DBNull.Value);
+                        command.Parameters.AddWithValue("@status", contaPagar.status);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        return contaPagar;
+                    }
+                    finally
+                    {
+                        conexao.Close();
+                    }
+                }
+                else
+                {
+                    throw new Exception("Conta já cadastrada");
+                }
+            }
         }
 
-        public override Task<ContasPagar> Editar(ContasPagar entity)
+        public async override Task<ContasPagar> Editar(ContasPagar contaPagar)
         {
-            throw new NotImplementedException();
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"UPDATE contaspagar SET codigoformapagamento = @codigoFormaPagamento, dtvencimento = @dtVencimento WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeronf AND codigofornecedor = @codigoFornecedor AND numeroparcela = @numeroParcela;";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@codigoFormaPagamento", contaPagar.codigoFormaPagamento);
+                    command.Parameters.AddWithValue("@dtVencimento", contaPagar.dtVencimento);
+                    command.Parameters.AddWithValue("@modelo", contaPagar.modelo);
+                    command.Parameters.AddWithValue("@serie", contaPagar.serie);
+                    command.Parameters.AddWithValue("@numeronf", contaPagar.numeroNF);
+                    command.Parameters.AddWithValue("@codigoFornecedor", contaPagar.codigoFornecedor);
+                    command.Parameters.AddWithValue("@numeroParcela", contaPagar.numeroParcela);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    return contaPagar;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
         public override Task<bool> Excluir(ContasPagar entity)

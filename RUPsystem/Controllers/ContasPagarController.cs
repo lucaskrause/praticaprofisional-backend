@@ -62,7 +62,7 @@ namespace RUPsystem.Controllers
             try
             {
                 ContasPagar newContaPagar = await _service.Inserir(contaPagar);
-                return Created("/api/contaPagares/inserir", newContaPagar);
+                return Created("/api/contasPagar/inserir", newContaPagar);
             }
             catch (Exception ex)
             {
@@ -75,12 +75,11 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(ContasPagar contaPagar, int codigo)
+        [Route("editar")]
+        public async Task<IActionResult> Editar(ContasPagar contaPagar)
         {
             try
             {
-                contaPagar.codigo = codigo;
                 ContasPagar newContaPagar = await _service.Editar(contaPagar);
                 return Ok(newContaPagar);
             }

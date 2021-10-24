@@ -74,7 +74,7 @@ namespace DAL.DataAccessObject
 
         public async Task<List<ItensCompra>> BuscarItensCompra(NpgsqlConnection conexao, Compras compra)
         {
-            string sql = @"SELECT itenscompra.*, produtos.produto FROM itenscompra INNER JOIN produtos ON produtos.codigo = itenscompra.codigoProduto WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+            string sql = @"SELECT produtoscompras.*, produtos.produto FROM produtoscompras INNER JOIN produtos ON produtos.codigo = produtoscompras.codigoProduto WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -118,7 +118,7 @@ namespace DAL.DataAccessObject
 
         public async Task<ItensCompra> InserirItensCompra(NpgsqlConnection conexao, ItensCompra item)
         {
-            string sql = @"INSERT INTO itenscompra(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
+            string sql = @"INSERT INTO produtoscompras(modelo, serie, numeronf, codigofornecedor, codigoproduto, quantidade, valorunitario, desconto, total) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoProduto, @quantidade, @valorUnitario, @desconto, @total);";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@modelo", item.modelo);
