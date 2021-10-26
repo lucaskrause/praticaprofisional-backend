@@ -142,16 +142,30 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"SELECT locacoes.codigo, locacoes.codigocliente, locacoes.qtdepessoas, locacoes.dtlocacao, locacoes.valor, locacoes.codigocondicaopagamento, locacoes.dtcadastro, locacoes.dtalteracao, locacoes.status, clientes.nome as nomeCliente, condicoespagamento.descricao AS nomeCondicao FROM locacoes INNER JOIN clientes ON(locacoes.codigocliente = clientes.codigo) INNER JOIN condicoespagamento ON (locacoes.codigocondicaopagamento = condicoespagamento.codigo) WHERE locacoes.status = 'Ativo' ORDER BY locacoes.codigo;";
 
-                    conexao.Open();
-
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
                     List<Locacoes> list = await GetResultSet(command);
+                    if (list.Count > 0)
+                    {
+                        Locacoes locacao = new Locacoes();
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            locacao = list[i];
+                            locacao.areasLocacao = await GetAreasLocacoes(conexao, locacao.codigo);
+                        }
+                    }
                     return list;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception("Não foi possivel listar as locações");
                 }
                 finally
                 {
