@@ -158,6 +158,21 @@ namespace DAL.DataAccessObject
             return parcela;
         }
 
+        public async Task<bool> CancelarContasPagar(NpgsqlConnection conexao, Compras compra)
+        {
+            string sql = @"UPDATE contaspagar SET status = 'Cancelado' WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@modelo", compra.modelo);
+            command.Parameters.AddWithValue("@serie", compra.serie);
+            command.Parameters.AddWithValue("@numeronf", compra.numeroNF);
+            command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
+
+            await command.ExecuteNonQueryAsync();
+
+            return true;
+        }
+
         public override async Task<IList<Compras>> ListarTodos()
         {
             using (var conexao = GetCurrentConnection())
@@ -228,10 +243,9 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"SELECT compras.modelo, compras.serie, compras.numeronf, compras.codigofornecedor, compras.codigocondicaopagamento, compras.dtemissao, compras.dtentrega, compras.dtcadastro, compras.dtalteracao, compras.status, fornecedores.nome as nomeFornecedor, condicoespagamento.descricao as nomeCondicao FROM compras INNER JOIN fornecedores ON fornecedores.codigo = compras.codigofornecedor INNER JOIN condicoespagamento ON condicoespagamento.codigo = compras.codigocondicaopagamento WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;"; // AND status = 'Ativo'
-
+                    string sql = @"SELECT compras.modelo, compras.serie, compras.numeronf, compras.codigofornecedor, compras.dtemissao, compras.dtentrega, compras.valorprodutos, compras.frete, compras.seguro, compras.despesas, compras.valortotal, compras.codigocondicaopagamento, compras.dtcadastro, compras.dtalteracao, compras.status, fornecedores.nome as nomeFornecedor, condicoespagamento.descricao as nomeCondicao FROM compras INNER JOIN fornecedores ON fornecedores.codigo = compras.codigofornecedor INNER JOIN condicoespagamento ON condicoespagamento.codigo = compras.codigocondicaopagamento WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;";
+                    
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
                     command.Parameters.AddWithValue("@modelo", compra.modelo);
                     command.Parameters.AddWithValue("@serie", compra.serie);
                     command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
@@ -268,16 +282,21 @@ namespace DAL.DataAccessObject
                 NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
-                    string sql = @"INSERT INTO compras(modelo, serie, numeronf, codigofornecedor, codigocondicaopagamento, dtemissao, dtentrega, dtcadastro, dtalteracao, status) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @codigoCondicaoPagamento, @dtEmissao, @dtEntrega, @dtCadastro, @dtAlteracao, @status);";
+                    string sql = @"INSERT INTO compras(modelo, serie, numeronf, codigofornecedor, dtemissao, dtentrega, valorprodutos, frete, seguro, despesas, valortotal, codigocondicaopagamento, dtcadastro, dtalteracao, status) VALUES (@modelo, @serie, @numeroNF, @codigoFornecedor, @dtEmissao, @dtEntrega, @valorProdutos, @frete, @seguro, @despesas, @valorTotal, @codigoCondicaoPagamento, @dtCadastro, @dtAlteracao, @status);";
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
                     command.Parameters.AddWithValue("@modelo", compra.modelo);
                     command.Parameters.AddWithValue("@serie", compra.serie);
                     command.Parameters.AddWithValue("@numeroNF", compra.numeroNF);
                     command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
-                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", compra.codigoCondicaoPagamento);
                     command.Parameters.AddWithValue("@dtEmissao", compra.dtEmissao);
                     command.Parameters.AddWithValue("@dtEntrega", compra.dtEntrega);
+                    command.Parameters.AddWithValue("@valorProdutos", compra.valorProdutos);
+                    command.Parameters.AddWithValue("@frete", compra.frete);
+                    command.Parameters.AddWithValue("@seguro", compra.seguro);
+                    command.Parameters.AddWithValue("@despesas", compra.despesas);
+                    command.Parameters.AddWithValue("@valorTotal", compra.valorTotal);
+                    command.Parameters.AddWithValue("@codigoCondicaoPagamento", compra.codigoCondicaoPagamento);
                     command.Parameters.AddWithValue("@dtCadastro", compra.dtCadastro);
                     command.Parameters.AddWithValue("@dtAlteracao", compra.dtAlteracao);
                     command.Parameters.AddWithValue("@status", compra.status);
@@ -336,11 +355,11 @@ namespace DAL.DataAccessObject
         {
             using (var conexao = GetCurrentConnection())
             {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
                 try
                 {
                     string sql = @"UPDATE compras SET dtalteracao = @dtAlteracao, status = @status WHERE modelo = @modelo AND serie = @serie AND numeroNF = @numeroNF AND codigoFornecedor = @codigoFornecedor;";
-
-                    conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 
@@ -352,10 +371,16 @@ namespace DAL.DataAccessObject
                     command.Parameters.AddWithValue("@codigoFornecedor", compra.codigoFornecedor);
 
                     var result = await command.ExecuteNonQueryAsync();
+
+                    await CancelarContasPagar(conexao, compra);
+
+                    transaction.Commit();
+
                     return result == 1 ? true : false;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    transaction.Rollback();
                     throw new Exception("Não foi possível cancelar a compra");
                 }
                 finally
