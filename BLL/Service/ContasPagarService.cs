@@ -33,7 +33,7 @@ namespace BLL.Service
             string error = contaPagar.Validation();
             if (error == null)
             {
-                contaPagar.dtEmissao = new DateTime();
+                contaPagar.dtEmissao = DateTime.Now;
                 contaPagar.pendente();
                 return await contasPagarDao.Inserir(contaPagar);
             }
@@ -54,6 +54,13 @@ namespace BLL.Service
             {
                 throw new Exception(error);
             }
+        }
+
+        public async Task<ContasPagar> Pagar(ContasPagar contaPagar)
+        {
+            contaPagar.dtPagamento = DateTime.Now;
+            contaPagar.pagar();
+            return await contasPagarDao.Pagar(contaPagar);
         }
 
         public async Task<bool> Excluir(int codigo)

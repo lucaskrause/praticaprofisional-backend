@@ -166,6 +166,37 @@ namespace DAL.DataAccessObject
             }
         }
 
+        public async Task<ContasPagar> Pagar(ContasPagar contaPagar)
+        {
+            using (var conexao = GetCurrentConnection())
+            {
+                try
+                {
+                    string sql = @"UPDATE contaspagar SET dtPagamento = @dtPagamento, status = @status WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeronf AND codigofornecedor = @codigoFornecedor AND numeroparcela = @numeroParcela;";
+
+                    conexao.Open();
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+
+                    command.Parameters.AddWithValue("@dtPagamento", contaPagar.dtPagamento);
+                    command.Parameters.AddWithValue("@status", contaPagar.status);
+                    command.Parameters.AddWithValue("@modelo", contaPagar.modelo);
+                    command.Parameters.AddWithValue("@serie", contaPagar.serie);
+                    command.Parameters.AddWithValue("@numeronf", contaPagar.numeroNF);
+                    command.Parameters.AddWithValue("@codigoFornecedor", contaPagar.codigoFornecedor);
+                    command.Parameters.AddWithValue("@numeroParcela", contaPagar.numeroParcela);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    return contaPagar;
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
+        }
+
         public override Task<bool> Excluir(ContasPagar entity)
         {
             throw new NotImplementedException();

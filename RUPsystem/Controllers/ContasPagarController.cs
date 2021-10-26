@@ -93,6 +93,25 @@ namespace RUPsystem.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("pagar")]
+        public async Task<IActionResult> Pagar(ContasPagar contaPagar)
+        {
+            try
+            {
+                ContasPagar newContaPagar = await _service.Pagar(contaPagar);
+                return Ok(newContaPagar);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
         [HttpDelete]
         [Route("excluir/{codigo}")]
         public async Task<IActionResult> Excluir(int codigo)
