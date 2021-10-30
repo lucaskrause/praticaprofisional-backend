@@ -5,6 +5,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -136,6 +137,57 @@ namespace DAL.DataAccessObject
 
             var result = await command.ExecuteNonQueryAsync();
             return result == 1 ? true : false;
+        }
+
+        public async Task<string> VerificaDisponibilidadeArea(DateTime dtLocacao, List<AreasLocacao> areas)
+        {
+            using (var conexao = GetCurrentConnection())
+            {
+                conexao.Open();
+                NpgsqlTransaction transaction = conexao.BeginTransaction();
+                try
+                {
+                    string sql = @"SELECT * FROM locacoes WHERE dtlocacao = @dtLocacao";
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                    command.Parameters.AddWithValue("@dtLocacao", dtLocacao);
+
+                    List<Locacoes> list = await GetResultSet(command);
+                    if (list.Count > 0)
+                    {
+                        var ids = list.Select(locacao => "codigoLocacao = " + locacao.codigo.ToString()).ToArray();
+                        string conditionCodigo = String.Join(" OR ", ids);
+                        string conditionArea;
+
+                        for (int i = 0; i < areas.Count(); i++)
+                        {
+                            conditionArea = "codigoArea = " + areas[i].codigo.ToString();
+
+                            sql = @"SELECT * FROM areasLocacoes WHERE " + conditionCodigo + " AND " + conditionArea + ";";
+
+                            command = new NpgsqlCommand(sql, conexao);
+
+                            List<AreasLocacoes> listAreasLocacoes = await GetAreasLocacoesResultSet(command);
+
+                            if (listAreasLocacoes.Count() > 0)
+                            {
+                                return areas[i].descricao + " já alocada";
+                            }
+                        }
+                    }
+                    transaction.Commit();
+                    return null;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception("Não foi verificar a disponibilidade");
+                }
+                finally
+                {
+                    conexao.Close();
+                }
+            }
         }
 
         public override async Task<IList<Locacoes>> ListarTodos()

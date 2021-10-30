@@ -1,4 +1,5 @@
-﻿using DAL.DataAccessObject;
+﻿using BLL.DataTransferObjects;
+using DAL.DataAccessObject;
 using DAL.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,11 @@ namespace BLL.Service
         private readonly LocacoesDAO locacoesDao = null;
 
         public LocacoesService() => this.locacoesDao = new LocacoesDAO();
+
+        public async Task<string> VerificaDisponibilidadeArea(LocacoesDTO locacao)
+        {
+            return await locacoesDao.VerificaDisponibilidadeArea(locacao.dtLocacao, locacao.areasLocacao);
+        }
 
         public async Task<IList<Locacoes>> ListarTodos()
         {

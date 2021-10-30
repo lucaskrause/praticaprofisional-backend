@@ -18,6 +18,25 @@ namespace RUPsystem.Controllers
             _service = new LocacoesService();
         }
 
+        [HttpPost]
+        [Route("verificaArea")]
+        public async Task<IActionResult> VerificaDisponibilidadeArea(LocacoesDTO locacao)
+        {
+            try
+            {
+                string result = await _service.VerificaDisponibilidadeArea(locacao);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> ListarTodos()
