@@ -15,6 +15,7 @@ namespace DAL.DataAccessObject
         public ComprasDAO() : base()
         {
         }
+
         public async Task<List<ItensCompra>> GetItensCompraResultSet(NpgsqlCommand command)
         {
             List<ItensCompra> list = new List<ItensCompra>();
@@ -43,6 +44,36 @@ namespace DAL.DataAccessObject
             }
             return list;
         }
+
+        public async Task<List<Produtos>> GetProdutosResultSet(NpgsqlCommand command)
+        {
+            List<Produtos> list = new List<Produtos>();
+
+            command.ExecuteNonQuery();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                DataTable schemaTable = reader.GetSchemaTable();
+
+                JTokenWriter writer = new JTokenWriter();
+                writer.WriteStartObject();
+
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    writer.WritePropertyName(row[0].ToString());
+                    writer.WriteValue(reader[row[0].ToString()]);
+                }
+                writer.WriteEndObject();
+                JObject o = (JObject)writer.Token;
+                var stringJson = o.ToString();
+                Produtos p = JsonConvert.DeserializeObject<Produtos>(stringJson);
+                list.Add(p);
+            }
+            return list;
+        }
+
         public async Task<List<ParcelasCompra>> GetParcelasCompraResultSet(NpgsqlCommand command)
         {
             List<ParcelasCompra> list = new List<ParcelasCompra>();
@@ -106,9 +137,19 @@ namespace DAL.DataAccessObject
 
         public async Task AtualizarProdutos(NpgsqlConnection conexao, Compras compra, ItensCompra item)
         {
-            string sql = @"UPDATE produtos SET dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra WHERE codigo = @codigo;";
+            string sql = @"SELECT estoque FROM produtos WHERE codigo = @codigo;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@codigo", item.codigoProduto);
+
+            List<Produtos> produtos = await GetProdutosResultSet(command);
+
+            int estoqueAtual = produtos[0].estoque + item.quantidade;
+
+            sql = @"UPDATE produtos SET estoque = @estoque, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra WHERE codigo = @codigo;";
+
+            command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@estoque", estoqueAtual);
             command.Parameters.AddWithValue("@dtUltimaCompra", compra.dtEmissao);
             command.Parameters.AddWithValue("@valorUltimaCompra", item.valorUnitario);
             command.Parameters.AddWithValue("@codigo", item.codigoProduto);
