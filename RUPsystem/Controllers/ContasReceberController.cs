@@ -36,13 +36,13 @@ namespace RUPsystem.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{codigo}")]
-        public async Task<IActionResult> BuscarPorID(int codigo)
+        [HttpPost]
+        [Route("getParcela")]
+        public async Task<IActionResult> BuscarParcela(ContasReceber contaReceber)
         {
             try
             {
-                ContasReceber newContaReceber = await _service.BuscarPorID(codigo);
+                ContasReceber newContaReceber = await _service.BuscarParcela(contaReceber);
                 return Ok(newContaReceber);
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace RUPsystem.Controllers
             try
             {
                 ContasReceber newContaReceber = await _service.Inserir(contaReceber);
-                return Created("/api/contaReceberes/inserir", newContaReceber);
+                return Created("/api/contasReceber/inserir", newContaReceber);
             }
             catch (Exception ex)
             {
@@ -75,13 +75,31 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPut]
-        [Route("editar/{codigo}")]
-        public async Task<IActionResult> Editar(ContasReceber contaReceber, int codigo)
+        [Route("editar")]
+        public async Task<IActionResult> Editar(ContasReceber contaReceber)
         {
             try
             {
-                contaReceber.codigo = codigo;
                 ContasReceber newContaReceber = await _service.Editar(contaReceber);
+                return Ok(newContaReceber);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("pagar")]
+        public async Task<IActionResult> Pagar(ContasReceber contaReceber)
+        {
+            try
+            {
+                ContasReceber newContaReceber = await _service.Receber(contaReceber);
                 return Ok(newContaReceber);
             }
             catch (Exception ex)

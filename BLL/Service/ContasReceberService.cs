@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using DAL.DataAccessObject;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,34 +9,68 @@ namespace BLL.Service
 {
     public class ContasReceberService : IService<ContasReceber>
     {
-        public Task<ContasReceber> BuscarPorID(int codigo)
+        private readonly ContasReceberDAO contasReceberDao = null;
+
+        public ContasReceberService() => this.contasReceberDao = new ContasReceberDAO();
+
+        public async Task<IList<ContasReceber>> ListarTodos()
         {
-            throw new NotImplementedException();
+            return await contasReceberDao.ListarTodos();
         }
 
-        public Task<ContasReceber> Editar(ContasReceber entity)
+        public async Task<ContasReceber> BuscarPorID(int id)
         {
-            throw new NotImplementedException();
+            return await contasReceberDao.BuscarPorID(id);
         }
 
-        public Task<bool> Excluir(int codigo)
+        public async Task<ContasReceber> BuscarParcela(ContasReceber contaReceber)
         {
-            throw new NotImplementedException();
+            return await contasReceberDao.BuscarParcela(contaReceber);
         }
 
-        public Task<ContasReceber> Inserir(ContasReceber entity)
+        public async Task<ContasReceber> Inserir(ContasReceber contaReceber)
         {
-            throw new NotImplementedException();
+            string error = contaReceber.Validation();
+            if (error == null)
+            {
+                contaReceber.dtEmissao = DateTime.Now;
+                contaReceber.pendente();
+                return await contasReceberDao.Inserir(contaReceber);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public Task<IList<ContasReceber>> ListarTodos()
+        public async Task<ContasReceber> Editar(ContasReceber contaReceber)
         {
-            throw new NotImplementedException();
+            string error = contaReceber.Validation();
+            if (error == null)
+            {
+                return await contasReceberDao.Editar(contaReceber);
+            }
+            else
+            {
+                throw new Exception(error);
+            }
         }
 
-        public Task<IList<ContasReceber>> Pesquisar(string str)
+        public async Task<ContasReceber> Receber(ContasReceber contaReceber)
         {
-            throw new NotImplementedException();
+            contaReceber.dtPagamento = DateTime.Now;
+            contaReceber.pagar();
+            return await contasReceberDao.Receber(contaReceber);
+        }
+
+        public async Task<bool> Excluir(int codigo)
+        {
+            return false;
+        }
+
+        public async Task<IList<ContasReceber>> Pesquisar(string str)
+        {
+            return await contasReceberDao.Pesquisar(str);
         }
     }
 }
