@@ -14,7 +14,7 @@ namespace DAL.Models
         public string nomeForneceodr { set { fornecedor ??= new Fornecedores(); fornecedor.nome = value; } }
         public int codigoProduto { get; set; }
         public string produto { get; set; }
-        public decimal quantidade { get; set; }
+        public int quantidade { get; set; }
         public decimal valorUnitario { get; set; }
         public decimal desconto { get; set; }
         public decimal total { get; set; }
