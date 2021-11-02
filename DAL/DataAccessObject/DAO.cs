@@ -10,7 +10,7 @@ using DAL.Models;
 
 namespace DAL.DataAccessObject
 {
-    public abstract class DAO<T> where T : AbstractEntity
+    public abstract class DAO<T> where T : Pai
     {
         private readonly NpgsqlConnection _conexao;
 

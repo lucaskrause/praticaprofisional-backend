@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Models
 {
-    public abstract class AbstractEntity
+    public abstract class Pai
     {
-        public AbstractEntity()
+        public Pai()
         {
             this.codigo = 0;
             this.status = "Ativo";

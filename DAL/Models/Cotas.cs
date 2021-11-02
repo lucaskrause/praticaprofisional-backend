@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class Cotas : AbstractEntity
+    public class Cotas : Pai
     {
         public int codigoCliente { get; set; }
 

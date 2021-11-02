@@ -2,7 +2,7 @@
 
 namespace DAL.Models
 {
-    public class FormasPagamento : AbstractEntity
+    public class FormasPagamento : Pai
     {
         public string descricao { get; set; }
 

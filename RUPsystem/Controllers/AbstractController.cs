@@ -7,7 +7,7 @@ namespace RUPsystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class AbstractController<T> : ControllerBase where T : AbstractEntity
+    public abstract class AbstractController<T> : ControllerBase where T : Pai
     {
         public readonly IService<T> _service;
     }

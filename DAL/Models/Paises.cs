@@ -2,7 +2,7 @@
 
 namespace DAL.Models
 {
-    public class Paises : AbstractEntity
+    public class Paises : Pai
     {
         public string pais { get; set; }
 

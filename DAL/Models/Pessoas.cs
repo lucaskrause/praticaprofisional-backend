@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class Pessoas : AbstractEntity
+    public class Pessoas : Pai
     {
         public string nome { get; set; }
 

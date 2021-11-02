@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Models
 {
-    public class Contas : AbstractEntity
+    public class Contas : Pai
     {
         public string modelo { get; set; }
 

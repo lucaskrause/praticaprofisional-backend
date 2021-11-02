@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class CondicoesPagamento : AbstractEntity
+    public class CondicoesPagamento : Pai
     {
         public int totalParcelas { get; set; }
 

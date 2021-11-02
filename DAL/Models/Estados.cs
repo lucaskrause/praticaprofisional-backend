@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace DAL.Models
 {
-    public class Estados : AbstractEntity
+    public class Estados : Pai
     {
         public string estado { get; set; }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class OrdemServico : AbstractEntity
+    public class OrdemServico : Pai
     {
         public DateTime? dtAbertura { get; set; }
 

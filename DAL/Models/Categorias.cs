@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class Categorias : AbstractEntity
+    public class Categorias : Pai
     {
         public string descricao { get; set; }
 

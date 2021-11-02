@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Service
 {
-    public interface IService<T> where T : AbstractEntity
+    public interface IService<T> where T : Pai
     {
         public abstract Task<IList<T>> ListarTodos();
 
