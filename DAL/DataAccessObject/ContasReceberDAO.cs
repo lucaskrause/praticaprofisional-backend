@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT contasreceber.modelo, contasreceber.serie, contasreceber.numeronf, contasreceber.codigocliente, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoFormaPagamento;";
+                    string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigocota, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoFormaPagamento WHERE contasreceber.status != 'Cancelado';";
 
                     conexao.Open();
 
@@ -63,17 +63,12 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT contasreceber.modelo, contasreceber.serie, contasreceber.numeronf, contasreceber.codigocliente, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoformapagamento WHERE contasreceber.modelo = @modelo AND contasreceber.serie = @serie AND contasreceber.numeroNF = @numeroNF AND contasreceber.codigoCliente = @codigoCliente AND contasreceber.numeroParcela = @numeroParcela;";
+                    string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoformapagamento WHERE contasreceber.codigo = @codigo;";
 
                     conexao.Open();
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
-
-                    command.Parameters.AddWithValue("@modelo", contaReceber.modelo);
-                    command.Parameters.AddWithValue("@serie", contaReceber.serie);
-                    command.Parameters.AddWithValue("@numeroNF", contaReceber.numeroNF);
-                    command.Parameters.AddWithValue("@codigoCliente", contaReceber.codigoCliente);
-                    command.Parameters.AddWithValue("@numeroParcela", contaReceber.numeroParcela);
+                    command.Parameters.AddWithValue("@codigo", contaReceber.codigo);
 
                     List<ContasReceber> list = await GetResultSet(command);
 
@@ -98,39 +93,28 @@ namespace DAL.DataAccessObject
             using (var conexao = GetCurrentConnection())
             {
                 conexao.Open();
-                bool exists = await CheckExist(conexao, "contasreceber", contaReceber.modelo, contaReceber.serie, contaReceber.numeroNF, contaReceber.codigoCliente, contaReceber.numeroParcela);
-                if (exists)
+                try
                 {
-                    try
-                    {
-                        string sql = @"INSERT INTO contasreceber(modelo, serie, numeronf, codigocliente, numeroparcela, valorparcela, codigoformapagamento, dtemissao, dtvencimento, dtpagamento, status) VALUES (@modelo, @serie, @numeronf, @codigoCliente, @numeroParcela, @valorParcela, @codigoFormaPagamento, @dtEmissao, @dtVencimento, @dtPagamento, @status);";
+                    string sql = @"INSERT INTO contasreceber(numeroparcela, valorparcela, codigoformapagamento, codigocliente, dtemissao, dtvencimento, dtpagamento, status) VALUES (@numeroParcela, @valorParcela, @codigoFormaPagamento, @codigoCliente, @dtEmissao, @dtVencimento, @dtPagamento, @status) returning codigo;";
 
-                        NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                    NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+                    command.Parameters.AddWithValue("@numeroParcela", contaReceber.numeroParcela);
+                    command.Parameters.AddWithValue("@valorParcela", contaReceber.valorParcela);
+                    command.Parameters.AddWithValue("@codigoFormaPagamento", contaReceber.codigoFormaPagamento);
+                    command.Parameters.AddWithValue("@codigoCliente", contaReceber.codigoCliente);
+                    command.Parameters.AddWithValue("@dtEmissao", contaReceber.dtEmissao);
+                    command.Parameters.AddWithValue("@dtVencimento", contaReceber.dtVencimento);
+                    command.Parameters.AddWithValue("@dtPagamento", contaReceber.dtPagamento ?? (Object)DBNull.Value);
+                    command.Parameters.AddWithValue("@status", contaReceber.status);
 
-                        command.Parameters.AddWithValue("@modelo", contaReceber.modelo);
-                        command.Parameters.AddWithValue("@serie", contaReceber.serie);
-                        command.Parameters.AddWithValue("@numeronf", contaReceber.numeroNF);
-                        command.Parameters.AddWithValue("@codigoCliente", contaReceber.codigoCliente);
-                        command.Parameters.AddWithValue("@numeroParcela", contaReceber.numeroParcela);
-                        command.Parameters.AddWithValue("@valorParcela", contaReceber.valorParcela);
-                        command.Parameters.AddWithValue("@codigoFormaPagamento", contaReceber.codigoFormaPagamento);
-                        command.Parameters.AddWithValue("@dtEmissao", contaReceber.dtEmissao);
-                        command.Parameters.AddWithValue("@dtVencimento", contaReceber.dtVencimento);
-                        command.Parameters.AddWithValue("@dtPagamento", contaReceber.dtPagamento ?? (Object)DBNull.Value);
-                        command.Parameters.AddWithValue("@status", contaReceber.status);
+                    Object idInserido = await command.ExecuteScalarAsync();
+                    contaReceber.codigo = (int)idInserido;
 
-                        await command.ExecuteNonQueryAsync();
-
-                        return contaReceber;
-                    }
-                    finally
-                    {
-                        conexao.Close();
-                    }
+                    return contaReceber;
                 }
-                else
+                finally
                 {
-                    throw new Exception("Conta já cadastrada");
+                    conexao.Close();
                 }
             }
         }
@@ -141,7 +125,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE contasreceber SET codigoformapagamento = @codigoFormaPagamento, dtvencimento = @dtVencimento WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeronf AND codigocliente = @codigoCliente AND numeroparcela = @numeroParcela;";
+                    string sql = @"UPDATE contasreceber SET codigoformapagamento = @codigoFormaPagamento, dtvencimento = @dtVencimento WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -149,11 +133,7 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@codigoFormaPagamento", contaReceber.codigoFormaPagamento);
                     command.Parameters.AddWithValue("@dtVencimento", contaReceber.dtVencimento);
-                    command.Parameters.AddWithValue("@modelo", contaReceber.modelo);
-                    command.Parameters.AddWithValue("@serie", contaReceber.serie);
-                    command.Parameters.AddWithValue("@numeronf", contaReceber.numeroNF);
-                    command.Parameters.AddWithValue("@codigoCliente", contaReceber.codigoCliente);
-                    command.Parameters.AddWithValue("@numeroParcela", contaReceber.numeroParcela);
+                    command.Parameters.AddWithValue("@codigo", contaReceber.codigo);
 
                     await command.ExecuteNonQueryAsync();
 
@@ -172,7 +152,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"UPDATE contasreceber SET dtPagamento = @dtPagamento, status = @status WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeronf AND codigocliente = @codigoCliente AND numeroparcela = @numeroParcela;";
+                    string sql = @"UPDATE contasreceber SET dtPagamento = @dtPagamento, status = @status WHERE codigo = @codigo;";
 
                     conexao.Open();
 
@@ -180,11 +160,7 @@ namespace DAL.DataAccessObject
 
                     command.Parameters.AddWithValue("@dtPagamento", contaReceber.dtPagamento);
                     command.Parameters.AddWithValue("@status", contaReceber.status);
-                    command.Parameters.AddWithValue("@modelo", contaReceber.modelo);
-                    command.Parameters.AddWithValue("@serie", contaReceber.serie);
-                    command.Parameters.AddWithValue("@numeronf", contaReceber.numeroNF);
-                    command.Parameters.AddWithValue("@codigoCliente", contaReceber.codigoCliente);
-                    command.Parameters.AddWithValue("@numeroParcela", contaReceber.numeroParcela);
+                    command.Parameters.AddWithValue("@codigo", contaReceber.codigo);
 
                     await command.ExecuteNonQueryAsync();
 

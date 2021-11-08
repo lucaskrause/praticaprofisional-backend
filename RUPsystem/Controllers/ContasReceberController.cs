@@ -94,8 +94,8 @@ namespace RUPsystem.Controllers
         }
 
         [HttpPost]
-        [Route("pagar")]
-        public async Task<IActionResult> Pagar(ContasReceber contaReceber)
+        [Route("receber")]
+        public async Task<IActionResult> Receber(ContasReceber contaReceber)
         {
             try
             {
