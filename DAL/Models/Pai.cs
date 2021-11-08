@@ -36,6 +36,11 @@ namespace DAL.Models
             this.status = "Inativo";
         }
 
+        public virtual void Cancelar()
+        {
+            this.status = "Cancelado";
+        }
+
         public abstract string Validation();
     }
 }

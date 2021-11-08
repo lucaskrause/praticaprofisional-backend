@@ -5,12 +5,6 @@ namespace DAL.Models
 {
     public class Contas : Pai
     {
-        public string modelo { get; set; }
-
-        public string serie { get; set; }
-
-        public string numeroNF { get; set; }
-
         public int numeroParcela { get; set; }
 
         public double valorParcela { get; set; }
@@ -21,11 +15,26 @@ namespace DAL.Models
 
         public string descricaoForma { set { formaPagamento ??= new FormasPagamento(); formaPagamento.descricao = value; } }
 
-        public DateTime dtVencimento { get; set; }
+        public DateTime? dtVencimento { get; set; }
 
         public DateTime dtEmissao { get; set; }
 
         public DateTime? dtPagamento { get; set; }
+
+        public virtual void pendente()
+        {
+            this.status = "Pendente";
+        }
+
+        public virtual void pagar()
+        {
+            this.status = "Pago";
+        }
+
+        public virtual void cancelar()
+        {
+            this.status = "Cancelado";
+        }
 
         public override string Validation()
         {
