@@ -27,6 +27,8 @@ namespace DAL.Models
 
         public List<AreasLocacao> areasLocacao { get; set; }
 
+        public List<ContasReceber> parcelas { get; set; }
+
         public override string Validation()
         {
             if (this.codigoCliente <= 0)
