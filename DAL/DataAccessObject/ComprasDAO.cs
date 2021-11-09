@@ -121,7 +121,7 @@ namespace DAL.DataAccessObject
 
         public async Task<List<ParcelasCompra>> BuscarParcelasCompra(NpgsqlConnection conexao, Compras compra)
         {
-            string sql = @"SELECT contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtvencimento, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoFormaPagamento WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+            string sql = @"SELECT contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtvencimento, contaspagar.status, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoFormaPagamento WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
 

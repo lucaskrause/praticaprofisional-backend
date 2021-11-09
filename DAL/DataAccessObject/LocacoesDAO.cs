@@ -166,7 +166,7 @@ namespace DAL.DataAccessObject
 
         public async Task<List<ContasReceber>> GetContasReceber(NpgsqlConnection conexao, int codigoLocacao)
         {
-            string sql = @"SELECT contasreceber.codigocontareceber, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, formasPagamento.descricao as descricaoForma FROM contasreceber LEFT JOIN formasPagamento ON contasreceber.codigoFormaPagamento = formasPagamento.codigo LEFT JOIN clientes ON contasreceber.codigocliente = clientes.codigo LEFT JOIN locacoes ON contasreceber.codigoLocacao = locacoes.codigo WHERE contasreceber.codigoLocacao = @codigo;";
+            string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, formasPagamento.descricao as descricaoForma FROM contasreceber LEFT JOIN formasPagamento ON contasreceber.codigoFormaPagamento = formasPagamento.codigo LEFT JOIN clientes ON contasreceber.codigocliente = clientes.codigo LEFT JOIN locacoes ON contasreceber.codigoLocacao = locacoes.codigo WHERE contasreceber.codigoLocacao = @codigo;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@codigo", codigoLocacao);
