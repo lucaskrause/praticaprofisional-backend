@@ -224,7 +224,7 @@ namespace DAL.DataAccessObject
                     transaction.Commit();
                     return result == 1 ? true : false;
                 }
-                catch (Exception ex)
+                catch
                 {
                     transaction.Rollback();
                     throw new Exception("Não é foi possível excluir o Consumo");

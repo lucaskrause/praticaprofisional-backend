@@ -39,10 +39,6 @@ namespace DAL.Models
             {
                 return "Unidades deve ser no mínimo 1";
             }
-            else if (this.valorCusto <= Convert.ToDecimal(0.00) || this.valorCusto > Convert.ToDecimal(99999999.99))
-            {
-                return "Valor de custo deve ser entre 0.01 e 99999999.99";
-            }
             else if (this.estoque < 1)
             {
                 return "Estoque deve ser no mínimo 1";

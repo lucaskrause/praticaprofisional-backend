@@ -457,7 +457,7 @@ namespace DAL.DataAccessObject
                     transaction.Commit();
                     return result == 1 ? true : false;
                 }
-                catch (Exception ex)
+                catch
                 {
                     transaction.Rollback();
                     throw new Exception("Não foi possivel cancelar a locação");
