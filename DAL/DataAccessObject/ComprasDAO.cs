@@ -146,9 +146,10 @@ namespace DAL.DataAccessObject
 
             int estoqueAtual = produtos[0].estoque + item.quantidade;
 
-            sql = @"UPDATE produtos SET estoque = @estoque, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra WHERE codigo = @codigo;";
+            sql = @"UPDATE produtos SET valorcusto = @valorCusto, estoque = @estoque, dtultimacompra = @dtUltimaCompra, valorultimacompra = @valorUltimaCompra WHERE codigo = @codigo;";
 
             command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@valorCusto", item.valorCusto);
             command.Parameters.AddWithValue("@estoque", estoqueAtual);
             command.Parameters.AddWithValue("@dtUltimaCompra", compra.dtEmissao);
             command.Parameters.AddWithValue("@valorUltimaCompra", item.valorUnitario);
@@ -201,9 +202,12 @@ namespace DAL.DataAccessObject
 
         public async Task<bool> CancelarContasPagar(NpgsqlConnection conexao, Compras compra)
         {
-            string sql = @"UPDATE contaspagar SET status = 'Cancelado' WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
+            string statusConta = "Cancelado";
+
+            string sql = @"UPDATE contaspagar SET status = @status WHERE modelo = @modelo AND serie = @serie AND numeronf = @numeroNF AND codigofornecedor = @codigoFornecedor;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
+            command.Parameters.AddWithValue("@status", statusConta);
             command.Parameters.AddWithValue("@modelo", compra.modelo);
             command.Parameters.AddWithValue("@serie", compra.serie);
             command.Parameters.AddWithValue("@numeronf", compra.numeroNF);
@@ -419,7 +423,7 @@ namespace DAL.DataAccessObject
 
                     return result == 1 ? true : false;
                 }
-                catch (Exception ex)
+                catch
                 {
                     transaction.Rollback();
                     throw new Exception("Não foi possível cancelar a compra");

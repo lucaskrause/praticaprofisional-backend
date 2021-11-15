@@ -44,11 +44,6 @@ namespace DAL.Models
 
         public List<ParcelasCompra> parcelas { get; set; }
 
-        public void Cancelar()
-        {
-            this.status = "Cancelado";
-        }
-
         public override string Validation()
         {
             return null;
