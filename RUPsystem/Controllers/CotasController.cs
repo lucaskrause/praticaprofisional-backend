@@ -95,6 +95,25 @@ namespace RUPsystem.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("parcelas")]
+        public async Task<IActionResult> gerarParcelas(ParcelasDTO parcela)
+        {
+            try
+            {
+                var result = await _service.gerarParcelas(parcela);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(new
+                {
+                    ex.Message,
+                    Status = 422
+                });
+            }
+        }
+
         [HttpDelete]
         [Route("excluir/{codigo}")]
         public async Task<IActionResult> Excluir(int codigo)

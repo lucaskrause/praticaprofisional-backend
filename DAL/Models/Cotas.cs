@@ -20,6 +20,8 @@ namespace DAL.Models
 
         public DateTime dtTermino { get; set; }
 
+        public List<ContasReceber> parcelas { get; set; }
+
         public override string Validation()
         {
             if (this.codigoCliente <= 0)
