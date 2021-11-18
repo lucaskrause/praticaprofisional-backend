@@ -166,7 +166,7 @@ namespace DAL.DataAccessObject
 
         public async Task<List<ContasReceber>> GetContasReceber(NpgsqlConnection conexao, int codigoLocacao)
         {
-            string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, formasPagamento.descricao as descricaoForma FROM contasreceber LEFT JOIN formasPagamento ON contasreceber.codigoFormaPagamento = formasPagamento.codigo LEFT JOIN clientes ON contasreceber.codigocliente = clientes.codigo LEFT JOIN locacoes ON contasreceber.codigoLocacao = locacoes.codigo WHERE contasreceber.codigoLocacao = @codigo;";
+            string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, formasPagamento.descricao as descricaoForma FROM contasreceber LEFT JOIN formasPagamento ON contasreceber.codigoFormaPagamento = formasPagamento.codigo LEFT JOIN clientes ON contasreceber.codigocliente = clientes.codigo LEFT JOIN locacoes ON contasreceber.codigoLocacao = locacoes.codigo WHERE contasreceber.codigoLocacao = @codigo ORDER BY contasreceber.numeroParcela;";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@codigo", codigoLocacao);
@@ -198,7 +198,7 @@ namespace DAL.DataAccessObject
 
         public async Task<bool> CancelarContasReceber(NpgsqlConnection conexao, Locacoes locacao)
         {
-            string sql = @"UPDATE contasreceber SET status = @status WHERE codigolocacao = @codigo";
+            string sql = @"UPDATE contasreceber SET status = @status WHERE codigolocacao = @codigo AND status != 'Pago';";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conexao);
             command.Parameters.AddWithValue("@status", locacao.status);
@@ -370,7 +370,6 @@ namespace DAL.DataAccessObject
                         for (int i = 0; i < qtdParcelas; i++)
                         {
                             ContasReceber parcelaCompra = locacao.parcelas[i];
-                            parcelaCompra.dtEmissao = new DateTime();
                             parcelaCompra.pendente();
                             locacao.parcelas[i] = await InserirContasReceber(conexao, parcelaCompra, locacao);
                         }
