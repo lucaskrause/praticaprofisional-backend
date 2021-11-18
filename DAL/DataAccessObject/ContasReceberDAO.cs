@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigocota, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoFormaPagamento WHERE contasreceber.status != 'Cancelado';";
+                    string sql = @"SELECT contasreceber.codigo, contasreceber.numeroparcela, contasreceber.valorparcela, contasreceber.codigoformapagamento, contasreceber.codigocliente, contasreceber.codigocota, contasreceber.codigolocacao, contasreceber.dtemissao, contasreceber.dtvencimento, contasreceber.dtpagamento, contasreceber.status, clientes.nome as nomeCliente, formaspagamento.descricao as descricaoForma FROM contasreceber INNER JOIN clientes ON clientes.codigo = contasreceber.codigocliente INNER JOIN formaspagamento ON formaspagamento.codigo = contasreceber.codigoFormaPagamento ORDER BY contasreceber.codigo;";
 
                     conexao.Open();
 
