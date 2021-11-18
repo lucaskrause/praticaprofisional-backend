@@ -224,7 +224,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT compras.*, fornecedores.nome as nomeFornecedor FROM compras INNER JOIN fornecedores ON codigoFornecedor = fornecedores.codigo WHERE compras.status = 'Ativo' ORDER BY compras.modelo, compras.serie, compras.numeronf;";
+                    string sql = @"SELECT compras.*, fornecedores.nome as nomeFornecedor FROM compras INNER JOIN fornecedores ON codigoFornecedor = fornecedores.codigo ORDER BY compras.modelo, compras.serie, compras.numeronf;";
 
                     conexao.Open();
 
