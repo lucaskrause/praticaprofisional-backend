@@ -9,7 +9,7 @@ namespace DAL.DataAccessObject
 {
     public class ContasPagarDAO : DAO<ContasPagar>
     {
-        public async Task<bool> CheckExist(NpgsqlConnection conexao, string table, string modelo, string serie, string numeroNF, int codigoFornecedor, int numeroParcela)
+        public async Task<bool> CheckExist(NpgsqlConnection conexao, string modelo, string serie, string numeroNF, int codigoFornecedor, int numeroParcela)
         {
             string sql = @"SELECT * FROM contaspagar WHERE contaspagar.modelo = @modelo AND contaspagar.serie = @serie AND contaspagar.numeroNF = @numeroNF AND contaspagar.codigoFornecedor = @codigoFornecedor AND contaspagar.numeroParcela = @numeroParcela;";
 
@@ -36,7 +36,7 @@ namespace DAL.DataAccessObject
             {
                 try
                 {
-                    string sql = @"SELECT contaspagar.modelo, contaspagar.serie, contaspagar.numeronf, contaspagar.codigofornecedor, contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtemissao, contaspagar.dtvencimento, contaspagar.dtpagamento, contaspagar.status, fornecedores.nome as nomeFornecedor, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN fornecedores ON fornecedores.codigo = contaspagar.codigofornecedor INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoFormaPagamento;";
+                    string sql = @"SELECT contaspagar.modelo, contaspagar.serie, contaspagar.numeronf, contaspagar.codigofornecedor, contaspagar.numeroparcela, contaspagar.valorparcela, contaspagar.codigoformapagamento, contaspagar.dtemissao, contaspagar.dtvencimento, contaspagar.dtpagamento, contaspagar.status, fornecedores.nome as nomeFornecedor, formaspagamento.descricao as descricaoForma FROM contaspagar INNER JOIN fornecedores ON fornecedores.codigo = contaspagar.codigofornecedor INNER JOIN formaspagamento ON formaspagamento.codigo = contaspagar.codigoFormaPagamento ORDER BY contaspagar.modelo, contaspagar.serie, contaspagar.numeronf, contaspagar.codigofornecedor, contaspagar.numeroparcela;";
 
                     conexao.Open();
 
@@ -98,7 +98,7 @@ namespace DAL.DataAccessObject
             using (var conexao = GetCurrentConnection())
             {
                 conexao.Open();
-                bool exists = await CheckExist(conexao, "contaspagar", contaPagar.modelo, contaPagar.serie, contaPagar.numeroNF, contaPagar.codigoFornecedor, contaPagar.numeroParcela);
+                bool exists = await CheckExist(conexao, contaPagar.modelo, contaPagar.serie, contaPagar.numeroNF, contaPagar.codigoFornecedor, contaPagar.numeroParcela);
                 if (exists)
                 {
                     try
